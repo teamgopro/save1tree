@@ -231,134 +231,276 @@
     #leaderboard {
       list-style: none;
       padding: 0;
-      margin: 15px 0 0 0;
-      max-height: 200px;
-      overflow-y: auto;
-      border-radius: 12px;
-      background: #f1f8f3;
-      box-shadow: inset 0 0 8px #a5d6a7;
+      margin: 25px 0 0 0;
+      color: #1b5e20;
+      font-weight: 600;
+      font-size: 1.1rem;
       user-select: text;
     }
     #leaderboard li {
-      padding: 12px 18px;
-      border-bottom: 1px solid #a5d6a7;
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: #054a3d;
+      margin-bottom: 8px;
       opacity: 0;
-      transform: translateX(-10px);
+      transform: translateX(-20px);
       animation-fill-mode: forwards;
     }
-    #leaderboard li:last-child {
-      border-bottom: none;
-    }
-    #leaderboard li.fade-slide-in {
-      animation-name: fadeSlideIn;
-      animation-duration: 0.35s;
-      animation-timing-function: ease-out;
+    .fade-slide-in {
+      animation: fadeSlideIn 0.5s ease forwards;
     }
     @keyframes fadeSlideIn {
-      from {
-        opacity: 0;
-        transform: translateX(-15px);
-      }
       to {
         opacity: 1;
         transform: translateX(0);
       }
     }
-    /* Confetti */
-    #confetti {
-      pointer-events: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: visible;
-      z-index: 99;
-    }
-    .confetti-piece {
-      position: absolute;
-      width: 8px;
-      height: 14px;
-      opacity: 0.9;
-      border-radius: 3px;
-      animation-name: confettiFall;
-      animation-timing-function: linear;
-      animation-iteration-count: 1;
-    }
-    @keyframes confettiFall {
-      0% {
-        opacity: 1;
-        transform: translateY(0) rotate(0deg);
-      }
-      100% {
-        opacity: 0;
-        transform: translateY(80vh) rotate(360deg);
-      }
-    }
-    /* Tree Facts */
-    #treeFacts {
-      margin-top: 40px;
-      font-style: italic;
-      font-weight: 500;
-      color: #2a7a39;
-      opacity: 0;
-      transition: opacity 0.8s ease;
-      user-select: none;
-      min-height: 40px;
-    }
-    #treeFacts.show {
-      opacity: 1;
-    }
-    /* Scrollbar for leaderboard */
-    #leaderboard::-webkit-scrollbar {
-      width: 8px;
-    }
-    #leaderboard::-webkit-scrollbar-thumb {
-      background: #66bb6a;
-      border-radius: 10px;
-    }
   </style>
 </head>
 <body>
-  <div class="container" role="main" aria-label="Plant trees counter and leaderboard">
-    <h1>Save 1 Tree</h1>
-    <div id="counter" aria-live="polite" aria-atomic="true" aria-relevant="text">0</div>
-    <div id="progressBarContainer" aria-label="Overall progress bar">
+  <div class="container">
+    <h1>TEKA Trees</h1>
+    <div id="counter" aria-live="polite" aria-atomic="true" aria-label="Total trees planted">0</div>
+
+    <div id="progressBarContainer">
       <div id="progressBar"></div>
     </div>
-    
-    <div class="input-group">
-      <input id="nameInput" type="text" autocomplete="off" placeholder=" " aria-required="true" aria-describedby="nameHelp" />
-      <label for="nameInput">Enter Your Name</label>
-    </div>
-    <button id="plantBtn" aria-label="Plant a tree button">Plant a Tree 🌳</button>
-    <div id="treeEmoji" aria-hidden="true">🌱</div>
-    <div id="myStats" aria-live="polite" aria-atomic="true"></div>
 
-    <section id="dailyChallenge" aria-label="Daily tree planting challenge">
-      <strong>Today's Goal: 50 Trees</strong>
-      <div id="dailyProgressBarContainer" aria-hidden="true">
-        <div id="dailyProgressBar"></div>
+    <form id="plantForm" onsubmit="return false;">
+      <div class="input-group">
+        <input
+          type="text"
+          id="nameInput"
+          name="name"
+          required
+          autocomplete="off"
+          placeholder=" "
+          aria-label="Enter your name"
+          spellcheck="false"
+          minlength="2"
+          maxlength="20"
+        />
+        <label for="nameInput">Your Name</label>
       </div>
-      <div id="challengeCountdown" aria-live="polite" aria-atomic="true">00:00:00</div>
-    </section>
+      <button id="plantBtn" aria-label="Plant a tree">Plant a Tree 🌳</button>
+    </form>
+
+    <div id="treeEmoji" aria-hidden="true">🌳</div>
+
+    <div id="myStats" aria-live="polite" aria-atomic="true" role="status"></div>
 
     <h2>Leaderboard</h2>
-    <ul id="leaderboard" role="list" aria-live="polite" aria-atomic="true"></ul>
+    <ul id="leaderboard" aria-live="polite" aria-atomic="true" role="list"></ul>
 
-    <div id="treeFacts" aria-live="polite"></div>
+    <div id="dailyChallenge" aria-label="Daily tree planting challenge">
+      <strong>Daily Goal: Plant 50 Trees</strong>
+      <div id="challengeCountdown" aria-live="polite" aria-atomic="true">00:00:00</div>
+      <div id="dailyProgressBarContainer">
+        <div id="dailyProgressBar"></div>
+      </div>
+    </div>
   </div>
 
-  <div id="confetti"></div>
+  <!-- Firebase Libraries -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
-  <!-- Firebase and JS logic here -->
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
   <script>
-    // Your firebase config & logic here (as you posted earlier)
+    // Firebase config
+    const firebaseConfig = {
+      apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
+      authDomain: "save1tree-f116f.firebaseapp.com",
+      databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
+      projectId: "save1tree-f116f",
+      storageBucket: "save1tree-f116f.appspot.com",
+      messagingSenderId: "823144374779",
+      appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
+    };
+
+    // Initialize Firebase app
+    firebase.initializeApp(firebaseConfig);
+    const database = firebase.database();
+
+    // Elements
+    const plantBtn = document.getElementById('plantBtn');
+    const nameInput = document.getElementById('nameInput');
+    const counterEl = document.getElementById('counter');
+    const leaderboardEl = document.getElementById('leaderboard');
+    const treeEmoji = document.getElementById('treeEmoji');
+    const myStats = document.getElementById('myStats');
+    const progressBar = document.getElementById('progressBar');
+
+    // Daily challenge elements
+    const dailyGoal = 50; // Set daily goal here
+    const challengeCountdown = document.getElementById('challengeCountdown');
+    const dailyProgressBar = document.getElementById('dailyProgressBar');
+
+    // Helper to get today's date as YYYY-MM-DD
+    function getTodayKey() {
+      const now = new Date();
+      return now.toISOString().split('T')[0];
+    }
+
+    // Animate counter pop effect
+    function animateCounter() {
+      counterEl.classList.add('pop');
+      setTimeout(() => counterEl.classList.remove('pop'), 400);
+    }
+
+    // Animate progress bar glow
+    function animateProgressBar() {
+      progressBar.classList.add('pulse');
+      setTimeout(() => progressBar.classList.remove('pulse'), 1200);
+    }
+
+    // Animate tree emoji bounce on planting
+    function animateTreeEmoji() {
+      treeEmoji.classList.add('tree-animation');
+      setTimeout(() => treeEmoji.classList.remove('tree-animation'), 1000);
+    }
+
+    // Update total counter & progress bar based on count
+    function updateTotalCount(count) {
+      counterEl.textContent = count;
+      animateCounter();
+      const progressPercent = Math.min((count / dailyGoal) * 100, 100);
+      progressBar.style.width = progressPercent + '%';
+      animateProgressBar();
+
+      // Also update daily progress bar
+      dailyProgressBar.style.width = progressPercent + '%';
+    }
+
+    // Update leaderboard list UI
+    function updateLeaderboard(users) {
+      leaderboardEl.innerHTML = '';
+      const sortedUsers = Object.entries(users)
+        .sort(([,a],[,b]) => b - a)
+        .slice(0, 10);
+
+      sortedUsers.forEach(([name, count], i) => {
+        const li = document.createElement('li');
+        li.textContent = `${name}: ${count} tree${count !== 1 ? 's' : ''}`;
+        li.style.animationDelay = (i * 100) + 'ms';
+        li.classList.add('fade-slide-in');
+        leaderboardEl.appendChild(li);
+      });
+    }
+
+    // Update user's personal stats display
+    function updateMyStats(userName) {
+      database.ref(`users/${userName}`).once('value').then(snapshot => {
+        const count = snapshot.val() || 0;
+        myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''}.`;
+      });
+    }
+
+    // Increment global tree count safely with transaction
+    function incrementTreeCount() {
+      const todayKey = getTodayKey();
+      const ref = database.ref(`treeCount/${todayKey}`);
+      return ref.transaction(current => (current || 0) + 1);
+    }
+
+    // Increment user's personal count safely
+    function incrementUserCount(userName) {
+      const todayKey = getTodayKey();
+      const ref = database.ref(`users/${userName}/${todayKey}`);
+      return ref.transaction(current => (current || 0) + 1);
+    }
+
+    // Get total trees planted today globally
+    function getTotalToday() {
+      const todayKey = getTodayKey();
+      return database.ref(`treeCount/${todayKey}`).once('value').then(snap => snap.val() || 0);
+    }
+
+    // Get all user counts today for leaderboard
+    function getUsersToday() {
+      const todayKey = getTodayKey();
+      return database.ref('users').once('value').then(snap => {
+        const usersData = snap.val() || {};
+        // Aggregate user counts for today
+        const result = {};
+        Object.entries(usersData).forEach(([userName, days]) => {
+          result[userName] = days[todayKey] || 0;
+        });
+        return result;
+      });
+    }
+
+    // Listen for realtime updates on today's total count and leaderboard
+    function listenRealtimeUpdates() {
+      const todayKey = getTodayKey();
+
+      // Listen total tree count today
+      database.ref(`treeCount/${todayKey}`).on('value', snap => {
+        const count = snap.val() || 0;
+        updateTotalCount(count);
+      });
+
+      // Listen all users for today's counts to update leaderboard
+      database.ref('users').on('value', snap => {
+        const usersData = snap.val() || {};
+        const counts = {};
+        Object.entries(usersData).forEach(([userName, days]) => {
+          counts[userName] = days[todayKey] || 0;
+        });
+        updateLeaderboard(counts);
+      });
+    }
+
+    // Show countdown to next midnight
+    function startCountdown() {
+      function updateCountdown() {
+        const now = new Date();
+        const nextMidnight = new Date(now);
+        nextMidnight.setHours(24,0,0,0);
+        const diff = nextMidnight - now;
+
+        const hrs = Math.floor(diff / (1000*60*60));
+        const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
+        const secs = Math.floor((diff % (1000*60)) / 1000);
+
+        challengeCountdown.textContent = 
+          `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+
+        // Reset progress bar to 0 at midnight
+        if (diff < 1000) {
+          dailyProgressBar.style.width = '0%';
+        }
+      }
+      updateCountdown();
+      setInterval(updateCountdown, 1000);
+    }
+
+    // Plant button click handler
+    plantBtn.addEventListener('click', () => {
+      const userName = nameInput.value.trim();
+      if (!userName) {
+        alert('Please enter your name!');
+        return;
+      }
+
+      plantBtn.disabled = true;
+
+      Promise.all([
+        incrementTreeCount(),
+        incrementUserCount(userName)
+      ]).then(() => {
+        animateTreeEmoji();
+        updateMyStats(userName);
+        nameInput.value = '';
+      }).catch(err => {
+        alert('Error planting tree: ' + err.message);
+      }).finally(() => {
+        plantBtn.disabled = false;
+      });
+    });
+
+    // Initialize
+    listenRealtimeUpdates();
+    startCountdown();
+
+    // Optional: update my stats for previously entered user on page load (if any)
+    // You can add logic to remember last user via localStorage if you want.
   </script>
 </body>
 </html>
