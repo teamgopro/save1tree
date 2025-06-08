@@ -49,23 +49,15 @@
 
   <script>
     // 🔥 Replace this with your actual Firebase config
-    var firebaseConfig = {// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app";
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
-
-// Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
+    var firebaseConfig = {
+ apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
   authDomain: "save1tree-f116f.firebaseapp.com",
   projectId: "save1tree-f116f",
   storageBucket: "save1tree-f116f.firebasestorage.app",
   messagingSenderId: "823144374779",
   appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
-};
-
-// Initialize Firebase
-const app = initializeApp(firebaseConfig);
+    };
+    firebase.initializeApp(firebaseConfig);
 
     // Reference to the counter node in Firebase Realtime Database
     var counterRef = firebase.database().ref('counter');
