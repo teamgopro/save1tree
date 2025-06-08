@@ -52,20 +52,22 @@
     }
     #plantForm {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
       max-width: 400px;
       margin: auto;
     }
-    #nameInput, #plantBtn {
+    #nameInput, #dedicationInput, #plantBtn {
       padding: 10px;
       border-radius: 8px;
       font-size: 1rem;
-    }
-    #nameInput {
-      flex-grow: 1;
       border: 2px solid #004d40;
       color: #004d40;
+    }
+    #nameInput, #dedicationInput {
+      flex-grow: 1;
+      min-width: 120px;
     }
     #plantBtn {
       background: #00796b;
@@ -73,6 +75,8 @@
       border: none;
       font-weight: bold;
       cursor: pointer;
+      flex-shrink: 0;
+      min-width: 120px;
     }
     #treeEmoji {
       text-align: center;
@@ -89,7 +93,7 @@
       list-style: none;
       padding: 0;
       max-width: 400px;
-      margin: auto;
+      margin: auto 0 10px;
     }
     #leaderboard li {
       background: #b2dfdb;
@@ -101,12 +105,30 @@
       text-align: center;
       font-weight: bold;
       color: #00796b;
+      margin-bottom: 20px;
     }
-    #userTotalTrees {
-      text-align: center;
-      margin-top: 10px;
-      font-weight: bold;
-      color: #00695c;
+    #dedicationsContainer {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 10px;
+      background: #b2dfdb;
+      border-radius: 12px;
+      box-shadow: inset 0 0 8px #004d40aa;
+      color: #004d40;
+    }
+    #dedicationsContainer h2 {
+      margin-top: 0;
+    }
+    #dedicationsList {
+      max-height: 150px;
+      overflow-y: auto;
+      padding-left: 15px;
+    }
+    #dedicationsList li {
+      margin-bottom: 6px;
+      font-style: italic;
+      border-bottom: 1px solid #004d4055;
+      padding-bottom: 4px;
     }
   </style>
 </head>
@@ -115,15 +137,30 @@
   <div id="counter">0</div>
   <div id="facts"></div>
   <div id="progressBarContainer"><div id="progressBar"></div></div>
+  
   <form id="plantForm">
     <input type="text" id="nameInput" placeholder="Enter your name" required />
+    <input
+      type="text"
+      id="dedicationInput"
+      placeholder="Add a dedication (optional)"
+      maxlength="100"
+      aria-label="Tree dedication message"
+    />
     <button type="submit" id="plantBtn">Plant a Tree 🌳</button>
   </form>
+
   <div id="treeEmoji">🌳</div>
-  <div id="myStats">You have planted 0 trees today.</div>
-  <div id="userTotalTrees"></div>
+  <div id="myStats">You have planted 0 trees.</div>
+  
   <h2>Leaderboard</h2>
   <ul id="leaderboard"></ul>
+
+  <div id="dedicationsContainer">
+    <h2>Recent Tree Dedications</h2>
+    <ul id="dedicationsList"></ul>
+  </div>
+
   <div id="dailyChallenge">
     <strong>Daily Goal: Plant 50 Trees</strong>
     <div id="challengeCountdown">00:00:00</div>
@@ -150,10 +187,10 @@
     const counterEl = document.getElementById("counter");
     const treeEmoji = document.getElementById("treeEmoji");
     const myStats = document.getElementById("myStats");
-    const userTotalTrees = document.getElementById("userTotalTrees");
     const leaderboardEl = document.getElementById("leaderboard");
     const progressBar = document.getElementById("progressBar");
     const dailyProgressBar = document.getElementById("dailyProgressBar");
+    const dedicationsList = document.getElementById("dedicationsList");
 
     function getTodayKey() {
       return new Date().toISOString().split('T')[0];
@@ -168,15 +205,7 @@
       const key = getTodayKey();
       db.ref(`users/${name}/${key}`).once("value").then(snapshot => {
         const count = snapshot.val() || 0;
-        myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''} today.`;
-      });
-      db.ref(`users/${name}`).once("value").then(snapshot => {
-        const data = snapshot.val() || {};
-        let total = 0;
-        for (const day in data) {
-          total += data[day];
-        }
-        userTotalTrees.textContent = `Total trees planted: ${total}`;
+        myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''}.`;
       });
     }
 
@@ -221,17 +250,53 @@
       db.ref("users").on("value", snap => {
         updateLeaderboard(snap.val() || {});
       });
+
+      // Listen for latest dedications (limit 10)
+      db.ref(`dedications/${today}`).limitToLast(10).on("value", snap => {
+        const data = snap.val();
+        dedicationsList.innerHTML = "";
+        if (!data) {
+          dedicationsList.innerHTML = "<li>No dedications yet. Be the first!</li>";
+          return;
+        }
+        // Sort dedications by timestamp descending
+        const dedicationsArr = Object.values(data).sort((a,b) => b.timestamp - a.timestamp);
+        dedicationsArr.forEach(ded => {
+          const li = document.createElement("li");
+          li.textContent = `${ded.user}: "${ded.message}"`;
+          dedicationsList.appendChild(li);
+        });
+      });
     }
 
     document.getElementById("plantForm").addEventListener("submit", e => {
       e.preventDefault();
       const name = document.getElementById("nameInput").value.trim();
+      const dedication = document.getElementById("dedicationInput").value.trim();
       if (!name) return alert("Please enter your name.");
       const today = getTodayKey();
+
+      // Increment global and user counts
       db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
       db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
+
+      // Save dedication if given
+      if (dedication) {
+        const dedicationRef = db.ref(`dedications/${today}`).push();
+        dedicationRef.set({
+          user: name,
+          message: dedication,
+          timestamp: Date.now()
+        });
+      }
+
       animateTree();
       updateStats(name);
+
+      if (dedication) {
+        alert(`Thank you for your dedication:\n"${dedication}"`);
+        document.getElementById("dedicationInput").value = "";
+      }
     });
 
     const facts = [
