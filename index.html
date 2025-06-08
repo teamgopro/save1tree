@@ -102,6 +102,12 @@
       font-weight: bold;
       color: #00796b;
     }
+    #userTotalTrees {
+      text-align: center;
+      margin-top: 10px;
+      font-weight: bold;
+      color: #00695c;
+    }
   </style>
 </head>
 <body>
@@ -114,7 +120,8 @@
     <button type="submit" id="plantBtn">Plant a Tree 🌳</button>
   </form>
   <div id="treeEmoji">🌳</div>
-  <div id="myStats">You have planted 0 trees.</div>
+  <div id="myStats">You have planted 0 trees today.</div>
+  <div id="userTotalTrees"></div>
   <h2>Leaderboard</h2>
   <ul id="leaderboard"></ul>
   <div id="dailyChallenge">
@@ -143,6 +150,7 @@
     const counterEl = document.getElementById("counter");
     const treeEmoji = document.getElementById("treeEmoji");
     const myStats = document.getElementById("myStats");
+    const userTotalTrees = document.getElementById("userTotalTrees");
     const leaderboardEl = document.getElementById("leaderboard");
     const progressBar = document.getElementById("progressBar");
     const dailyProgressBar = document.getElementById("dailyProgressBar");
@@ -160,7 +168,15 @@
       const key = getTodayKey();
       db.ref(`users/${name}/${key}`).once("value").then(snapshot => {
         const count = snapshot.val() || 0;
-        myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''}.`;
+        myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''} today.`;
+      });
+      db.ref(`users/${name}`).once("value").then(snapshot => {
+        const data = snapshot.val() || {};
+        let total = 0;
+        for (const day in data) {
+          total += data[day];
+        }
+        userTotalTrees.textContent = `Total trees planted: ${total}`;
       });
     }
 
