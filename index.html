@@ -37,7 +37,7 @@
     }
   </style>
 
-  <!-- Firebase -->
+  <!-- Firebase v8 SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
@@ -48,30 +48,30 @@
   <button onclick="plantTree()">Plant 1 Tree 🌳</button>
 
   <script>
-    // 🔥 Replace this with your actual Firebase config
+    // ✅ Your Firebase config
     var firebaseConfig = {
- apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
-  authDomain: "save1tree-f116f.firebaseapp.com",
-  projectId: "save1tree-f116f",
-  storageBucket: "save1tree-f116f.firebasestorage.app",
-  messagingSenderId: "823144374779",
-  appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
+      apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
+      authDomain: "save1tree-f116f.firebaseapp.com",
+      databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
+      projectId: "save1tree-f116f",
+      storageBucket: "save1tree-f116f.appspot.com",
+      messagingSenderId: "823144374779",
+      appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
     };
     firebase.initializeApp(firebaseConfig);
 
-    // Reference to the counter node in Firebase Realtime Database
+    // Reference the counter node in database
     var counterRef = firebase.database().ref('counter');
 
-    // Listen for real-time value changes
-    counterRef.on('value', (snapshot) => {
-      const count = snapshot.val();
-      document.getElementById('counter').innerText = count ?? 0;
+    // Update the counter in real-time
+    counterRef.on('value', function(snapshot) {
+      document.getElementById('counter').innerText = snapshot.val() ?? 0;
     });
 
-    // Function to increment the tree count
+    // Increase the counter when button is clicked
     function plantTree() {
-      counterRef.transaction(current => {
-        return (current || 0) + 1;
+      counterRef.transaction(function(currentValue) {
+        return (currentValue || 0) + 1;
       });
     }
   </script>
