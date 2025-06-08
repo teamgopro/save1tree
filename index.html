@@ -11,210 +11,141 @@
       color: #004d40;
       margin: 0;
       padding: 20px;
+      text-align: center;
     }
     h1, h2 {
-      text-align: center;
       font-weight: 700;
       color: #004d40;
     }
     #counter {
       font-size: 4rem;
-      text-align: center;
       font-weight: 900;
-    }
-    #facts {
-      text-align: center;
-      font-style: italic;
-      margin: 10px auto 25px;
-      max-width: 500px;
-      color: #00695c;
-    }
-    #progressBarContainer, #dailyProgressBarContainer {
-      background: #b2dfdb;
-      border-radius: 15px;
-      margin: 0 auto 20px;
-      box-shadow: inset 0 0 6px #004d40aa;
-      width: 80%;
-      max-width: 400px;
-    }
-    #progressBar, #dailyProgressBar {
-      height: 22px;
-      width: 0;
-      border-radius: 15px;
-      transition: width 0.4s ease;
-      box-shadow: 0 0 8px #00796b;
+      margin: 0.2em 0 0.5em;
     }
     #progressBar {
+      height: 22px;
       background: linear-gradient(90deg, #00bfa5, #004d40);
+      border-radius: 15px;
+      width: 0%;
+      margin: 0 auto 25px;
+      max-width: 400px;
+      box-shadow: 0 0 8px #00796b;
+      transition: width 0.5s ease;
     }
     #dailyProgressBar {
+      height: 22px;
       background: linear-gradient(90deg, #004d40, #00bfa5);
-    }
-    #plantForm {
-      display: none; /* only show after login */
-      justify-content: center;
-      gap: 10px;
+      border-radius: 15px;
+      width: 0%;
+      margin: 0 auto 10px;
       max-width: 400px;
-      margin: auto;
+      box-shadow: 0 0 8px #004d40;
+      transition: width 0.5s ease;
     }
-    #nameInput, #dedicationInput, #plantBtn {
+    form {
+      margin: 15px auto 30px;
+      max-width: 400px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+    input[type="text"] {
+      flex-grow: 1;
       padding: 10px;
-      border-radius: 8px;
       font-size: 1rem;
-    }
-    #nameInput {
-      flex-grow: 1;
       border: 2px solid #004d40;
+      border-radius: 8px;
       color: #004d40;
     }
-    #dedicationInput {
-      flex-grow: 1;
-      border: 2px solid #004d40;
-      color: #004d40;
-      font-style: italic;
-    }
-    #plantBtn {
+    button {
       background: #00796b;
-      color: #fff;
+      color: white;
       border: none;
+      border-radius: 8px;
+      padding: 10px 20px;
       font-weight: bold;
       cursor: pointer;
-      min-width: 120px;
+      user-select: none;
+      transition: background 0.3s ease;
     }
-    #treeEmoji {
-      text-align: center;
-      font-size: 3.5rem;
+    button:hover:not(:disabled) {
+      background: #004d40;
     }
-    .tree-bounce {
-      animation: bounce 0.7s ease;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
+    button:disabled {
+      background: #a5d6a7;
+      cursor: not-allowed;
     }
     #leaderboard {
       list-style: none;
       padding: 0;
       max-width: 400px;
-      margin: auto;
-    }
-    #leaderboard li {
-      background: #b2dfdb;
-      padding: 8px;
-      border-radius: 10px;
-      margin-bottom: 5px;
-    }
-    #myStats, #challengeCountdown {
-      text-align: center;
-      font-weight: bold;
-      color: #00796b;
-    }
-    #authContainer {
-      max-width: 400px;
-      margin: 0 auto 20px;
-      text-align: center;
-    }
-    #authContainer input {
-      padding: 8px;
-      margin: 5px;
-      border-radius: 6px;
-      border: 1px solid #004d40;
-      font-size: 1rem;
-    }
-    #authContainer button {
-      padding: 8px 16px;
-      margin: 5px;
-      border-radius: 6px;
-      background-color: #00796b;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-    }
-    #authStatus {
-      margin-top: 10px;
+      margin: 0 auto 40px;
       color: #004d40;
       font-weight: 600;
     }
-    #usernameContainer {
-      display: none;
-      margin-top: 10px;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-      text-align: center;
-    }
-    #usernameContainer input {
-      padding: 8px;
-      width: 70%;
-      border-radius: 6px;
-      border: 1px solid #004d40;
-      font-size: 1rem;
-    }
-    #usernameContainer button {
+    #leaderboard li {
+      background: #b2dfdb;
       padding: 8px 12px;
-      border-radius: 6px;
-      background-color: #004d40;
-      color: white;
-      border: none;
-      cursor: pointer;
-      font-weight: bold;
-      margin-left: 6px;
+      border-radius: 10px;
+      margin-bottom: 6px;
+      box-shadow: inset 0 0 4px #004d40aa;
     }
-    #usernameStatus {
-      margin-top: 5px;
+    #myStats {
+      margin-bottom: 20px;
+      font-weight: bold;
       color: #00796b;
-      font-weight: 600;
+    }
+    #challengeCountdown {
+      font-weight: bold;
+      color: #00796b;
+      margin-bottom: 20px;
+    }
+    #tree {
+      font-size: 4rem;
+      margin: 0 auto 20px;
+      display: none;
+      transition: transform 1s ease, opacity 1s ease;
+    }
+    #slowDownToggle {
+      margin-bottom: 30px;
     }
   </style>
 </head>
 <body>
+
   <h1>TEKA Trees</h1>
 
-  <div id="authContainer">
-    <input type="email" id="emailInput" placeholder="Email" />
-    <input type="password" id="passwordInput" placeholder="Password" />
-    <br />
-    <button id="loginBtn">Login</button>
-    <button id="registerBtn">Register</button>
-    <button id="logoutBtn" style="display:none;">Logout</button>
-    <div id="authStatus">Please log in to plant a tree.</div>
-  </div>
-
-  <div id="usernameContainer">
-    <input type="text" id="usernameInput" placeholder="Choose a username" maxlength="20" />
-    <button id="saveUsernameBtn">Save Username</button>
-    <button id="changeUsernameBtn" style="display:none;">Change Username</button>
-    <div id="usernameStatus"></div>
-  </div>
+  <div id="myStats">You have planted 0 trees.</div>
 
   <div id="counter">0</div>
-  <div id="facts"></div>
-
-  <div id="progressBarContainer"><div id="progressBar"></div></div>
+  <div id="progressBar"></div>
 
   <form id="plantForm">
-    <input type="text" id="dedicationInput" placeholder="Dedicate your tree (optional)" maxlength="50" />
-    <button type="submit" id="plantBtn">Plant a Tree 🌳</button>
+    <input
+      type="text"
+      id="dedicationInput"
+      placeholder="Dedicate this tree (optional, max 50 chars)"
+      maxlength="50"
+      autocomplete="off"
+    />
+    <button type="submit" id="plantBtn">Plant Tree 🌳</button>
   </form>
 
-  <div id="treeEmoji">🌳</div>
-  <div id="myStats"></div>
+  <button id="slowDownToggle">Slow Down Mode: OFF</button>
+
+  <h2>Daily Challenge Progress</h2>
+  <div id="dailyProgressBar"></div>
+  <div>Time left: <span id="challengeCountdown">00:00:00</span></div>
 
   <h2>Leaderboard</h2>
   <ul id="leaderboard"></ul>
 
-  <div id="dailyChallenge">
-    <strong>Daily Goal: Plant 50 Trees</strong>
-    <div id="challengeCountdown">00:00:00</div>
-    <div id="dailyProgressBarContainer"><div id="dailyProgressBar"></div></div>
-  </div>
+  <div id="tree" aria-hidden="true">🌳</div>
 
-  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script>
+    // --- Firebase config ---
     const firebaseConfig = {
       apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
       authDomain: "save1tree-f116f.firebaseapp.com",
@@ -224,195 +155,109 @@
       messagingSenderId: "823144374779",
       appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
     };
-    firebase.initializeApp(firebaseConfig);
 
-    const auth = firebase.auth();
+    firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const dailyGoal = 50;
-
     // Elements
-    const emailInput = document.getElementById("emailInput");
-    const passwordInput = document.getElementById("passwordInput");
-    const loginBtn = document.getElementById("loginBtn");
-    const registerBtn = document.getElementById("registerBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const authStatus = document.getElementById("authStatus");
-
-    const usernameContainer = document.getElementById("usernameContainer");
-    const usernameInput = document.getElementById("usernameInput");
-    const saveUsernameBtn = document.getElementById("saveUsernameBtn");
-    const changeUsernameBtn = document.getElementById("changeUsernameBtn");
-    const usernameStatus = document.getElementById("usernameStatus");
-
     const plantForm = document.getElementById("plantForm");
     const dedicationInput = document.getElementById("dedicationInput");
-    const counterEl = document.getElementById("counter");
-    const treeEmoji = document.getElementById("treeEmoji");
-    const myStats = document.getElementById("myStats");
     const leaderboardEl = document.getElementById("leaderboard");
+    const counterEl = document.getElementById("counter");
     const progressBar = document.getElementById("progressBar");
     const dailyProgressBar = document.getElementById("dailyProgressBar");
+    const myStats = document.getElementById("myStats");
+    const challengeCountdown = document.getElementById("challengeCountdown");
+    const plantBtn = document.getElementById("plantBtn");
+    const slowDownToggle = document.getElementById("slowDownToggle");
+    const treeEmoji = document.getElementById("tree");
 
-    let currentUsername = null;
-    let cachedUsersData = {};
+    // Constants
+    const dailyGoal = 50;
+    const slowDownInterval = 10000; // 10 seconds between plants in slow down mode
 
-    // Helpers
+    // User ID fixed (no login)
+    const userId = "anonymousUser";
+
+    // Slow down mode state
+    let slowDownMode = false;
+    let lastPlantTime = 0;
+
+    // Helper - get today's date key "YYYY-MM-DD"
     function getTodayKey() {
-      return new Date().toISOString().split('T')[0];
+      const now = new Date();
+      return now.toISOString().slice(0, 10);
     }
 
-    // Animate tree emoji bounce
+    // Animate tree emoji on plant
     function animateTree() {
-      treeEmoji.classList.add("tree-bounce");
-      setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 700);
+      treeEmoji.style.display = "inline-block";
+      treeEmoji.style.opacity = "1";
+      treeEmoji.style.transform = "scale(1)";
+      setTimeout(() => {
+        treeEmoji.style.transition = "opacity 1s ease, transform 1s ease";
+        treeEmoji.style.opacity = "0";
+        treeEmoji.style.transform = "scale(2)";
+        setTimeout(() => {
+          treeEmoji.style.display = "none";
+          treeEmoji.style.transition = "";
+          treeEmoji.style.transform = "";
+        }, 1000);
+      }, 200);
     }
 
-    // Username uniqueness check (case-insensitive)
-    async function isUsernameTaken(name) {
+    // Update leaderboard and stats display
+    async function updateLeaderboard() {
       const snapshot = await db.ref("users").once("value");
-      const users = snapshot.val() || {};
-      const lowerName = name.toLowerCase();
+      const usersData = snapshot.val() || {};
 
-      return Object.values(users).some(user => user.username && user.username.toLowerCase() === lowerName);
-    }
-
-    // Load username for current user, show UI accordingly
-    async function loadUsername(uid) {
-      const snapshot = await db.ref(`users/${uid}/username`).once("value");
-      currentUsername = snapshot.val();
-
-      if (!currentUsername) {
-        usernameContainer.style.display = "block";
-        saveUsernameBtn.style.display = "inline";
-        changeUsernameBtn.style.display = "none";
-        usernameStatus.textContent = "Please set your username.";
-        usernameInput.value = "";
-      } else {
-        usernameContainer.style.display = "block";
-        saveUsernameBtn.style.display = "none";
-        changeUsernameBtn.style.display = "inline";
-        usernameStatus.textContent = `Your username: ${currentUsername}`;
-        usernameInput.value = currentUsername;
+      let entries = [];
+      for (const uid in usersData) {
+        let total = 0;
+        for (const key in usersData[uid]) {
+          if (key !== "username") {
+            const val = usersData[uid][key];
+            if (typeof val === "number") total += val;
+          }
+        }
+        entries.push({ uid, count: total });
       }
-    }
-
-    // Save or update username
-    async function saveUsername() {
-      const user = auth.currentUser;
-      if (!user) return alert("Not logged in");
-
-      const newUsername = usernameInput.value.trim();
-      if (!newUsername) {
-        usernameStatus.textContent = "Username cannot be empty.";
-        return;
-      }
-      if (newUsername.length < 3) {
-        usernameStatus.textContent = "Username must be at least 3 characters.";
-        return;
-      }
-
-      if (newUsername === currentUsername) {
-        usernameStatus.textContent = "This is already your username.";
-        return;
-      }
-
-      // Check uniqueness
-      const taken = await isUsernameTaken(newUsername);
-      if (taken) {
-        usernameStatus.textContent = "Username already taken. Try another.";
-        return;
-      }
-
-      // Save username
-      await db.ref(`users/${user.uid}/username`).set(newUsername);
-      currentUsername = newUsername;
-      usernameStatus.textContent = "Username saved!";
-      saveUsernameBtn.style.display = "none";
-      changeUsernameBtn.style.display = "inline";
-
-      updateLeaderboardCached();
-      updateStats(user.uid);
-    }
-
-    saveUsernameBtn.addEventListener("click", saveUsername);
-
-    changeUsernameBtn.addEventListener("click", () => {
-      usernameInput.value = currentUsername;
-      usernameStatus.textContent = "Enter a new username and click Save.";
-      saveUsernameBtn.style.display = "inline";
-      changeUsernameBtn.style.display = "none";
-    });
-
-    // Update leaderboard UI from cachedUsersData
-    function updateLeaderboardCached() {
-      leaderboardEl.innerHTML = "";
-      const today = getTodayKey();
-
-      const entries = Object.entries(cachedUsersData).map(([uid, days]) => {
-        const count = days[today] || 0;
-        const username = days.username || null;
-        return { uid, count, username };
-      });
 
       entries.sort((a, b) => b.count - a.count);
 
-      entries.slice(0, 10).forEach(({ uid, count, username }) => {
-        const displayName = username || uid.substring(0, 6);
+      leaderboardEl.innerHTML = "";
+      entries.slice(0, 10).forEach(entry => {
+        const name = entry.uid === userId ? "You" : entry.uid.substring(0, 6);
         const li = document.createElement("li");
-        li.textContent = `${displayName}: ${count} tree${count !== 1 ? "s" : ""}`;
+        li.textContent = `${name}: ${entry.count} tree${entry.count !== 1 ? "s" : ""}`;
         leaderboardEl.appendChild(li);
       });
-    }
 
-    // Update leaderboard when users data changes
-    function updateLeaderboard(users) {
-      cachedUsersData = users || {};
-      updateLeaderboardCached();
-    }
-
-    // Update stats UI for current user
-    async function updateStats(uid) {
-      const today = getTodayKey();
-      const userRef = db.ref(`users/${uid}`);
-      const [usernameSnap, countSnap] = await Promise.all([
-        userRef.child("username").once("value"),
-        userRef.child(today).once("value")
-      ]);
-
-      const username = usernameSnap.val() || uid.substring(0, 6);
-      const count = countSnap.val() || 0;
-
-      myStats.textContent = `You (${username}) have planted ${count} tree${count !== 1 ? 's' : ''}.`;
-    }
-
-    // Update total trees counter and progress bar (all time)
-    function updateTotalCounter(users) {
-      let totalTrees = 0;
-      for (const userData of Object.values(users || {})) {
-        if (userData) {
-          for (const [key, val] of Object.entries(userData)) {
-            if (key !== "username") {
-              totalTrees += val;
-            }
-          }
-        }
-      }
+      const totalTrees = entries.reduce((sum, e) => sum + e.count, 0);
       counterEl.textContent = totalTrees.toLocaleString();
 
-      // Update overall progress bar (goal: 1000 trees)
-      const maxGoal = 1000;
-      const progress = Math.min(totalTrees / maxGoal, 1);
+      const progress = Math.min(totalTrees / 1000, 1);
       progressBar.style.width = (progress * 100) + "%";
+
+      // Update myStats
+      const myData = usersData[userId] || {};
+      let myCount = 0;
+      for (const key in myData) {
+        if (key !== "username" && typeof myData[key] === "number") myCount += myData[key];
+      }
+      myStats.textContent = `You have planted ${myCount} tree${myCount !== 1 ? "s" : ""}.`;
+
+      updateDailyChallenge(usersData);
     }
 
-    // Update daily challenge progress bar and countdown
-    function updateDailyChallenge(users) {
+    // Update daily challenge bar and countdown
+    function updateDailyChallenge(usersData) {
       const today = getTodayKey();
       let dailyTotal = 0;
-      for (const userData of Object.values(users || {})) {
-        if (userData && userData[today]) {
-          dailyTotal += userData[today];
+
+      if (usersData) {
+        for (const user in usersData) {
+          if (usersData[user][today]) dailyTotal += usersData[user][today];
         }
       }
 
@@ -429,103 +274,72 @@
       const secs = Math.floor((diff % (1000 * 60)) / 1000);
 
       const pad = n => n.toString().padStart(2, "0");
-      document.getElementById("challengeCountdown").textContent = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+      challengeCountdown.textContent = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
     }
 
-    // Event handlers
-    loginBtn.addEventListener("click", () => {
-      auth.signInWithEmailAndPassword(emailInput.value.trim(), passwordInput.value.trim())
-        .catch(e => alert("Login failed: " + e.message));
+    // Handle slow down toggle button
+    slowDownToggle.addEventListener("click", () => {
+      slowDownMode = !slowDownMode;
+      slowDownToggle.textContent = `Slow Down Mode: ${slowDownMode ? "ON" : "OFF"}`;
+      if (!slowDownMode) {
+        plantBtn.disabled = false; // re-enable button immediately if turning off slow mode
+      }
     });
 
-    registerBtn.addEventListener("click", () => {
-      auth.createUserWithEmailAndPassword(emailInput.value.trim(), passwordInput.value.trim())
-        .catch(e => alert("Registration failed: " + e.message));
-    });
-
-    logoutBtn.addEventListener("click", () => auth.signOut());
-
-    plantForm.addEventListener("submit", async e => {
+    plantForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      const user = auth.currentUser;
-      if (!user) {
-        alert("Please log in first.");
+
+      const now = Date.now();
+
+      if (slowDownMode && now - lastPlantTime < slowDownInterval) {
+        const waitSeconds = Math.ceil((slowDownInterval - (now - lastPlantTime)) / 1000);
+        alert(`Slow Down Mode is ON! Please wait ${waitSeconds} more second${waitSeconds !== 1 ? "s" : ""} before planting again.`);
         return;
       }
 
-      // Dedication text (optional)
       const dedication = dedicationInput.value.trim().slice(0, 50);
       const today = getTodayKey();
 
-      // Increment today's count for user
-      const userDayRef = db.ref(`users/${user.uid}/${today}`);
-      const userDaySnapshot = await userDayRef.once("value");
-      const currentCount = userDaySnapshot.val() || 0;
+      plantBtn.disabled = true;
 
-      // Update tree count and optional dedication message in the database
-      // We store dedication under a separate path for display later if needed
+      // Update count for user for today
+      const userDayRef = db.ref(`users/${userId}/${today}`);
+      const snapshot = await userDayRef.once("value");
+      const currentCount = snapshot.val() || 0;
       await userDayRef.set(currentCount + 1);
 
+      // Store dedication if provided
       if (dedication) {
-        // Save dedication under a user-dedications node, with timestamp key for uniqueness
-        const dedicationRef = db.ref(`dedications/${user.uid}/${Date.now()}`);
+        const dedicationRef = db.ref(`dedications/${userId}/${Date.now()}`);
         await dedicationRef.set(dedication);
       }
 
       dedicationInput.value = "";
+      lastPlantTime = now;
 
       animateTree();
+      await updateLeaderboard();
 
-      // Refresh leaderboard and stats
-      // We fetch all user data again (could optimize by using Firebase listeners)
-      const allUsersSnap = await db.ref("users").once("value");
-      const usersData = allUsersSnap.val() || {};
-      updateLeaderboard(usersData);
-      updateStats(user.uid);
-      updateTotalCounter(usersData);
-      updateDailyChallenge(usersData);
-    });
-
-    // Firebase Auth listener
-    auth.onAuthStateChanged(async user => {
-      if (user) {
-        authStatus.textContent = `Logged in as ${user.email}`;
-        loginBtn.style.display = "none";
-        registerBtn.style.display = "none";
-        logoutBtn.style.display = "inline";
-        plantForm.style.display = "flex";
-
-        await loadUsername(user.uid);
-
-        // Initial data load
-        const allUsersSnap = await db.ref("users").once("value");
-        const usersData = allUsersSnap.val() || {};
-        updateLeaderboard(usersData);
-        updateTotalCounter(usersData);
-        updateDailyChallenge(usersData);
-        updateStats(user.uid);
+      // Re-enable button after delay if slowDownMode ON, else immediately
+      if (slowDownMode) {
+        setTimeout(() => {
+          plantBtn.disabled = false;
+        }, slowDownInterval);
       } else {
-        authStatus.textContent = "Please log in to plant a tree.";
-        loginBtn.style.display = "inline";
-        registerBtn.style.display = "inline";
-        logoutBtn.style.display = "none";
-        plantForm.style.display = "none";
-        usernameContainer.style.display = "none";
-        myStats.textContent = "";
-        counterEl.textContent = "0";
-        leaderboardEl.innerHTML = "";
-        progressBar.style.width = "0%";
-        dailyProgressBar.style.width = "0%";
-        document.getElementById("challengeCountdown").textContent = "00:00:00";
+        plantBtn.disabled = false;
       }
     });
 
-    // Periodic update of daily countdown and progress every second
-    setInterval(async () => {
-      const allUsersSnap = await db.ref("users").once("value");
-      const usersData = allUsersSnap.val() || {};
-      updateDailyChallenge(usersData);
+    // Initial calls
+    updateLeaderboard();
+
+    // Periodically update leaderboard and countdowns
+    setInterval(updateLeaderboard, 60000);
+    setInterval(() => {
+      updateDailyChallenge(null);
     }, 1000);
+
   </script>
+
 </body>
 </html>
