@@ -12,211 +12,212 @@
       margin: 0;
       padding: 20px;
     }
-
-    h1 {
+    h1, h2 {
       text-align: center;
-      margin-bottom: 0;
       font-weight: 700;
-      letter-spacing: 2px;
+      color: #004d40;
     }
-
     #counter {
       font-size: 4rem;
       text-align: center;
-      margin: 10px 0 5px;
       font-weight: 900;
     }
-
     #facts {
       text-align: center;
-      font-size: 1.1rem;
+      font-style: italic;
       margin: 10px auto 25px;
       max-width: 500px;
-      font-style: italic;
       color: #00695c;
     }
-
-    #progressBarContainer {
-      width: 80%;
-      max-width: 400px;
-      height: 22px;
+    #progressBarContainer, #dailyProgressBarContainer {
       background: #b2dfdb;
       border-radius: 15px;
       margin: 0 auto 20px;
       box-shadow: inset 0 0 6px #004d40aa;
+      width: 80%;
+      max-width: 400px;
     }
-
-    #progressBar {
-      height: 100%;
+    #progressBar, #dailyProgressBar {
+      height: 22px;
       width: 0;
-      background: linear-gradient(90deg, #00bfa5, #004d40);
       border-radius: 15px;
       transition: width 0.4s ease;
       box-shadow: 0 0 8px #00796b;
     }
-
-    #plantForm {
-      max-width: 400px;
-      margin: 0 auto 30px;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
+    #progressBar {
+      background: linear-gradient(90deg, #00bfa5, #004d40);
     }
-
+    #dailyProgressBar {
+      background: linear-gradient(90deg, #004d40, #00bfa5);
+    }
+    #plantForm {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      max-width: 400px;
+      margin: auto;
+    }
+    #nameInput, #plantBtn {
+      padding: 10px;
+      border-radius: 8px;
+      font-size: 1rem;
+    }
     #nameInput {
       flex-grow: 1;
-      padding: 10px 15px;
-      font-size: 1.2rem;
       border: 2px solid #004d40;
-      border-radius: 8px;
-      outline-offset: 2px;
-      outline-color: #00796b;
       color: #004d40;
     }
-
     #plantBtn {
-      background-color: #00796b;
+      background: #00796b;
+      color: #fff;
       border: none;
-      padding: 12px 20px;
-      color: #e0f2f1;
-      font-weight: 700;
-      font-size: 1.1rem;
-      border-radius: 8px;
+      font-weight: bold;
       cursor: pointer;
-      transition: background-color 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
     }
-
-    #plantBtn:hover:not(:disabled) {
-      background-color: #004d40;
-    }
-
-    #plantBtn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
     #treeEmoji {
+      text-align: center;
       font-size: 3.5rem;
-      text-align: center;
-      margin-bottom: 20px;
-      user-select: none;
-      transition: transform 0.3s ease;
     }
-
     .tree-bounce {
-      animation: bounce 0.7s ease forwards;
+      animation: bounce 0.7s ease;
     }
-
     @keyframes bounce {
-      0% { transform: translateY(0); }
-      30% { transform: translateY(-20px); }
-      50% { transform: translateY(0); }
-      70% { transform: translateY(-10px); }
-      100% { transform: translateY(0); }
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-20px); }
     }
-
-    #myStats {
-      text-align: center;
-      font-size: 1.1rem;
-      margin-bottom: 25px;
-      font-weight: 600;
-      color: #00796b;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 15px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      color: #004d40;
-    }
-
     #leaderboard {
-      max-width: 400px;
-      margin: 0 auto 40px;
-      padding-left: 0;
       list-style: none;
-      color: #004d40;
-      font-weight: 600;
-      font-size: 1.1rem;
+      padding: 0;
+      max-width: 400px;
+      margin: auto;
     }
-
     #leaderboard li {
       background: #b2dfdb;
-      margin-bottom: 8px;
-      padding: 8px 12px;
+      padding: 8px;
       border-radius: 10px;
-      box-shadow: inset 0 0 4px #004d40aa;
+      margin-bottom: 5px;
     }
-
-    #dailyChallenge {
-      max-width: 400px;
-      margin: 0 auto;
+    #myStats, #challengeCountdown {
       text-align: center;
-      font-weight: 600;
-      color: #004d40;
-    }
-
-    #challengeCountdown {
-      font-size: 1.5rem;
-      margin: 6px 0 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
+      font-weight: bold;
       color: #00796b;
-    }
-
-    #dailyProgressBarContainer {
-      height: 16px;
-      background: #b2dfdb;
-      border-radius: 15px;
-      box-shadow: inset 0 0 5px #004d40aa;
-      width: 100%;
-      max-width: 400px;
-      margin: 0 auto 30px;
-    }
-
-    #dailyProgressBar {
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, #004d40, #00bfa5);
-      border-radius: 15px;
-      transition: width 0.4s ease;
-      box-shadow: 0 0 8px #00796b;
     }
   </style>
 </head>
 <body>
   <h1>TEKA Trees</h1>
-  <div id="counter" aria-live="polite" aria-atomic="true">0</div>
+  <div id="counter">0</div>
   <div id="facts"></div>
-  <div id="progressBarContainer" aria-label="Progress towards daily tree planting goal">
-    <div id="progressBar"></div>
-  </div>
-  <form id="plantForm" onsubmit="return false;">
-    <input type="text" id="nameInput" placeholder="Enter your name" aria-label="Your name" required minlength="2" maxlength="20" autocomplete="off" spellcheck="false" />
-    <button id="plantBtn" aria-label="Plant a tree">Plant a Tree 🌳</button>
+  <div id="progressBarContainer"><div id="progressBar"></div></div>
+  <form id="plantForm">
+    <input type="text" id="nameInput" placeholder="Enter your name" required />
+    <button type="submit" id="plantBtn">Plant a Tree 🌳</button>
   </form>
-  <div id="treeEmoji" aria-hidden="true">🌳</div>
-  <div id="myStats" aria-live="polite" aria-atomic="true" role="status">You have planted 0 trees.</div>
+  <div id="treeEmoji">🌳</div>
+  <div id="myStats">You have planted 0 trees.</div>
   <h2>Leaderboard</h2>
-  <ul id="leaderboard" role="list" aria-live="polite" aria-atomic="true"></ul>
-  <div id="dailyChallenge" aria-label="Daily tree planting challenge">
+  <ul id="leaderboard"></ul>
+  <div id="dailyChallenge">
     <strong>Daily Goal: Plant 50 Trees</strong>
     <div id="challengeCountdown">00:00:00</div>
-    <div id="dailyProgressBarContainer">
-      <div id="dailyProgressBar"></div>
-    </div>
+    <div id="dailyProgressBarContainer"><div id="dailyProgressBar"></div></div>
   </div>
 
-  <!-- Firebase Libraries -->
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-
   <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
+      authDomain: "save1tree-f116f.firebaseapp.com",
+      databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
+      projectId: "save1tree-f116f",
+      storageBucket: "save1tree-f116f.appspot.com",
+      messagingSenderId: "823144374779",
+      appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+    const dailyGoal = 50;
+
+    const counterEl = document.getElementById("counter");
+    const treeEmoji = document.getElementById("treeEmoji");
+    const myStats = document.getElementById("myStats");
+    const leaderboardEl = document.getElementById("leaderboard");
+    const progressBar = document.getElementById("progressBar");
+    const dailyProgressBar = document.getElementById("dailyProgressBar");
+
+    function getTodayKey() {
+      return new Date().toISOString().split('T')[0];
+    }
+
+    function animateTree() {
+      treeEmoji.classList.add("tree-bounce");
+      setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 700);
+    }
+
+    function updateStats(name) {
+      const key = getTodayKey();
+      db.ref(`users/${name}/${key}`).once("value").then(snapshot => {
+        const count = snapshot.val() || 0;
+        myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''}.`;
+      });
+    }
+
+    function updateCountDisplay(count) {
+      counterEl.textContent = count;
+      const percent = Math.min((count / dailyGoal) * 100, 100);
+      progressBar.style.width = percent + "%";
+      dailyProgressBar.style.width = percent + "%";
+    }
+
+    function updateLeaderboard(users) {
+      leaderboardEl.innerHTML = "";
+      const today = getTodayKey();
+      const entries = Object.entries(users).map(([user, days]) => [user, days[today] || 0]);
+      entries.sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([user, count]) => {
+        const li = document.createElement("li");
+        li.textContent = `${user}: ${count} tree${count !== 1 ? 's' : ''}`;
+        leaderboardEl.appendChild(li);
+      });
+    }
+
+    function startCountdown() {
+      function update() {
+        const now = new Date();
+        const midnight = new Date(now);
+        midnight.setHours(24, 0, 0, 0);
+        const diff = midnight - now;
+        const hrs = String(Math.floor(diff / (1000*60*60))).padStart(2, '0');
+        const mins = String(Math.floor((diff % (1000*60*60)) / (1000*60))).padStart(2, '0');
+        const secs = String(Math.floor((diff % (1000*60)) / 1000)).padStart(2, '0');
+        document.getElementById("challengeCountdown").textContent = `${hrs}:${mins}:${secs}`;
+      }
+      update();
+      setInterval(update, 1000);
+    }
+
+    function listenRealtime() {
+      const today = getTodayKey();
+      db.ref(`treeCount/${today}`).on("value", snap => {
+        updateCountDisplay(snap.val() || 0);
+      });
+      db.ref("users").on("value", snap => {
+        updateLeaderboard(snap.val() || {});
+      });
+    }
+
+    document.getElementById("plantForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("nameInput").value.trim();
+      if (!name) return alert("Please enter your name.");
+      const today = getTodayKey();
+      db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
+      db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
+      animateTree();
+      updateStats(name);
+    });
+
     const facts = [
       "Did you know? 🌳 Trees help reduce air pollution and provide oxygen for us to breathe.",
       "One large tree can supply oxygen for four people in a day.",
@@ -224,17 +225,17 @@
       "Urban forests can cool cities by up to 10°F.",
       "Trees provide habitat for over 80% of the world’s terrestrial species."
     ];
-
     let factIndex = 0;
-    const factsEl = document.getElementById("facts");
-
     function rotateFacts() {
-      factsEl.textContent = facts[factIndex];
+      document.getElementById("facts").textContent = facts[factIndex];
       factIndex = (factIndex + 1) % facts.length;
     }
-
     rotateFacts();
     setInterval(rotateFacts, 7000);
+
+    // Initialize
+    listenRealtime();
+    startCountdown();
   </script>
 </body>
 </html>
