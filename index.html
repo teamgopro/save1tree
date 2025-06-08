@@ -50,51 +50,28 @@
     #dailyProgressBar {
       background: linear-gradient(90deg, #004d40, #00bfa5);
     }
-    #authContainer {
-      max-width: 400px;
-      margin: 0 auto 20px;
-      text-align: center;
-    }
-    #authContainer input {
-      padding: 8px;
-      margin: 5px;
-      width: 180px;
-      border-radius: 8px;
-      border: 2px solid #004d40;
-      color: #004d40;
-      font-size: 1rem;
-    }
-    #authContainer button {
-      padding: 8px 12px;
-      margin: 5px;
-      background: #00796b;
-      color: #fff;
-      border: none;
-      border-radius: 8px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    #authStatus {
-      margin-top: 10px;
-      color: #00796b;
-      font-weight: bold;
-    }
     #plantForm {
-      display: none; /* Hidden until logged in */
-      flex-direction: column;
+      display: none; /* only show after login */
+      justify-content: center;
       gap: 10px;
       max-width: 400px;
       margin: auto;
-      align-items: center;
     }
-    #plantForm input[type="text"] {
+    #nameInput, #dedicationInput, #plantBtn {
       padding: 10px;
       border-radius: 8px;
       font-size: 1rem;
+    }
+    #nameInput {
+      flex-grow: 1;
       border: 2px solid #004d40;
       color: #004d40;
-      width: 100%;
-      box-sizing: border-box;
+    }
+    #dedicationInput {
+      flex-grow: 1;
+      border: 2px solid #004d40;
+      color: #004d40;
+      font-style: italic;
     }
     #plantBtn {
       background: #00796b;
@@ -102,14 +79,11 @@
       border: none;
       font-weight: bold;
       cursor: pointer;
-      padding: 10px 20px;
-      border-radius: 8px;
-      font-size: 1.1rem;
+      min-width: 120px;
     }
     #treeEmoji {
       text-align: center;
       font-size: 3.5rem;
-      margin: 15px 0;
     }
     .tree-bounce {
       animation: bounce 0.7s ease;
@@ -135,6 +109,63 @@
       font-weight: bold;
       color: #00796b;
     }
+    #authContainer {
+      max-width: 400px;
+      margin: 0 auto 20px;
+      text-align: center;
+    }
+    #authContainer input {
+      padding: 8px;
+      margin: 5px;
+      border-radius: 6px;
+      border: 1px solid #004d40;
+      font-size: 1rem;
+    }
+    #authContainer button {
+      padding: 8px 16px;
+      margin: 5px;
+      border-radius: 6px;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    #authStatus {
+      margin-top: 10px;
+      color: #004d40;
+      font-weight: 600;
+    }
+    #usernameContainer {
+      display: none;
+      margin-top: 10px;
+      max-width: 400px;
+      margin-left: auto;
+      margin-right: auto;
+      text-align: center;
+    }
+    #usernameContainer input {
+      padding: 8px;
+      width: 70%;
+      border-radius: 6px;
+      border: 1px solid #004d40;
+      font-size: 1rem;
+    }
+    #usernameContainer button {
+      padding: 8px 12px;
+      border-radius: 6px;
+      background-color: #004d40;
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-weight: bold;
+      margin-left: 6px;
+    }
+    #usernameStatus {
+      margin-top: 5px;
+      color: #00796b;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -143,25 +174,32 @@
   <div id="authContainer">
     <input type="email" id="emailInput" placeholder="Email" />
     <input type="password" id="passwordInput" placeholder="Password" />
-    <div>
-      <button id="loginBtn">Login</button>
-      <button id="registerBtn">Register</button>
-      <button id="logoutBtn" style="display:none;">Logout</button>
-    </div>
+    <br />
+    <button id="loginBtn">Login</button>
+    <button id="registerBtn">Register</button>
+    <button id="logoutBtn" style="display:none;">Logout</button>
     <div id="authStatus">Please log in to plant a tree.</div>
+  </div>
+
+  <div id="usernameContainer">
+    <input type="text" id="usernameInput" placeholder="Choose a username" maxlength="20" />
+    <button id="saveUsernameBtn">Save Username</button>
+    <button id="changeUsernameBtn" style="display:none;">Change Username</button>
+    <div id="usernameStatus"></div>
   </div>
 
   <div id="counter">0</div>
   <div id="facts"></div>
+
   <div id="progressBarContainer"><div id="progressBar"></div></div>
 
   <form id="plantForm">
-    <input type="text" id="dedicationInput" placeholder="Dedicate this tree (optional)" maxlength="100" />
+    <input type="text" id="dedicationInput" placeholder="Dedicate your tree (optional)" maxlength="50" />
     <button type="submit" id="plantBtn">Plant a Tree 🌳</button>
   </form>
 
   <div id="treeEmoji">🌳</div>
-  <div id="myStats">You have planted 0 trees.</div>
+  <div id="myStats"></div>
 
   <h2>Leaderboard</h2>
   <ul id="leaderboard"></ul>
@@ -174,9 +212,8 @@
 
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
@@ -188,10 +225,28 @@
       appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
     };
     firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+
     const auth = firebase.auth();
+    const db = firebase.database();
+
     const dailyGoal = 50;
 
+    // Elements
+    const emailInput = document.getElementById("emailInput");
+    const passwordInput = document.getElementById("passwordInput");
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const authStatus = document.getElementById("authStatus");
+
+    const usernameContainer = document.getElementById("usernameContainer");
+    const usernameInput = document.getElementById("usernameInput");
+    const saveUsernameBtn = document.getElementById("saveUsernameBtn");
+    const changeUsernameBtn = document.getElementById("changeUsernameBtn");
+    const usernameStatus = document.getElementById("usernameStatus");
+
+    const plantForm = document.getElementById("plantForm");
+    const dedicationInput = document.getElementById("dedicationInput");
     const counterEl = document.getElementById("counter");
     const treeEmoji = document.getElementById("treeEmoji");
     const myStats = document.getElementById("myStats");
@@ -199,105 +254,255 @@
     const progressBar = document.getElementById("progressBar");
     const dailyProgressBar = document.getElementById("dailyProgressBar");
 
-    const emailInput = document.getElementById("emailInput");
-    const passwordInput = document.getElementById("passwordInput");
-    const loginBtn = document.getElementById("loginBtn");
-    const registerBtn = document.getElementById("registerBtn");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const authStatus = document.getElementById("authStatus");
-    const plantForm = document.getElementById("plantForm");
-    const dedicationInput = document.getElementById("dedicationInput");
+    let currentUsername = null;
+    let cachedUsersData = {};
 
+    // Helpers
     function getTodayKey() {
       return new Date().toISOString().split('T')[0];
     }
 
+    // Animate tree emoji bounce
     function animateTree() {
       treeEmoji.classList.add("tree-bounce");
       setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 700);
     }
 
-    function updateStats(uid) {
-      const key = getTodayKey();
-      db.ref(`users/${uid}/${key}`).once("value").then(snapshot => {
-        const count = snapshot.val() || 0;
-        myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''}.`;
-      });
+    // Username uniqueness check (case-insensitive)
+    async function isUsernameTaken(name) {
+      const snapshot = await db.ref("users").once("value");
+      const users = snapshot.val() || {};
+      const lowerName = name.toLowerCase();
+
+      return Object.values(users).some(user => user.username && user.username.toLowerCase() === lowerName);
     }
 
-    function updateCountDisplay(count) {
-      counterEl.textContent = count;
-      const percent = Math.min((count / dailyGoal) * 100, 100);
-      progressBar.style.width = percent + "%";
-      dailyProgressBar.style.width = percent + "%";
+    // Load username for current user, show UI accordingly
+    async function loadUsername(uid) {
+      const snapshot = await db.ref(`users/${uid}/username`).once("value");
+      currentUsername = snapshot.val();
+
+      if (!currentUsername) {
+        usernameContainer.style.display = "block";
+        saveUsernameBtn.style.display = "inline";
+        changeUsernameBtn.style.display = "none";
+        usernameStatus.textContent = "Please set your username.";
+        usernameInput.value = "";
+      } else {
+        usernameContainer.style.display = "block";
+        saveUsernameBtn.style.display = "none";
+        changeUsernameBtn.style.display = "inline";
+        usernameStatus.textContent = `Your username: ${currentUsername}`;
+        usernameInput.value = currentUsername;
+      }
     }
 
-    function updateLeaderboard(users) {
+    // Save or update username
+    async function saveUsername() {
+      const user = auth.currentUser;
+      if (!user) return alert("Not logged in");
+
+      const newUsername = usernameInput.value.trim();
+      if (!newUsername) {
+        usernameStatus.textContent = "Username cannot be empty.";
+        return;
+      }
+      if (newUsername.length < 3) {
+        usernameStatus.textContent = "Username must be at least 3 characters.";
+        return;
+      }
+
+      if (newUsername === currentUsername) {
+        usernameStatus.textContent = "This is already your username.";
+        return;
+      }
+
+      // Check uniqueness
+      const taken = await isUsernameTaken(newUsername);
+      if (taken) {
+        usernameStatus.textContent = "Username already taken. Try another.";
+        return;
+      }
+
+      // Save username
+      await db.ref(`users/${user.uid}/username`).set(newUsername);
+      currentUsername = newUsername;
+      usernameStatus.textContent = "Username saved!";
+      saveUsernameBtn.style.display = "none";
+      changeUsernameBtn.style.display = "inline";
+
+      updateLeaderboardCached();
+      updateStats(user.uid);
+    }
+
+    saveUsernameBtn.addEventListener("click", saveUsername);
+
+    changeUsernameBtn.addEventListener("click", () => {
+      usernameInput.value = currentUsername;
+      usernameStatus.textContent = "Enter a new username and click Save.";
+      saveUsernameBtn.style.display = "inline";
+      changeUsernameBtn.style.display = "none";
+    });
+
+    // Update leaderboard UI from cachedUsersData
+    function updateLeaderboardCached() {
       leaderboardEl.innerHTML = "";
       const today = getTodayKey();
-      // We will need user emails for display, so let's fetch them:
-      // users object structure: { uid: { date1: count, ... }, ... }
-      // We'll also get user emails from a separate ref or from auth. For simplicity, show uid short here.
-      const entries = Object.entries(users).map(([uid, days]) => [uid, days[today] || 0]);
-      entries.sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([uid, count]) => {
+
+      const entries = Object.entries(cachedUsersData).map(([uid, days]) => {
+        const count = days[today] || 0;
+        const username = days.username || null;
+        return { uid, count, username };
+      });
+
+      entries.sort((a, b) => b.count - a.count);
+
+      entries.slice(0, 10).forEach(({ uid, count, username }) => {
+        const displayName = username || uid.substring(0, 6);
         const li = document.createElement("li");
-        li.textContent = `${uid.substring(0,6)}: ${count} tree${count !== 1 ? 's' : ''}`;
+        li.textContent = `${displayName}: ${count} tree${count !== 1 ? "s" : ""}`;
         leaderboardEl.appendChild(li);
       });
     }
 
-    function startCountdown() {
-      function update() {
-        const now = new Date();
-        const midnight = new Date(now);
-        midnight.setHours(24, 0, 0, 0);
-        const diff = midnight - now;
-        const hrs = String(Math.floor(diff / (1000*60*60))).padStart(2, '0');
-        const mins = String(Math.floor((diff % (1000*60*60)) / (1000*60))).padStart(2, '0');
-        const secs = String(Math.floor((diff % (1000*60)) / 1000)).padStart(2, '0');
-        document.getElementById("challengeCountdown").textContent = `${hrs}:${mins}:${secs}`;
-      }
-      update();
-      setInterval(update, 1000);
+    // Update leaderboard when users data changes
+    function updateLeaderboard(users) {
+      cachedUsersData = users || {};
+      updateLeaderboardCached();
     }
 
-    function listenRealtime() {
+    // Update stats UI for current user
+    async function updateStats(uid) {
       const today = getTodayKey();
-      db.ref(`treeCount/${today}`).on("value", snap => {
-        updateCountDisplay(snap.val() || 0);
-      });
-      db.ref("users").on("value", snap => {
-        updateLeaderboard(snap.val() || {});
-      });
+      const userRef = db.ref(`users/${uid}`);
+      const [usernameSnap, countSnap] = await Promise.all([
+        userRef.child("username").once("value"),
+        userRef.child(today).once("value")
+      ]);
+
+      const username = usernameSnap.val() || uid.substring(0, 6);
+      const count = countSnap.val() || 0;
+
+      myStats.textContent = `You (${username}) have planted ${count} tree${count !== 1 ? 's' : ''}.`;
     }
 
+    // Update total trees counter and progress bar (all time)
+    function updateTotalCounter(users) {
+      let totalTrees = 0;
+      for (const userData of Object.values(users || {})) {
+        if (userData) {
+          for (const [key, val] of Object.entries(userData)) {
+            if (key !== "username") {
+              totalTrees += val;
+            }
+          }
+        }
+      }
+      counterEl.textContent = totalTrees.toLocaleString();
+
+      // Update overall progress bar (goal: 1000 trees)
+      const maxGoal = 1000;
+      const progress = Math.min(totalTrees / maxGoal, 1);
+      progressBar.style.width = (progress * 100) + "%";
+    }
+
+    // Update daily challenge progress bar and countdown
+    function updateDailyChallenge(users) {
+      const today = getTodayKey();
+      let dailyTotal = 0;
+      for (const userData of Object.values(users || {})) {
+        if (userData && userData[today]) {
+          dailyTotal += userData[today];
+        }
+      }
+
+      const progress = Math.min(dailyTotal / dailyGoal, 1);
+      dailyProgressBar.style.width = (progress * 100) + "%";
+
+      // Countdown to midnight UTC
+      const now = new Date();
+      const tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+      const diff = tomorrow.getTime() - now.getTime();
+
+      const hrs = Math.floor(diff / (1000 * 60 * 60));
+      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      const secs = Math.floor((diff % (1000 * 60)) / 1000);
+
+      const pad = n => n.toString().padStart(2, "0");
+      document.getElementById("challengeCountdown").textContent = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
+    }
+
+    // Event handlers
     loginBtn.addEventListener("click", () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-      if (!email || !password) return alert("Enter email and password");
-      auth.signInWithEmailAndPassword(email, password)
-        .catch(error => alert(error.message));
+      auth.signInWithEmailAndPassword(emailInput.value.trim(), passwordInput.value.trim())
+        .catch(e => alert("Login failed: " + e.message));
     });
 
     registerBtn.addEventListener("click", () => {
-      const email = emailInput.value.trim();
-      const password = passwordInput.value.trim();
-      if (!email || !password) return alert("Enter email and password");
-      auth.createUserWithEmailAndPassword(email, password)
-        .catch(error => alert(error.message));
+      auth.createUserWithEmailAndPassword(emailInput.value.trim(), passwordInput.value.trim())
+        .catch(e => alert("Registration failed: " + e.message));
     });
 
-    logoutBtn.addEventListener("click", () => {
-      auth.signOut();
+    logoutBtn.addEventListener("click", () => auth.signOut());
+
+    plantForm.addEventListener("submit", async e => {
+      e.preventDefault();
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Please log in first.");
+        return;
+      }
+
+      // Dedication text (optional)
+      const dedication = dedicationInput.value.trim().slice(0, 50);
+      const today = getTodayKey();
+
+      // Increment today's count for user
+      const userDayRef = db.ref(`users/${user.uid}/${today}`);
+      const userDaySnapshot = await userDayRef.once("value");
+      const currentCount = userDaySnapshot.val() || 0;
+
+      // Update tree count and optional dedication message in the database
+      // We store dedication under a separate path for display later if needed
+      await userDayRef.set(currentCount + 1);
+
+      if (dedication) {
+        // Save dedication under a user-dedications node, with timestamp key for uniqueness
+        const dedicationRef = db.ref(`dedications/${user.uid}/${Date.now()}`);
+        await dedicationRef.set(dedication);
+      }
+
+      dedicationInput.value = "";
+
+      animateTree();
+
+      // Refresh leaderboard and stats
+      // We fetch all user data again (could optimize by using Firebase listeners)
+      const allUsersSnap = await db.ref("users").once("value");
+      const usersData = allUsersSnap.val() || {};
+      updateLeaderboard(usersData);
+      updateStats(user.uid);
+      updateTotalCounter(usersData);
+      updateDailyChallenge(usersData);
     });
 
-    auth.onAuthStateChanged(user => {
+    // Firebase Auth listener
+    auth.onAuthStateChanged(async user => {
       if (user) {
         authStatus.textContent = `Logged in as ${user.email}`;
         loginBtn.style.display = "none";
         registerBtn.style.display = "none";
         logoutBtn.style.display = "inline";
         plantForm.style.display = "flex";
+
+        await loadUsername(user.uid);
+
+        // Initial data load
+        const allUsersSnap = await db.ref("users").once("value");
+        const usersData = allUsersSnap.val() || {};
+        updateLeaderboard(usersData);
+        updateTotalCounter(usersData);
+        updateDailyChallenge(usersData);
         updateStats(user.uid);
       } else {
         authStatus.textContent = "Please log in to plant a tree.";
@@ -305,48 +510,22 @@
         registerBtn.style.display = "inline";
         logoutBtn.style.display = "none";
         plantForm.style.display = "none";
+        usernameContainer.style.display = "none";
         myStats.textContent = "";
+        counterEl.textContent = "0";
+        leaderboardEl.innerHTML = "";
+        progressBar.style.width = "0%";
+        dailyProgressBar.style.width = "0%";
+        document.getElementById("challengeCountdown").textContent = "00:00:00";
       }
     });
 
-    plantForm.addEventListener("submit", e => {
-      e.preventDefault();
-      const user = auth.currentUser;
-      if (!user) {
-        alert("Please log in first.");
-        return;
-      }
-      const dedication = dedicationInput.value.trim();
-      const today = getTodayKey();
-
-      db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
-      db.ref(`users/${user.uid}/${today}`).transaction(n => (n || 0) + 1);
-      if (dedication) {
-        db.ref(`dedications/${user.uid}/${today}`).push(dedication);
-      }
-      animateTree();
-      updateStats(user.uid);
-      plantForm.reset();
-    });
-
-    const facts = [
-      "Did you know? 🌳 Trees help reduce air pollution and provide oxygen for us to breathe.",
-      "One large tree can supply oxygen for four people in a day.",
-      "Trees absorb carbon dioxide, helping to fight climate change.",
-      "Urban forests can cool cities by up to 10°F.",
-      "Trees provide habitat for over 80% of the world’s terrestrial species."
-    ];
-    let factIndex = 0;
-    function rotateFacts() {
-      document.getElementById("facts").textContent = facts[factIndex];
-      factIndex = (factIndex + 1) % facts.length;
-    }
-    rotateFacts();
-    setInterval(rotateFacts, 7000);
-
-    // Initialize realtime listeners and countdown
-    listenRealtime();
-    startCountdown();
+    // Periodic update of daily countdown and progress every second
+    setInterval(async () => {
+      const allUsersSnap = await db.ref("users").once("value");
+      const usersData = allUsersSnap.val() || {};
+      updateDailyChallenge(usersData);
+    }, 1000);
   </script>
 </body>
 </html>
