@@ -2,53 +2,90 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TEKA Trees - Real Time Counter</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TEKA Trees - Live Counter</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #e0f7fa;
       text-align: center;
-      margin-top: 100px;
-      background: #e0f2f1;
+      padding: 40px;
       color: #004d40;
     }
     h1 {
       font-size: 3rem;
-      margin-bottom: 10px;
     }
     #counter {
-      font-weight: bold;
       font-size: 4rem;
       color: #00796b;
     }
-    button {
+    #progressBarContainer {
+      margin: 20px auto;
+      width: 80%;
+      height: 30px;
+      background-color: #c8e6c9;
+      border-radius: 20px;
+      overflow: hidden;
+    }
+    #progressBar {
+      height: 100%;
+      width: 0%;
+      background-color: #388e3c;
+      transition: width 0.5s;
+    }
+    #leaderboard {
+      margin-top: 40px;
+      text-align: left;
+      display: inline-block;
+    }
+    input {
+      padding: 10px;
+      font-size: 1rem;
       margin-top: 20px;
+      width: 200px;
+      border-radius: 5px;
+      border: 1px solid #aaa;
+    }
+    button {
       padding: 15px 40px;
-      font-size: 1.5rem;
+      font-size: 1.2rem;
+      margin-top: 20px;
       background-color: #00796b;
       color: white;
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      transition: background-color 0.3s ease;
     }
     button:hover {
       background-color: #004d40;
     }
+    .tree-animation {
+      animation: grow 1s ease-out;
+    }
+    @keyframes grow {
+      0% { transform: scale(0); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
   </style>
-
-  <!-- Firebase v8 SDK -->
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
-
-  <h1>TEKA Trees - Total Trees Planted</h1>
+  <h1>TEKA Trees</h1>
   <div id="counter">0</div>
+  <div id="progressBarContainer">
+    <div id="progressBar"></div>
+  </div>
+  <input type="text" id="nameInput" placeholder="Enter your name" />
+  <br>
   <button onclick="plantTree()">Plant 1 Tree 🌳</button>
+  <div id="treeEmoji" style="font-size:3rem; margin-top: 20px;"></div>
+  
+  <h2>🌟 Leaderboard</h2>
+  <div id="leaderboard"></div>
 
   <script>
-    // ✅ Your Firebase config
+    const GOAL = 10000;
     var firebaseConfig = {
       apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
       authDomain: "save1tree-f116f.firebaseapp.com",
@@ -59,20 +96,43 @@
       appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
     };
     firebase.initializeApp(firebaseConfig);
+    var db = firebase.database();
 
-    // Reference the counter node in database
-    var counterRef = firebase.database().ref('counter');
-
-    // Update the counter in real-time
-    counterRef.on('value', function(snapshot) {
-      document.getElementById('counter').innerText = snapshot.val() ?? 0;
+    // Counter
+    var counterRef = db.ref('counter');
+    counterRef.on('value', snapshot => {
+      let count = snapshot.val() || 0;
+      document.getElementById('counter').innerText = count;
+      let progress = Math.min((count / GOAL) * 100, 100);
+      document.getElementById('progressBar').style.width = progress + '%';
     });
 
-    // Increase the counter when button is clicked
+    // Leaderboard
+    var leaderboardRef = db.ref('leaderboard');
+    leaderboardRef.on('value', snapshot => {
+      let data = snapshot.val() || {};
+      let sorted = Object.entries(data).sort((a, b) => b[1] - a[1]).slice(0, 5);
+      let html = '<ol>' + sorted.map(([name, count]) => `<li><strong>${name}</strong>: ${count}</li>`).join('') + '</ol>';
+      document.getElementById('leaderboard').innerHTML = html;
+    });
+
+    // Plant Tree
     function plantTree() {
-      counterRef.transaction(function(currentValue) {
-        return (currentValue || 0) + 1;
-      });
+      const name = document.getElementById('nameInput').value.trim();
+      if (!name) return alert("Please enter your name");
+
+      counterRef.transaction(current => (current || 0) + 1);
+
+      var userRef = db.ref('leaderboard/' + name);
+      userRef.transaction(current => (current || 0) + 1);
+
+      const emoji = document.getElementById("treeEmoji");
+      emoji.innerText = "🌱";
+      emoji.classList.add("tree-animation");
+      setTimeout(() => {
+        emoji.innerText = "";
+        emoji.classList.remove("tree-animation");
+      }, 1000);
     }
   </script>
 </body>
