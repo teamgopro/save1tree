@@ -21,6 +21,16 @@
       color: #00796b;
       font-weight: 700;
       margin-bottom: 10px;
+      display: inline-block;
+      transition: transform 0.3s ease;
+    }
+    #counter.pop {
+      animation: pop 0.4s forwards;
+    }
+    @keyframes pop {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.3); }
+      100% { transform: scale(1); }
     }
     #progressBarContainer {
       margin: 20px auto;
@@ -52,11 +62,20 @@
       min-width: 250px;
       font-size: 1.2rem;
       color: #004d40;
-      opacity: 0;
-      animation: fadeIn 0.8s forwards;
     }
-    @keyframes fadeIn {
-      to { opacity: 1; }
+    #leaderboard li {
+      opacity: 0;
+      transform: translateY(10px);
+      animation-fill-mode: forwards;
+    }
+    .fade-slide-in {
+      animation: fadeSlideUp 0.5s ease forwards;
+    }
+    @keyframes fadeSlideUp {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
     }
     input {
       padding: 10px;
@@ -81,7 +100,7 @@
       border: none;
       border-radius: 10px;
       cursor: pointer;
-      transition: transform 0.2s ease, box-shadow 0.3s ease;
+      transition: transform 0.15s ease, box-shadow 0.3s ease;
       box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       user-select: none;
     }
@@ -89,6 +108,10 @@
       background-color: #004d40;
       transform: scale(1.05);
       box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 15px #66bb6a;
+    }
+    button:active {
+      transform: scale(0.95);
+      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
     }
     .tree-animation {
       display: inline-block;
@@ -102,6 +125,33 @@
       80% { transform: scale(0.9) translateY(0); }
       100% { transform: scale(1) translateY(0); }
     }
+    /* Confetti container */
+    #confetti {
+      position: fixed;
+      pointer-events: none;
+      top: 0; left: 0; width: 100%; height: 100%;
+      overflow: visible;
+      z-index: 9999;
+    }
+    .confetti-piece {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      background-color: #66bb6a;
+      opacity: 0.9;
+      border-radius: 2px;
+      animation-name: confetti-fall, confetti-spin;
+      animation-timing-function: linear, ease-in-out;
+      animation-iteration-count: 1;
+    }
+    @keyframes confetti-fall {
+      0% { transform: translateY(0); opacity: 1; }
+      100% { transform: translateY(120vh); opacity: 0; }
+    }
+    @keyframes confetti-spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
@@ -112,13 +162,15 @@
   <div id="progressBarContainer">
     <div id="progressBar"></div>
   </div>
-  <input type="text" id="nameInput" placeholder="Enter your name" />
+  <input type="text" id="nameInput" placeholder="Enter your name" autocomplete="off" />
   <br />
   <button id="plantBtn" onclick="plantTree()">Plant 1 Tree 🌳</button>
   <div id="treeEmoji"></div>
-
+  
   <h2>🌟 Leaderboard</h2>
-  <div id="leaderboard"></div>
+  <ol id="leaderboard"></ol>
+
+  <div id="confetti"></div>
 
   <script>
     const GOAL = 10000;
@@ -140,30 +192,55 @@
     // Update counter and progress bar
     counterRef.on('value', snapshot => {
       let count = snapshot.val() || 0;
-      document.getElementById('counter').innerText = count;
+      let counterEl = document.getElementById('counter');
+      counterEl.innerText = count;
+
+      // Pop animation
+      counterEl.classList.remove('pop');
+      void counterEl.offsetWidth; // trigger reflow
+      counterEl.classList.add('pop');
+
       let progress = Math.min((count / GOAL) * 100, 100);
       let progressBar = document.getElementById('progressBar');
       progressBar.style.width = progress + '%';
 
-      // Add pulse effect on progress bar
+      // Pulse effect on progress bar
       progressBar.classList.remove('pulse');
       void progressBar.offsetWidth; // trigger reflow
       progressBar.classList.add('pulse');
     });
 
-    // Update leaderboard with fade-in
+    // Update leaderboard with fade + slide effect
     leaderboardRef.on('value', snapshot => {
       let data = snapshot.val() || {};
       let sorted = Object.entries(data).sort((a,b) => b[1] - a[1]).slice(0, 5);
-      let html = '<ol>' + sorted.map(([name, count]) =>
-        `<li><strong>${name}</strong>: ${count}</li>`).join('') + '</ol>';
-      let leaderboard = document.getElementById('leaderboard');
-      leaderboard.style.opacity = 0;
-      setTimeout(() => {
-        leaderboard.innerHTML = html;
-        leaderboard.style.opacity = 1;
-      }, 200);
+      let leaderboardEl = document.getElementById('leaderboard');
+      leaderboardEl.innerHTML = ''; // clear before adding
+
+      sorted.forEach(([name, count], i) => {
+        let li = document.createElement('li');
+        li.textContent = `${name}: ${count}`;
+        // Add animation delay for staggered effect
+        li.style.animationDelay = (i * 0.1) + 's';
+        li.classList.add('fade-slide-in');
+        leaderboardEl.appendChild(li);
+      });
     });
+
+    // Confetti effect on planting
+    function confettiBurst() {
+      const confettiContainer = document.getElementById('confetti');
+      for (let i = 0; i < 30; i++) {
+        let confetti = document.createElement('div');
+        confetti.classList.add('confetti-piece');
+        confetti.style.left = Math.random() * 100 + 'vw';
+        confetti.style.backgroundColor = `hsl(${Math.random() * 120 + 100}, 70%, 60%)`;
+        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+        confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+        confettiContainer.appendChild(confetti);
+        setTimeout(() => confetti.remove(), 3000);
+      }
+    }
 
     // Plant tree function with animation
     function plantTree() {
@@ -190,8 +267,10 @@
       void emoji.offsetWidth; // trigger reflow
       emoji.classList.add('tree-animation');
 
-      // Clear input after planting
-      nameInput.value = '';
+      // Confetti burst
+      confettiBurst();
+
+      // Do NOT clear input - keep user’s name
     }
   </script>
 </body>
