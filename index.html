@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Save1tree</title>
+  <title>TEKA Trees - Old Style</title>
   <style>
     body {
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -107,7 +107,6 @@
       transition: transform 0.3s ease;
     }
 
-    /* bounce animation */
     .tree-bounce {
       animation: bounce 0.7s ease forwards;
     }
@@ -192,39 +191,19 @@
 </head>
 <body>
   <h1>TEKA Trees</h1>
-
   <div id="counter" aria-live="polite" aria-atomic="true">0</div>
-
-  <div id="facts">
-    Did you know? 🌳 Trees help reduce air pollution and provide oxygen for us to breathe.
-  </div>
-
+  <div id="facts"></div>
   <div id="progressBarContainer" aria-label="Progress towards daily tree planting goal">
     <div id="progressBar"></div>
   </div>
-
   <form id="plantForm" onsubmit="return false;">
-    <input
-      type="text"
-      id="nameInput"
-      placeholder="Enter your name"
-      aria-label="Your name"
-      required
-      minlength="2"
-      maxlength="20"
-      autocomplete="off"
-      spellcheck="false"
-    />
+    <input type="text" id="nameInput" placeholder="Enter your name" aria-label="Your name" required minlength="2" maxlength="20" autocomplete="off" spellcheck="false" />
     <button id="plantBtn" aria-label="Plant a tree">Plant a Tree 🌳</button>
   </form>
-
   <div id="treeEmoji" aria-hidden="true">🌳</div>
-
   <div id="myStats" aria-live="polite" aria-atomic="true" role="status">You have planted 0 trees.</div>
-
   <h2>Leaderboard</h2>
   <ul id="leaderboard" role="list" aria-live="polite" aria-atomic="true"></ul>
-
   <div id="dailyChallenge" aria-label="Daily tree planting challenge">
     <strong>Daily Goal: Plant 50 Trees</strong>
     <div id="challengeCountdown">00:00:00</div>
@@ -238,160 +217,24 @@
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
   <script>
-    // Firebase config
-    const firebaseConfig = {
-      apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
-      authDomain: "save1tree-f116f.firebaseapp.com",
-      databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
-      projectId: "save1tree-f116f",
-      storageBucket: "save1tree-f116f.appspot.com",
-      messagingSenderId: "823144374779",
-      appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
-    };
+    const facts = [
+      "Did you know? 🌳 Trees help reduce air pollution and provide oxygen for us to breathe.",
+      "One large tree can supply oxygen for four people in a day.",
+      "Trees absorb carbon dioxide, helping to fight climate change.",
+      "Urban forests can cool cities by up to 10°F.",
+      "Trees provide habitat for over 80% of the world’s terrestrial species."
+    ];
 
-    // Initialize Firebase app
-    firebase.initializeApp(firebaseConfig);
-    const database = firebase.database();
+    let factIndex = 0;
+    const factsEl = document.getElementById("facts");
 
-    const dailyGoal = 50; // Daily goal
-
-    // Elements
-    const plantBtn = document.getElementById('plantBtn');
-    const nameInput = document.getElementById('nameInput');
-    const counterEl = document.getElementById('counter');
-    const leaderboardEl = document.getElementById('leaderboard');
-    const treeEmoji = document.getElementById('treeEmoji');
-    const myStats = document.getElementById('myStats');
-    const progressBar = document.getElementById('progressBar');
-    const challengeCountdown = document.getElementById('challengeCountdown');
-    const dailyProgressBar = document.getElementById('dailyProgressBar');
-
-    // Helpers
-    function getTodayKey() {
-      const now = new Date();
-      return now.toISOString().split('T')[0];
+    function rotateFacts() {
+      factsEl.textContent = facts[factIndex];
+      factIndex = (factIndex + 1) % facts.length;
     }
 
-    // Animate bounce
-    function animateTree() {
-      treeEmoji.classList.add('tree-bounce');
-      setTimeout(() => {
-        treeEmoji.classList.remove('tree-bounce');
-      }, 700);
-    }
-
-    // Update total count UI
-    function updateTotalCount(count) {
-      counterEl.textContent = count;
-      const percent = Math.min((count / dailyGoal) * 100, 100);
-      progressBar.style.width = percent + '%';
-      dailyProgressBar.style.width = percent + '%';
-    }
-
-    // Update leaderboard UI
-    function updateLeaderboard(users) {
-      leaderboardEl.innerHTML = '';
-      const sorted = Object.entries(users)
-        .sort((a, b) => b[1] - a[1])
-        .slice(0, 10);
-      sorted.forEach(([name, count]) => {
-        const li = document.createElement('li');
-        li.textContent = `${name}: ${count} tree${count !== 1 ? 's' : ''}`;
-        leaderboardEl.appendChild(li);
-      });
-    }
-
-    // Update my stats UI
-    function updateMyStats(userName) {
-      const todayKey = getTodayKey();
-      database.ref(`users/${userName}/${todayKey}`).once('value').then(snapshot => {
-        const count = snapshot.val() || 0;
-        myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''}.`;
-      });
-    }
-
-    // Increment global tree count safely with transaction
-    function incrementGlobalCount() {
-      const todayKey = getTodayKey();
-      const ref = database.ref(`treeCount/${todayKey}`);
-      return ref.transaction(current => (current || 0) + 1);
-    }
-
-    // Increment user's count safely with transaction
-    function incrementUserCount(userName) {
-      const todayKey = getTodayKey();
-      const ref = database.ref(`users/${userName}/${todayKey}`);
-      return ref.transaction(current => (current || 0) + 1);
-    }
-
-    // Listen to realtime updates for global and leaderboard
-    function listenRealtime() {
-      const todayKey = getTodayKey();
-
-      database.ref(`treeCount/${todayKey}`).on('value', snap => {
-        const count = snap.val() || 0;
-        updateTotalCount(count);
-      });
-
-      database.ref('users').on('value', snap => {
-        const allUsers = snap.val() || {};
-        const counts = {};
-        for (const user in allUsers) {
-          counts[user] = allUsers[user][todayKey] || 0;
-        }
-        updateLeaderboard(counts);
-      });
-    }
-
-    // Countdown to midnight
-    function startCountdown() {
-      function update() {
-        const now = new Date();
-        const midnight = new Date(now);
-        midnight.setHours(24, 0, 0, 0);
-        const diff = midnight - now;
-
-        const hrs = String(Math.floor(diff / (1000*60*60))).padStart(2, '0');
-        const mins = String(Math.floor((diff % (1000*60*60)) / (1000*60))).padStart(2, '0');
-        const secs = String(Math.floor((diff % (1000*60)) / 1000)).padStart(2, '0');
-
-        challengeCountdown.textContent = `${hrs}:${mins}:${secs}`;
-
-        if (diff < 1000) {
-          dailyProgressBar.style.width = '0%';
-        }
-      }
-      update();
-      setInterval(update, 1000);
-    }
-
-    // Plant tree button click
-    plantBtn.addEventListener('click', () => {
-      const userName = nameInput.value.trim();
-      if (!userName) {
-        alert('Please enter your name.');
-        return;
-      }
-
-      plantBtn.disabled = true;
-
-      Promise.all([
-        incrementGlobalCount(),
-        incrementUserCount(userName)
-      ]).then(() => {
-        animateTree();
-        updateMyStats(userName);
-        // Keep input value instead of clearing
-      }).catch(err => {
-        alert('Error planting tree: ' + err.message);
-      }).finally(() => {
-        plantBtn.disabled = false;
-      });
-    });
-
-    // On load
-    listenRealtime();
-    startCountdown();
+    rotateFacts();
+    setInterval(rotateFacts, 7000);
   </script>
 </body>
 </html>
