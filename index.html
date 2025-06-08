@@ -50,23 +50,51 @@
     #dailyProgressBar {
       background: linear-gradient(90deg, #004d40, #00bfa5);
     }
+    #authContainer {
+      max-width: 400px;
+      margin: 0 auto 20px;
+      text-align: center;
+    }
+    #authContainer input {
+      padding: 8px;
+      margin: 5px;
+      width: 180px;
+      border-radius: 8px;
+      border: 2px solid #004d40;
+      color: #004d40;
+      font-size: 1rem;
+    }
+    #authContainer button {
+      padding: 8px 12px;
+      margin: 5px;
+      background: #00796b;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #authStatus {
+      margin-top: 10px;
+      color: #00796b;
+      font-weight: bold;
+    }
     #plantForm {
-      display: flex;
+      display: none; /* Hidden until logged in */
       flex-direction: column;
-      align-items: center;
       gap: 10px;
       max-width: 400px;
       margin: auto;
+      align-items: center;
     }
-    #nameInput, #plantBtn {
+    #plantForm input[type="text"] {
       padding: 10px;
       border-radius: 8px;
       font-size: 1rem;
-    }
-    #nameInput {
-      width: 100%;
       border: 2px solid #004d40;
       color: #004d40;
+      width: 100%;
+      box-sizing: border-box;
     }
     #plantBtn {
       background: #00796b;
@@ -74,11 +102,14 @@
       border: none;
       font-weight: bold;
       cursor: pointer;
-      width: 100%;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-size: 1.1rem;
     }
     #treeEmoji {
       text-align: center;
       font-size: 3.5rem;
+      margin: 15px 0;
     }
     .tree-bounce {
       animation: bounce 0.7s ease;
@@ -98,69 +129,43 @@
       padding: 8px;
       border-radius: 10px;
       margin-bottom: 5px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-weight: 600;
-    }
-    #leaderboard li img {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      object-fit: cover;
     }
     #myStats, #challengeCountdown {
       text-align: center;
       font-weight: bold;
       color: #00796b;
-      margin-top: 10px;
-    }
-    #avatarSelector {
-      text-align: center;
-      margin: 10px 0 20px;
-    }
-    #avatarSelector strong {
-      display: block;
-      margin-bottom: 5px;
-      color: #004d40;
-    }
-    .avatar-option {
-      width: 50px;
-      height: 50px;
-      cursor: pointer;
-      border: 2px solid transparent;
-      border-radius: 50%;
-      margin: 0 5px;
-      object-fit: cover;
-      vertical-align: middle;
-      transition: border-color 0.3s;
-    }
-    .avatar-option.selected {
-      border-color: #00796b;
     }
   </style>
 </head>
 <body>
   <h1>TEKA Trees</h1>
+
+  <div id="authContainer">
+    <input type="email" id="emailInput" placeholder="Email" />
+    <input type="password" id="passwordInput" placeholder="Password" />
+    <div>
+      <button id="loginBtn">Login</button>
+      <button id="registerBtn">Register</button>
+      <button id="logoutBtn" style="display:none;">Logout</button>
+    </div>
+    <div id="authStatus">Please log in to plant a tree.</div>
+  </div>
+
   <div id="counter">0</div>
   <div id="facts"></div>
   <div id="progressBarContainer"><div id="progressBar"></div></div>
+
   <form id="plantForm">
-    <input type="text" id="nameInput" placeholder="Enter your name" required />
-    
-    <div id="avatarSelector">
-      <strong>Choose your avatar:</strong>
-      <img src="https://i.imgur.com/1Q9Z1Zm.png" alt="Avatar1" data-avatar="avatar1" class="avatar-option" />
-      <img src="https://i.imgur.com/fG2N5gX.png" alt="Avatar2" data-avatar="avatar2" class="avatar-option" />
-      <img src="https://i.imgur.com/7QvxKiX.png" alt="Avatar3" data-avatar="avatar3" class="avatar-option" />
-    </div>
-    
+    <input type="text" id="dedicationInput" placeholder="Dedicate this tree (optional)" maxlength="100" />
     <button type="submit" id="plantBtn">Plant a Tree 🌳</button>
   </form>
+
   <div id="treeEmoji">🌳</div>
   <div id="myStats">You have planted 0 trees.</div>
+
   <h2>Leaderboard</h2>
   <ul id="leaderboard"></ul>
+
   <div id="dailyChallenge">
     <strong>Daily Goal: Plant 50 Trees</strong>
     <div id="challengeCountdown">00:00:00</div>
@@ -170,6 +175,8 @@
   <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
@@ -182,6 +189,7 @@
     };
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
+    const auth = firebase.auth();
     const dailyGoal = 50;
 
     const counterEl = document.getElementById("counter");
@@ -190,6 +198,15 @@
     const leaderboardEl = document.getElementById("leaderboard");
     const progressBar = document.getElementById("progressBar");
     const dailyProgressBar = document.getElementById("dailyProgressBar");
+
+    const emailInput = document.getElementById("emailInput");
+    const passwordInput = document.getElementById("passwordInput");
+    const loginBtn = document.getElementById("loginBtn");
+    const registerBtn = document.getElementById("registerBtn");
+    const logoutBtn = document.getElementById("logoutBtn");
+    const authStatus = document.getElementById("authStatus");
+    const plantForm = document.getElementById("plantForm");
+    const dedicationInput = document.getElementById("dedicationInput");
 
     function getTodayKey() {
       return new Date().toISOString().split('T')[0];
@@ -200,9 +217,9 @@
       setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 700);
     }
 
-    function updateStats(name) {
+    function updateStats(uid) {
       const key = getTodayKey();
-      db.ref(`users/${name}/${key}`).once("value").then(snapshot => {
+      db.ref(`users/${uid}/${key}`).once("value").then(snapshot => {
         const count = snapshot.val() || 0;
         myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''}.`;
       });
@@ -218,21 +235,13 @@
     function updateLeaderboard(users) {
       leaderboardEl.innerHTML = "";
       const today = getTodayKey();
-      const entries = Object.entries(users).map(([user, days]) => [user, days[today] || 0]);
-      entries.sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([user, count]) => {
+      // We will need user emails for display, so let's fetch them:
+      // users object structure: { uid: { date1: count, ... }, ... }
+      // We'll also get user emails from a separate ref or from auth. For simplicity, show uid short here.
+      const entries = Object.entries(users).map(([uid, days]) => [uid, days[today] || 0]);
+      entries.sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([uid, count]) => {
         const li = document.createElement("li");
-
-        // Get avatar URL based on stored avatar key or default
-        const avatarKey = users[user].avatar || "default";
-        let avatarUrl;
-        switch(avatarKey) {
-          case "avatar1": avatarUrl = "https://i.imgur.com/1Q9Z1Zm.png"; break;
-          case "avatar2": avatarUrl = "https://i.imgur.com/fG2N5gX.png"; break;
-          case "avatar3": avatarUrl = "https://i.imgur.com/7QvxKiX.png"; break;
-          default: avatarUrl = "https://i.imgur.com/1Q9Z1Zm.png"; // default
-        }
-
-        li.innerHTML = `<img src="${avatarUrl}" alt="avatar"> ${user}: ${count} tree${count !== 1 ? 's' : ''}`;
+        li.textContent = `${uid.substring(0,6)}: ${count} tree${count !== 1 ? 's' : ''}`;
         leaderboardEl.appendChild(li);
       });
     }
@@ -262,42 +271,62 @@
       });
     }
 
-    // Avatar selection logic
-    let selectedAvatar = null;
-    const avatarOptions = document.querySelectorAll('.avatar-option');
-    avatarOptions.forEach(img => {
-      img.addEventListener('click', () => {
-        avatarOptions.forEach(i => i.classList.remove('selected'));
-        img.classList.add('selected');
-        selectedAvatar = img.getAttribute('data-avatar');
-      });
+    loginBtn.addEventListener("click", () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      if (!email || !password) return alert("Enter email and password");
+      auth.signInWithEmailAndPassword(email, password)
+        .catch(error => alert(error.message));
     });
 
-    document.getElementById("plantForm").addEventListener("submit", e => {
+    registerBtn.addEventListener("click", () => {
+      const email = emailInput.value.trim();
+      const password = passwordInput.value.trim();
+      if (!email || !password) return alert("Enter email and password");
+      auth.createUserWithEmailAndPassword(email, password)
+        .catch(error => alert(error.message));
+    });
+
+    logoutBtn.addEventListener("click", () => {
+      auth.signOut();
+    });
+
+    auth.onAuthStateChanged(user => {
+      if (user) {
+        authStatus.textContent = `Logged in as ${user.email}`;
+        loginBtn.style.display = "none";
+        registerBtn.style.display = "none";
+        logoutBtn.style.display = "inline";
+        plantForm.style.display = "flex";
+        updateStats(user.uid);
+      } else {
+        authStatus.textContent = "Please log in to plant a tree.";
+        loginBtn.style.display = "inline";
+        registerBtn.style.display = "inline";
+        logoutBtn.style.display = "none";
+        plantForm.style.display = "none";
+        myStats.textContent = "";
+      }
+    });
+
+    plantForm.addEventListener("submit", e => {
       e.preventDefault();
-      const name = document.getElementById("nameInput").value.trim();
-      if (!name) return alert("Please enter your name.");
-      if (!selectedAvatar) selectedAvatar = "default"; // default avatar if none selected
+      const user = auth.currentUser;
+      if (!user) {
+        alert("Please log in first.");
+        return;
+      }
+      const dedication = dedicationInput.value.trim();
       const today = getTodayKey();
 
-      // Increment tree count
       db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
-
-      // Increment user count & save avatar
-      const userRef = db.ref(`users/${name}`);
-      userRef.transaction(currentData => {
-        if (currentData === null) {
-          return { [today]: 1, avatar: selectedAvatar };
-        } else {
-          if (!currentData.avatar) currentData.avatar = selectedAvatar;
-          if (!currentData[today]) currentData[today] = 1;
-          else currentData[today]++;
-          return currentData;
-        }
-      });
-
+      db.ref(`users/${user.uid}/${today}`).transaction(n => (n || 0) + 1);
+      if (dedication) {
+        db.ref(`dedications/${user.uid}/${today}`).push(dedication);
+      }
       animateTree();
-      updateStats(name);
+      updateStats(user.uid);
+      plantForm.reset();
     });
 
     const facts = [
@@ -315,7 +344,7 @@
     rotateFacts();
     setInterval(rotateFacts, 7000);
 
-    // Initialize
+    // Initialize realtime listeners and countdown
     listenRealtime();
     startCountdown();
   </script>
