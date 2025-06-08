@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TEKA Trees - Real Time Counter</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+      background: #e0f2f1;
+      color: #004d40;
+    }
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+    }
+    #counter {
+      font-weight: bold;
+      font-size: 4rem;
+      color: #00796b;
+    }
+    button {
+      margin-top: 20px;
+      padding: 15px 40px;
+      font-size: 1.5rem;
+      background-color: #00796b;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+    button:hover {
+      background-color: #004d40;
+    }
+  </style>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+</head>
+<body>
+
+  <h1>TEKA Trees - Total Trees Planted</h1>
+  <div id="counter">0</div>
+  <button onclick="plantTree()">Plant 1 Tree 🌳</button>
+
+  <script>
+    // 🔥 Replace this with your actual Firebase config
+    var firebaseConfig = {
+      apiKey: "YOUR_API_KEY",
+      authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+      databaseURL: "https://YOUR_PROJECT_ID.firebaseio.com",
+      projectId: "YOUR_PROJECT_ID",
+      storageBucket: "YOUR_PROJECT_ID.appspot.com",
+      messagingSenderId: "YOUR_SENDER_ID",
+      appId: "YOUR_APP_ID"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    // Reference to the counter node in Firebase Realtime Database
+    var counterRef = firebase.database().ref('counter');
+
+    // Listen for real-time value changes
+    counterRef.on('value', (snapshot) => {
+      const count = snapshot.val();
+      document.getElementById('counter').innerText = count ?? 0;
+    });
+
+    // Function to increment the tree count
+    function plantTree() {
+      counterRef.transaction(current => {
+        return (current || 0) + 1;
+      });
+    }
+  </script>
+</body>
+</html>
