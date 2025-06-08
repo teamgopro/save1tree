@@ -1,300 +1,235 @@
 <!DOCTYPE html>
-<html lang="en" >
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TEKA Trees - Modern Planting Experience</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet" />
+  <title>TEKA Trees - Old Style</title>
   <style>
-    /* Reset & base */
-    * {
-      box-sizing: border-box;
-    }
     body {
-      margin: 0;
-      background: linear-gradient(135deg, #e0f7fa 0%, #a7ffeb 100%);
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-        Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-      color: #054a3d;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-      user-select: none;
-    }
-    /* Container */
-    .container {
-      background: white;
-      max-width: 480px;
-      width: 100%;
-      border-radius: 20px;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.1);
-      padding: 40px 35px 50px 35px;
-      text-align: center;
-    }
-    /* Header */
-    h1 {
-      font-weight: 700;
-      font-size: 3.2rem;
-      margin-bottom: 10px;
-      letter-spacing: 0.05em;
-      color: #00796b;
-    }
-    /* Counter */
-    #counter {
-      font-size: 4.5rem;
-      font-weight: 700;
-      margin: 15px 0 10px 0;
+      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+      background: #e0f7fa;
       color: #004d40;
-      transition: transform 0.3s ease;
-      user-select: text;
+      margin: 0;
+      padding: 20px;
     }
-    #counter.pop {
-      animation: pop 0.4s forwards;
+
+    h1 {
+      text-align: center;
+      margin-bottom: 0;
+      font-weight: 700;
+      letter-spacing: 2px;
     }
-    @keyframes pop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.3); }
-      100% { transform: scale(1); }
+
+    #counter {
+      font-size: 4rem;
+      text-align: center;
+      margin: 10px 0 5px;
+      font-weight: 900;
     }
-    /* Progress Bar */
+
+    #facts {
+      text-align: center;
+      font-size: 1.1rem;
+      margin: 10px auto 25px;
+      max-width: 500px;
+      font-style: italic;
+      color: #00695c;
+    }
+
     #progressBarContainer {
-      margin: 15px auto 30px auto;
-      width: 100%;
-      height: 16px;
-      background-color: #c8e6c9;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: inset 0 0 8px #81c784;
+      width: 80%;
+      max-width: 400px;
+      height: 22px;
+      background: #b2dfdb;
+      border-radius: 15px;
+      margin: 0 auto 20px;
+      box-shadow: inset 0 0 6px #004d40aa;
     }
+
     #progressBar {
       height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #2e7d32, #66bb6a);
-      transition: width 0.8s ease-in-out;
-      animation-fill-mode: forwards;
+      width: 0;
+      background: linear-gradient(90deg, #00bfa5, #004d40);
+      border-radius: 15px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px #00796b;
     }
-    #progressBar.pulse {
-      animation: pulseGlow 1.2s ease-in-out;
+
+    #plantForm {
+      max-width: 400px;
+      margin: 0 auto 30px;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      align-items: center;
     }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 8px 2px #66bb6a; }
-      50% { box-shadow: 0 0 15px 5px #a5d6a7; }
-    }
-    /* Input Floating Label */
-    .input-group {
-      position: relative;
-      margin: 30px 0 15px 0;
-      width: 100%;
-    }
-    input[type="text"] {
-      font-size: 1.1rem;
-      padding: 18px 15px 18px 15px;
-      width: 100%;
-      border: 2px solid #a5d6a7;
-      border-radius: 12px;
-      background: #f9fff9;
+
+    #nameInput {
+      flex-grow: 1;
+      padding: 10px 15px;
+      font-size: 1.2rem;
+      border: 2px solid #004d40;
+      border-radius: 8px;
+      outline-offset: 2px;
+      outline-color: #00796b;
       color: #004d40;
-      outline: none;
-      transition: border-color 0.3s ease, box-shadow 0.3s ease;
     }
-    input[type="text"]:focus {
-      border-color: #388e3c;
-      box-shadow: 0 0 8px 2px #66bb6a;
-    }
-    input[type="text"]:focus + label,
-    input[type="text"]:not(:placeholder-shown) + label {
-      top: 5px;
-      font-size: 0.85rem;
-      color: #388e3c;
-      font-weight: 600;
-      background: white;
-      padding: 0 8px;
-      left: 14px;
-      transition: all 0.3s ease;
-    }
-    label {
-      position: absolute;
-      top: 18px;
-      left: 15px;
-      color: #7bbd9a;
-      font-weight: 400;
-      pointer-events: none;
-      user-select: none;
-      transition: all 0.3s ease;
-      font-size: 1.1rem;
-      background: transparent;
-    }
-    /* Button */
-    button {
-      background: linear-gradient(135deg, #2e7d32, #66bb6a);
+
+    #plantBtn {
+      background-color: #00796b;
       border: none;
-      border-radius: 14px;
-      color: white;
-      font-size: 1.3rem;
+      padding: 12px 20px;
+      color: #e0f2f1;
       font-weight: 700;
-      padding: 18px 50px;
+      font-size: 1.1rem;
+      border-radius: 8px;
       cursor: pointer;
-      box-shadow: 0 8px 15px rgba(46, 125, 50, 0.4);
-      transition: box-shadow 0.3s ease, transform 0.15s ease;
-      user-select: none;
-      width: 100%;
-      max-width: 100%;
-      margin-top: 10px;
+      transition: background-color 0.3s ease;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
-    button:hover {
-      box-shadow: 0 12px 25px rgba(46, 125, 50, 0.7);
-      transform: scale(1.05);
+
+    #plantBtn:hover:not(:disabled) {
+      background-color: #004d40;
     }
-    button:active {
-      transform: scale(0.95);
-      box-shadow: 0 6px 12px rgba(46, 125, 50, 0.4);
-    }
-    button:disabled {
-      background: #b2dfdb;
+
+    #plantBtn:disabled {
+      opacity: 0.5;
       cursor: not-allowed;
-      box-shadow: none;
-      transform: none;
     }
-    /* Tree Emoji Animation */
+
     #treeEmoji {
       font-size: 3.5rem;
-      margin-top: 20px;
+      text-align: center;
+      margin-bottom: 20px;
       user-select: none;
-      display: inline-block;
-      transition: transform 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+      transition: transform 0.3s ease;
     }
-    #treeEmoji.tree-animation {
-      animation: bounceGrow 1s ease forwards;
+
+    /* bounce animation */
+    .tree-bounce {
+      animation: bounce 0.7s ease forwards;
     }
-    @keyframes bounceGrow {
-      0% { transform: scale(0) translateY(30px); opacity: 0; }
-      60% { transform: scale(1.2) translateY(-10px); opacity: 1; }
-      80% { transform: scale(0.9) translateY(0); }
-      100% { transform: scale(1) translateY(0); }
+
+    @keyframes bounce {
+      0% { transform: translateY(0); }
+      30% { transform: translateY(-20px); }
+      50% { transform: translateY(0); }
+      70% { transform: translateY(-10px); }
+      100% { transform: translateY(0); }
     }
-    /* Stats */
+
     #myStats {
+      text-align: center;
+      font-size: 1.1rem;
+      margin-bottom: 25px;
       font-weight: 600;
-      font-size: 1.2rem;
-      margin-top: 30px;
-      color: #2e7d32;
-      min-height: 28px;
-      user-select: text;
+      color: #00796b;
     }
-    /* Daily Challenge Card */
-    #dailyChallenge {
-      background: #d0f0d9;
-      border-radius: 16px;
-      padding: 22px 25px;
-      margin: 40px auto 0 auto;
-      max-width: 440px;
-      color: #1b5e20;
-      box-shadow: 0 8px 20px rgba(46, 125, 50, 0.2);
-      user-select: none;
-    }
-    #dailyChallenge strong {
-      font-size: 1.15rem;
-    }
-    #challengeCountdown {
-      margin-top: 8px;
-      font-size: 2rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      font-variant-numeric: tabular-nums;
-    }
-    #dailyProgressBarContainer {
-      margin: 15px 0 5px 0;
-      width: 100%;
-      height: 18px;
-      background-color: #a3d8a1;
-      border-radius: 15px;
-      box-shadow: inset 0 0 8px #81c784;
-      overflow: hidden;
-    }
-    #dailyProgressBar {
-      height: 100%;
-      width: 0%;
-      background: linear-gradient(90deg, #388e3c, #66bb6a);
-      transition: width 0.6s ease-in-out;
-    }
-    /* Leaderboard */
+
     h2 {
-      margin-top: 55px;
+      text-align: center;
+      margin-bottom: 15px;
       font-weight: 700;
-      font-size: 2rem;
-      color: #2e7d32;
-      letter-spacing: 0.04em;
-      user-select: none;
+      letter-spacing: 1.5px;
+      color: #004d40;
     }
+
     #leaderboard {
+      max-width: 400px;
+      margin: 0 auto 40px;
+      padding-left: 0;
       list-style: none;
-      padding: 0;
-      margin: 25px 0 0 0;
-      color: #1b5e20;
+      color: #004d40;
       font-weight: 600;
       font-size: 1.1rem;
-      user-select: text;
     }
+
     #leaderboard li {
+      background: #b2dfdb;
       margin-bottom: 8px;
-      opacity: 0;
-      transform: translateX(-20px);
-      animation-fill-mode: forwards;
+      padding: 8px 12px;
+      border-radius: 10px;
+      box-shadow: inset 0 0 4px #004d40aa;
     }
-    .fade-slide-in {
-      animation: fadeSlideIn 0.5s ease forwards;
+
+    #dailyChallenge {
+      max-width: 400px;
+      margin: 0 auto;
+      text-align: center;
+      font-weight: 600;
+      color: #004d40;
     }
-    @keyframes fadeSlideIn {
-      to {
-        opacity: 1;
-        transform: translateX(0);
-      }
+
+    #challengeCountdown {
+      font-size: 1.5rem;
+      margin: 6px 0 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      color: #00796b;
+    }
+
+    #dailyProgressBarContainer {
+      height: 16px;
+      background: #b2dfdb;
+      border-radius: 15px;
+      box-shadow: inset 0 0 5px #004d40aa;
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto 30px;
+    }
+
+    #dailyProgressBar {
+      height: 100%;
+      width: 0;
+      background: linear-gradient(90deg, #004d40, #00bfa5);
+      border-radius: 15px;
+      transition: width 0.4s ease;
+      box-shadow: 0 0 8px #00796b;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>TEKA Trees</h1>
-    <div id="counter" aria-live="polite" aria-atomic="true" aria-label="Total trees planted">0</div>
+  <h1>TEKA Trees</h1>
 
-    <div id="progressBarContainer">
-      <div id="progressBar"></div>
-    </div>
+  <div id="counter" aria-live="polite" aria-atomic="true">0</div>
 
-    <form id="plantForm" onsubmit="return false;">
-      <div class="input-group">
-        <input
-          type="text"
-          id="nameInput"
-          name="name"
-          required
-          autocomplete="off"
-          placeholder=" "
-          aria-label="Enter your name"
-          spellcheck="false"
-          minlength="2"
-          maxlength="20"
-        />
-        <label for="nameInput">Your Name</label>
-      </div>
-      <button id="plantBtn" aria-label="Plant a tree">Plant a Tree 🌳</button>
-    </form>
+  <div id="facts">
+    Did you know? 🌳 Trees help reduce air pollution and provide oxygen for us to breathe.
+  </div>
 
-    <div id="treeEmoji" aria-hidden="true">🌳</div>
+  <div id="progressBarContainer" aria-label="Progress towards daily tree planting goal">
+    <div id="progressBar"></div>
+  </div>
 
-    <div id="myStats" aria-live="polite" aria-atomic="true" role="status"></div>
+  <form id="plantForm" onsubmit="return false;">
+    <input
+      type="text"
+      id="nameInput"
+      placeholder="Enter your name"
+      aria-label="Your name"
+      required
+      minlength="2"
+      maxlength="20"
+      autocomplete="off"
+      spellcheck="false"
+    />
+    <button id="plantBtn" aria-label="Plant a tree">Plant a Tree 🌳</button>
+  </form>
 
-    <h2>Leaderboard</h2>
-    <ul id="leaderboard" aria-live="polite" aria-atomic="true" role="list"></ul>
+  <div id="treeEmoji" aria-hidden="true">🌳</div>
 
-    <div id="dailyChallenge" aria-label="Daily tree planting challenge">
-      <strong>Daily Goal: Plant 50 Trees</strong>
-      <div id="challengeCountdown" aria-live="polite" aria-atomic="true">00:00:00</div>
-      <div id="dailyProgressBarContainer">
-        <div id="dailyProgressBar"></div>
-      </div>
+  <div id="myStats" aria-live="polite" aria-atomic="true" role="status">You have planted 0 trees.</div>
+
+  <h2>Leaderboard</h2>
+  <ul id="leaderboard" role="list" aria-live="polite" aria-atomic="true"></ul>
+
+  <div id="dailyChallenge" aria-label="Daily tree planting challenge">
+    <strong>Daily Goal: Plant 50 Trees</strong>
+    <div id="challengeCountdown">00:00:00</div>
+    <div id="dailyProgressBarContainer">
+      <div id="dailyProgressBar"></div>
     </div>
   </div>
 
@@ -318,6 +253,8 @@
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
+    const dailyGoal = 50; // Daily goal
+
     // Elements
     const plantBtn = document.getElementById('plantBtn');
     const nameInput = document.getElementById('nameInput');
@@ -326,168 +263,125 @@
     const treeEmoji = document.getElementById('treeEmoji');
     const myStats = document.getElementById('myStats');
     const progressBar = document.getElementById('progressBar');
-
-    // Daily challenge elements
-    const dailyGoal = 50; // Set daily goal here
     const challengeCountdown = document.getElementById('challengeCountdown');
     const dailyProgressBar = document.getElementById('dailyProgressBar');
 
-    // Helper to get today's date as YYYY-MM-DD
+    // Helpers
     function getTodayKey() {
       const now = new Date();
       return now.toISOString().split('T')[0];
     }
 
-    // Animate counter pop effect
-    function animateCounter() {
-      counterEl.classList.add('pop');
-      setTimeout(() => counterEl.classList.remove('pop'), 400);
+    // Animate bounce
+    function animateTree() {
+      treeEmoji.classList.add('tree-bounce');
+      setTimeout(() => {
+        treeEmoji.classList.remove('tree-bounce');
+      }, 700);
     }
 
-    // Animate progress bar glow
-    function animateProgressBar() {
-      progressBar.classList.add('pulse');
-      setTimeout(() => progressBar.classList.remove('pulse'), 1200);
-    }
-
-    // Animate tree emoji bounce on planting
-    function animateTreeEmoji() {
-      treeEmoji.classList.add('tree-animation');
-      setTimeout(() => treeEmoji.classList.remove('tree-animation'), 1000);
-    }
-
-    // Update total counter & progress bar based on count
+    // Update total count UI
     function updateTotalCount(count) {
       counterEl.textContent = count;
-      animateCounter();
-      const progressPercent = Math.min((count / dailyGoal) * 100, 100);
-      progressBar.style.width = progressPercent + '%';
-      animateProgressBar();
-
-      // Also update daily progress bar
-      dailyProgressBar.style.width = progressPercent + '%';
+      const percent = Math.min((count / dailyGoal) * 100, 100);
+      progressBar.style.width = percent + '%';
+      dailyProgressBar.style.width = percent + '%';
     }
 
-    // Update leaderboard list UI
+    // Update leaderboard UI
     function updateLeaderboard(users) {
       leaderboardEl.innerHTML = '';
-      const sortedUsers = Object.entries(users)
-        .sort(([,a],[,b]) => b - a)
+      const sorted = Object.entries(users)
+        .sort((a, b) => b[1] - a[1])
         .slice(0, 10);
-
-      sortedUsers.forEach(([name, count], i) => {
+      sorted.forEach(([name, count]) => {
         const li = document.createElement('li');
         li.textContent = `${name}: ${count} tree${count !== 1 ? 's' : ''}`;
-        li.style.animationDelay = (i * 100) + 'ms';
-        li.classList.add('fade-slide-in');
         leaderboardEl.appendChild(li);
       });
     }
 
-    // Update user's personal stats display
+    // Update my stats UI
     function updateMyStats(userName) {
-      database.ref(`users/${userName}`).once('value').then(snapshot => {
+      const todayKey = getTodayKey();
+      database.ref(`users/${userName}/${todayKey}`).once('value').then(snapshot => {
         const count = snapshot.val() || 0;
         myStats.textContent = `You have planted ${count} tree${count !== 1 ? 's' : ''}.`;
       });
     }
 
     // Increment global tree count safely with transaction
-    function incrementTreeCount() {
+    function incrementGlobalCount() {
       const todayKey = getTodayKey();
       const ref = database.ref(`treeCount/${todayKey}`);
       return ref.transaction(current => (current || 0) + 1);
     }
 
-    // Increment user's personal count safely
+    // Increment user's count safely with transaction
     function incrementUserCount(userName) {
       const todayKey = getTodayKey();
       const ref = database.ref(`users/${userName}/${todayKey}`);
       return ref.transaction(current => (current || 0) + 1);
     }
 
-    // Get total trees planted today globally
-    function getTotalToday() {
-      const todayKey = getTodayKey();
-      return database.ref(`treeCount/${todayKey}`).once('value').then(snap => snap.val() || 0);
-    }
-
-    // Get all user counts today for leaderboard
-    function getUsersToday() {
-      const todayKey = getTodayKey();
-      return database.ref('users').once('value').then(snap => {
-        const usersData = snap.val() || {};
-        // Aggregate user counts for today
-        const result = {};
-        Object.entries(usersData).forEach(([userName, days]) => {
-          result[userName] = days[todayKey] || 0;
-        });
-        return result;
-      });
-    }
-
-    // Listen for realtime updates on today's total count and leaderboard
-    function listenRealtimeUpdates() {
+    // Listen to realtime updates for global and leaderboard
+    function listenRealtime() {
       const todayKey = getTodayKey();
 
-      // Listen total tree count today
       database.ref(`treeCount/${todayKey}`).on('value', snap => {
         const count = snap.val() || 0;
         updateTotalCount(count);
       });
 
-      // Listen all users for today's counts to update leaderboard
       database.ref('users').on('value', snap => {
-        const usersData = snap.val() || {};
+        const allUsers = snap.val() || {};
         const counts = {};
-        Object.entries(usersData).forEach(([userName, days]) => {
-          counts[userName] = days[todayKey] || 0;
-        });
+        for (const user in allUsers) {
+          counts[user] = allUsers[user][todayKey] || 0;
+        }
         updateLeaderboard(counts);
       });
     }
 
-    // Show countdown to next midnight
+    // Countdown to midnight
     function startCountdown() {
-      function updateCountdown() {
+      function update() {
         const now = new Date();
-        const nextMidnight = new Date(now);
-        nextMidnight.setHours(24,0,0,0);
-        const diff = nextMidnight - now;
+        const midnight = new Date(now);
+        midnight.setHours(24, 0, 0, 0);
+        const diff = midnight - now;
 
-        const hrs = Math.floor(diff / (1000*60*60));
-        const mins = Math.floor((diff % (1000*60*60)) / (1000*60));
-        const secs = Math.floor((diff % (1000*60)) / 1000);
+        const hrs = String(Math.floor(diff / (1000*60*60))).padStart(2, '0');
+        const mins = String(Math.floor((diff % (1000*60*60)) / (1000*60))).padStart(2, '0');
+        const secs = String(Math.floor((diff % (1000*60)) / 1000)).padStart(2, '0');
 
-        challengeCountdown.textContent = 
-          `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+        challengeCountdown.textContent = `${hrs}:${mins}:${secs}`;
 
-        // Reset progress bar to 0 at midnight
         if (diff < 1000) {
           dailyProgressBar.style.width = '0%';
         }
       }
-      updateCountdown();
-      setInterval(updateCountdown, 1000);
+      update();
+      setInterval(update, 1000);
     }
 
-    // Plant button click handler
+    // Plant tree button click
     plantBtn.addEventListener('click', () => {
       const userName = nameInput.value.trim();
       if (!userName) {
-        alert('Please enter your name!');
+        alert('Please enter your name.');
         return;
       }
 
       plantBtn.disabled = true;
 
       Promise.all([
-        incrementTreeCount(),
+        incrementGlobalCount(),
         incrementUserCount(userName)
       ]).then(() => {
-        animateTreeEmoji();
+        animateTree();
         updateMyStats(userName);
-        nameInput.value = '';
+        // Keep input value instead of clearing
       }).catch(err => {
         alert('Error planting tree: ' + err.message);
       }).finally(() => {
@@ -495,12 +389,9 @@
       });
     });
 
-    // Initialize
-    listenRealtimeUpdates();
+    // On load
+    listenRealtime();
     startCountdown();
-
-    // Optional: update my stats for previously entered user on page load (if any)
-    // You can add logic to remember last user via localStorage if you want.
   </script>
 </body>
 </html>
