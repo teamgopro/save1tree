@@ -1,160 +1,211 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TEKA Trees - Live Counter</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background-color: #e0f7fa;
-      text-align: center;
-      padding: 40px;
-      color: #004d40;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TEKA Trees - Live Counter + Challenges</title>
+<style>
+  body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #e0f7fa;
+    text-align: center;
+    padding: 40px;
+    color: #004d40;
+  }
+  h1 {
+    font-size: 3rem;
+    margin-bottom: 5px;
+  }
+  #counter {
+    font-size: 4rem;
+    color: #00796b;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: inline-block;
+    transition: transform 0.3s ease;
+  }
+  #counter.pop {
+    animation: pop 0.4s forwards;
+  }
+  @keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.3); }
+    100% { transform: scale(1); }
+  }
+  #progressBarContainer {
+    margin: 20px auto;
+    width: 80%;
+    height: 30px;
+    background-color: #c8e6c9;
+    border-radius: 20px;
+    overflow: hidden;
+    box-shadow: inset 0 0 5px #81c784;
+  }
+  #progressBar {
+    height: 100%;
+    width: 0%;
+    background-color: #388e3c;
+    transition: width 0.8s ease-in-out;
+    animation-fill-mode: forwards;
+  }
+  #progressBar.pulse {
+    animation: pulseGlow 1.2s ease-in-out;
+  }
+  @keyframes pulseGlow {
+    0%, 100% { box-shadow: 0 0 8px 2px #66bb6a; }
+    50% { box-shadow: 0 0 15px 5px #a5d6a7; }
+  }
+  #leaderboard {
+    margin-top: 40px;
+    text-align: left;
+    display: inline-block;
+    min-width: 250px;
+    font-size: 1.2rem;
+    color: #004d40;
+  }
+  #leaderboard li {
+    opacity: 0;
+    transform: translateY(10px);
+    animation-fill-mode: forwards;
+  }
+  .fade-slide-in {
+    animation: fadeSlideUp 0.5s ease forwards;
+  }
+  @keyframes fadeSlideUp {
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 5px;
-    }
-    #counter {
-      font-size: 4rem;
-      color: #00796b;
-      font-weight: 700;
-      margin-bottom: 10px;
-      display: inline-block;
-      transition: transform 0.3s ease;
-    }
-    #counter.pop {
-      animation: pop 0.4s forwards;
-    }
-    @keyframes pop {
-      0% { transform: scale(1); }
-      50% { transform: scale(1.3); }
-      100% { transform: scale(1); }
-    }
-    #progressBarContainer {
-      margin: 20px auto;
-      width: 80%;
-      height: 30px;
-      background-color: #c8e6c9;
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: inset 0 0 5px #81c784;
-    }
-    #progressBar {
-      height: 100%;
-      width: 0%;
-      background-color: #388e3c;
-      transition: width 0.8s ease-in-out;
-      animation-fill-mode: forwards;
-    }
-    #progressBar.pulse {
-      animation: pulseGlow 1.2s ease-in-out;
-    }
-    @keyframes pulseGlow {
-      0%, 100% { box-shadow: 0 0 8px 2px #66bb6a; }
-      50% { box-shadow: 0 0 15px 5px #a5d6a7; }
-    }
-    #leaderboard {
-      margin-top: 40px;
-      text-align: left;
-      display: inline-block;
-      min-width: 250px;
-      font-size: 1.2rem;
-      color: #004d40;
-    }
-    #leaderboard li {
-      opacity: 0;
-      transform: translateY(10px);
-      animation-fill-mode: forwards;
-    }
-    .fade-slide-in {
-      animation: fadeSlideUp 0.5s ease forwards;
-    }
-    @keyframes fadeSlideUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-    input {
-      padding: 10px;
-      font-size: 1rem;
-      margin-top: 20px;
-      width: 200px;
-      border-radius: 5px;
-      border: 1px solid #aaa;
-      transition: box-shadow 0.3s ease;
-    }
-    input:focus {
-      outline: none;
-      box-shadow: 0 0 8px #4caf50;
-      border-color: #4caf50;
-    }
-    button {
-      padding: 15px 40px;
-      font-size: 1.2rem;
-      margin-top: 20px;
-      background-color: #00796b;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: transform 0.15s ease, box-shadow 0.3s ease;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-      user-select: none;
-    }
-    button:hover {
-      background-color: #004d40;
-      transform: scale(1.05);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 15px #66bb6a;
-    }
-    button:active {
-      transform: scale(0.95);
-      box-shadow: 0 3px 6px rgba(0,0,0,0.2);
-    }
-    .tree-animation {
-      display: inline-block;
-      font-size: 3rem;
-      margin-top: 20px;
-      animation: bounceGrow 1s ease forwards;
-    }
-    @keyframes bounceGrow {
-      0% { transform: scale(0) translateY(30px); opacity: 0; }
-      60% { transform: scale(1.2) translateY(-10px); opacity: 1; }
-      80% { transform: scale(0.9) translateY(0); }
-      100% { transform: scale(1) translateY(0); }
-    }
-    /* Confetti container */
-    #confetti {
-      position: fixed;
-      pointer-events: none;
-      top: 0; left: 0; width: 100%; height: 100%;
-      overflow: visible;
-      z-index: 9999;
-    }
-    .confetti-piece {
-      position: absolute;
-      width: 8px;
-      height: 8px;
-      background-color: #66bb6a;
-      opacity: 0.9;
-      border-radius: 2px;
-      animation-name: confetti-fall, confetti-spin;
-      animation-timing-function: linear, ease-in-out;
-      animation-iteration-count: 1;
-    }
-    @keyframes confetti-fall {
-      0% { transform: translateY(0); opacity: 1; }
-      100% { transform: translateY(120vh); opacity: 0; }
-    }
-    @keyframes confetti-spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-  </style>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+  }
+  input {
+    padding: 10px;
+    font-size: 1rem;
+    margin-top: 20px;
+    width: 200px;
+    border-radius: 5px;
+    border: 1px solid #aaa;
+    transition: box-shadow 0.3s ease;
+  }
+  input:focus {
+    outline: none;
+    box-shadow: 0 0 8px #4caf50;
+    border-color: #4caf50;
+  }
+  button {
+    padding: 15px 40px;
+    font-size: 1.2rem;
+    margin-top: 20px;
+    background-color: #00796b;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    user-select: none;
+  }
+  button:hover {
+    background-color: #004d40;
+    transform: scale(1.05);
+    box-shadow: 0 6px 12px rgba(0,0,0,0.2), 0 0 15px #66bb6a;
+  }
+  button:active {
+    transform: scale(0.95);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+  }
+  .tree-animation {
+    display: inline-block;
+    font-size: 3rem;
+    margin-top: 20px;
+    animation: bounceGrow 1s ease forwards;
+  }
+  @keyframes bounceGrow {
+    0% { transform: scale(0) translateY(30px); opacity: 0; }
+    60% { transform: scale(1.2) translateY(-10px); opacity: 1; }
+    80% { transform: scale(0.9) translateY(0); }
+    100% { transform: scale(1) translateY(0); }
+  }
+  #confetti {
+    position: fixed;
+    pointer-events: none;
+    top: 0; left: 0; width: 100%; height: 100%;
+    overflow: visible;
+    z-index: 9999;
+  }
+  .confetti-piece {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    background-color: #66bb6a;
+    opacity: 0.9;
+    border-radius: 2px;
+    animation-name: confetti-fall, confetti-spin;
+    animation-timing-function: linear, ease-in-out;
+    animation-iteration-count: 1;
+  }
+  @keyframes confetti-fall {
+    0% { transform: translateY(0); opacity: 1; }
+    100% { transform: translateY(120vh); opacity: 0; }
+  }
+  @keyframes confetti-spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+  /* New section styles */
+  #myStats {
+    margin-top: 30px;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: #2e7d32;
+  }
+  #dailyChallenge {
+    margin-top: 40px;
+    background: #a5d6a7;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #1b5e20;
+  }
+  #challengeCountdown {
+    font-weight: 700;
+    font-size: 2rem;
+    margin-top: 10px;
+  }
+  #dailyProgressBarContainer {
+    margin: 15px auto 5px auto;
+    width: 100%;
+    height: 20px;
+    background-color: #c8e6c9;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: inset 0 0 5px #81c784;
+  }
+  #dailyProgressBar {
+    height: 100%;
+    width: 0%;
+    background-color: #388e3c;
+    transition: width 0.6s ease-in-out;
+  }
+  #treeFacts {
+    margin-top: 40px;
+    font-style: italic;
+    font-size: 1.2rem;
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #2e7d32;
+    min-height: 50px;
+    opacity: 0;
+    transition: opacity 0.8s ease;
+  }
+  #treeFacts.show {
+    opacity: 1;
+  }
+</style>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
   <h1>TEKA Trees</h1>
@@ -166,112 +217,231 @@
   <br />
   <button id="plantBtn" onclick="plantTree()">Plant 1 Tree 🌳</button>
   <div id="treeEmoji"></div>
-  
+
+  <div id="myStats">Your Trees Planted: 0</div>
+
+  <div id="dailyChallenge">
+    <div><strong>Daily Challenge: Plant 50 Trees Today!</strong></div>
+    <div id="challengeCountdown">Loading timer...</div>
+    <div id="dailyProgressBarContainer">
+      <div id="dailyProgressBar"></div>
+    </div>
+  </div>
+
   <h2>🌟 Leaderboard</h2>
   <ol id="leaderboard"></ol>
 
+  <div id="treeFacts"></div>
+
   <div id="confetti"></div>
 
-  <script>
-    const GOAL = 10000;
-    var firebaseConfig = {
-      apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
-      authDomain: "save1tree-f116f.firebaseapp.com",
-      databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
-      projectId: "save1tree-f116f",
-      storageBucket: "save1tree-f116f.appspot.com",
-      messagingSenderId: "823144374779",
-      appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
-    };
-    firebase.initializeApp(firebaseConfig);
-    var db = firebase.database();
+<script>
+  const GOAL = 10000;
+  const DAILY_GOAL = 50;
 
-    var counterRef = db.ref('counter');
-    var leaderboardRef = db.ref('leaderboard');
+  var firebaseConfig = {
+    apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
+    authDomain: "save1tree-f116f.firebaseapp.com",
+    databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
+    projectId: "save1tree-f116f",
+    storageBucket: "save1tree-f116f.appspot.com",
+    messagingSenderId: "823144374779",
+    appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-    // Update counter and progress bar
-    counterRef.on('value', snapshot => {
-      let count = snapshot.val() || 0;
-      let counterEl = document.getElementById('counter');
-      counterEl.innerText = count;
+  const counterEl = document.getElementById('counter');
+  const progressBar = document.getElementById('progressBar');
+  const leaderboardEl = document.getElementById('leaderboard');
+  const nameInput = document.getElementById('nameInput');
+  const treeEmoji = document.getElementById('treeEmoji');
+  const myStats = document.getElementById('myStats');
+  const dailyProgressBar = document.getElementById('dailyProgressBar');
+  const challengeCountdown = document.getElementById('challengeCountdown');
+  const treeFactsEl = document.getElementById('treeFacts');
 
-      // Pop animation
-      counterEl.classList.remove('pop');
-      void counterEl.offsetWidth; // trigger reflow
-      counterEl.classList.add('pop');
+  // Tree facts array for rotation
+  const treeFacts = [
+    "Trees produce oxygen for us to breathe.",
+    "An average mature tree can absorb 48 pounds of CO₂ per year.",
+    "Trees help reduce noise pollution by acting as sound barriers.",
+    "Urban trees can reduce temperatures by up to 10°F (6°C).",
+    "Planting trees helps prevent soil erosion.",
+    "Trees provide habitats for over 80% of terrestrial biodiversity.",
+    "A single tree can provide a day’s supply of oxygen for up to four people.",
+    "Trees improve mental health by reducing stress and anxiety."
+  ];
 
-      let progress = Math.min((count / GOAL) * 100, 100);
-      let progressBar = document.getElementById('progressBar');
-      progressBar.style.width = progress + '%';
+  // Show rotating tree facts with fade effect
+  let factIndex = 0;
+  function showNextFact() {
+    treeFactsEl.classList.remove('show');
+    setTimeout(() => {
+      treeFactsEl.textContent = treeFacts[factIndex];
+      treeFactsEl.classList.add('show');
+      factIndex = (factIndex + 1) % treeFacts.length;
+    }, 800);
+  }
+  showNextFact();
+  setInterval(showNextFact, 15000);
 
-      // Pulse effect on progress bar
-      progressBar.classList.remove('pulse');
-      void progressBar.offsetWidth; // trigger reflow
-      progressBar.classList.add('pulse');
+  // Utility: format seconds to HH:MM:SS
+  function formatTime(seconds) {
+    const hrs = Math.floor(seconds / 3600).toString().padStart(2, '0');
+    const mins = Math.floor((seconds % 3600) / 60).toString().padStart(2, '0');
+    const secs = (seconds % 60).toString().padStart(2, '0');
+    return `${hrs}:${mins}:${secs}`;
+  }
+
+  // Daily challenge timer and reset at midnight UTC
+  function getSecondsUntilMidnightUTC() {
+    const now = new Date();
+    const midnight = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
+    return Math.floor((midnight - now) / 1000);
+  }
+
+  // Initialize
+  let totalCount = 0;
+  let dailyCount = 0;
+  let userName = '';
+
+  // Update the total tree count and progress bar
+  function updateTotalCount(count) {
+    totalCount = count;
+    counterEl.textContent = count.toLocaleString();
+    counterEl.classList.add('pop');
+    setTimeout(() => counterEl.classList.remove('pop'), 400);
+    const percent = Math.min(100, (count / GOAL) * 100);
+    progressBar.style.width = percent + '%';
+    progressBar.classList.add('pulse');
+    setTimeout(() => progressBar.classList.remove('pulse'), 1200);
+  }
+
+  // Update daily challenge progress
+  function updateDailyProgress(count) {
+    dailyCount = count;
+    const percent = Math.min(100, (count / DAILY_GOAL) * 100);
+    dailyProgressBar.style.width = percent + '%';
+  }
+
+  // Update leaderboard display with animation
+  function updateLeaderboard(data) {
+    leaderboardEl.innerHTML = '';
+    // Convert snapshot to array [name, count]
+    const entries = Object.entries(data || {});
+    // Sort descending by count
+    const sorted = entries.sort((a, b) => b[1] - a[1]);
+    sorted.forEach(([name, count], i) => {
+      const li = document.createElement('li');
+      let badge = '';
+      if(count >= 500) badge = ' 🏆';
+      else if(count >= 100) badge = ' 🎖️';
+      else if(count >= 50) badge = ' 🥉';
+      else if(count >= 10) badge = ' 🥇';
+
+      li.textContent = `${name}: ${count}${badge}`;
+      li.style.animationDelay = (i * 0.1) + 's';
+      li.classList.add('fade-slide-in');
+      leaderboardEl.appendChild(li);
     });
+  }
 
-    // Update leaderboard with fade + slide effect
-    leaderboardRef.on('value', snapshot => {
-      let data = snapshot.val() || {};
-      let sorted = Object.entries(data).sort((a,b) => b[1] - a[1]).slice(0, 5);
-      let leaderboardEl = document.getElementById('leaderboard');
-      leaderboardEl.innerHTML = ''; // clear before adding
+  // Update user's personal stats display
+  function updateMyStats(name, count) {
+    if(!name) {
+      myStats.textContent = `Your Trees Planted: 0`;
+      return;
+    }
+    myStats.textContent = `${name}, your Trees Planted: ${count.toLocaleString()}`;
+  }
 
-      sorted.forEach(([name, count], i) => {
-        let li = document.createElement('li');
-        li.textContent = `${name}: ${count}`;
-        // Add animation delay for staggered effect
-        li.style.animationDelay = (i * 0.1) + 's';
-        li.classList.add('fade-slide-in');
-        leaderboardEl.appendChild(li);
-      });
+  // Confetti effect on planting
+  function confettiBurst() {
+    const confettiContainer = document.getElementById('confetti');
+    for (let i = 0; i < 30; i++) {
+      let confetti = document.createElement('div');
+      confetti.classList.add('confetti-piece');
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.backgroundColor = `hsl(${Math.random() * 120 + 100}, 70%, 60%)`;
+      confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
+      confetti.style.animationDelay = (Math.random() * 0.5) + 's';
+      confettiContainer.appendChild(confetti);
+      setTimeout(() => confetti.remove(), 3000);
+    }
+  }
+
+  // Handle planting a tree
+  function plantTree() {
+    const name = nameInput.value.trim();
+    if (!name) {
+      alert("Please enter your name");
+      return;
+    }
+    userName = name;
+
+    // Disable button briefly
+    const button = document.getElementById('plantBtn');
+    button.disabled = true;
+    setTimeout(() => button.disabled = false, 1500);
+
+    // Increase total count atomically
+    db.ref('totalCount').transaction(current => (current || 0) + 1);
+
+    // Increase leaderboard count atomically for this user
+    db.ref('leaderboard/' + name).transaction(current => (current || 0) + 1);
+
+    // Increase daily count for user and global daily count
+    const todayKey = new Date().toISOString().slice(0,10); // YYYY-MM-DD
+    db.ref(`daily/${todayKey}/total`).transaction(current => (current || 0) + 1);
+    db.ref(`daily/${todayKey}/users/${name}`).transaction(current => (current || 0) + 1);
+
+    // Animate tree emoji
+    treeEmoji.innerText = "🌱";
+    treeEmoji.classList.remove('tree-animation');
+    void treeEmoji.offsetWidth; // trigger reflow
+    treeEmoji.classList.add('tree-animation');
+
+    // Confetti!
+    confettiBurst();
+  }
+
+  // Listen for total count changes
+  db.ref('totalCount').on('value', snapshot => {
+    const val = snapshot.val() || 0;
+    updateTotalCount(val);
+  });
+
+  // Listen for leaderboard changes
+  db.ref('leaderboard').on('value', snapshot => {
+    updateLeaderboard(snapshot.val());
+    // Update my stats if user known
+    if(userName) {
+      const userCount = snapshot.val()?.[userName] || 0;
+      updateMyStats(userName, userCount);
+    }
+  });
+
+  // Listen for daily total count changes for today's challenge
+  function listenDailyChallenge() {
+    const todayKey = new Date().toISOString().slice(0,10);
+    db.ref(`daily/${todayKey}/total`).on('value', snapshot => {
+      updateDailyProgress(snapshot.val() || 0);
     });
+  }
+  listenDailyChallenge();
 
-    // Confetti effect on planting
-    function confettiBurst() {
-      const confettiContainer = document.getElementById('confetti');
-      for (let i = 0; i < 30; i++) {
-        let confetti = document.createElement('div');
-        confetti.classList.add('confetti-piece');
-        confetti.style.left = Math.random() * 100 + 'vw';
-        confetti.style.backgroundColor = `hsl(${Math.random() * 120 + 100}, 70%, 60%)`;
-        confetti.style.animationDuration = (Math.random() * 2 + 2) + 's';
-        confetti.style.animationDelay = (Math.random() * 0.5) + 's';
-        confettiContainer.appendChild(confetti);
-        setTimeout(() => confetti.remove(), 3000);
-      }
+  // Update countdown every second
+  function startCountdown() {
+    function update() {
+      let secondsLeft = getSecondsUntilMidnightUTC();
+      challengeCountdown.textContent = formatTime(secondsLeft);
     }
+    update();
+    setInterval(update, 1000);
+  }
+  startCountdown();
 
-    // Plant tree function with animation
-    function plantTree() {
-      const nameInput = document.getElementById('nameInput');
-      const name = nameInput.value.trim();
-      if (!name) {
-        alert("Please enter your name");
-        return;
-      }
-
-      // Disable button briefly to prevent spam clicks
-      const button = document.getElementById('plantBtn');
-      button.disabled = true;
-      setTimeout(() => button.disabled = false, 1500);
-
-      counterRef.transaction(current => (current || 0) + 1);
-      var userRef = db.ref('leaderboard/' + name);
-      userRef.transaction(current => (current || 0) + 1);
-
-      // Tree emoji animation
-      const emoji = document.getElementById("treeEmoji");
-      emoji.innerText = "🌱";
-      emoji.classList.remove('tree-animation'); // restart animation
-      void emoji.offsetWidth; // trigger reflow
-      emoji.classList.add('tree-animation');
-
-      // Confetti burst
-      confettiBurst();
-
-      // Do NOT clear input - keep user’s name
-    }
-  </script>
+</script>
 </body>
 </html>
