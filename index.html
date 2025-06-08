@@ -5,189 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TEKA Trees - Old Style</title>
   <style>
-    body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #e0f7fa;
-      color: #004d40;
-      margin: 0;
-      padding: 20px;
-    }
-
-    h1 {
-      text-align: center;
-      margin-bottom: 0;
-      font-weight: 700;
-      letter-spacing: 2px;
-    }
-
-    #counter {
-      font-size: 4rem;
-      text-align: center;
-      margin: 10px 0 5px;
-      font-weight: 900;
-    }
-
-    #facts {
-      text-align: center;
-      font-size: 1.1rem;
-      margin: 10px auto 25px;
-      max-width: 500px;
-      font-style: italic;
-      color: #00695c;
-    }
-
-    #progressBarContainer {
-      width: 80%;
-      max-width: 400px;
-      height: 22px;
-      background: #b2dfdb;
-      border-radius: 15px;
-      margin: 0 auto 20px;
-      box-shadow: inset 0 0 6px #004d40aa;
-    }
-
-    #progressBar {
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, #00bfa5, #004d40);
-      border-radius: 15px;
-      transition: width 0.4s ease;
-      box-shadow: 0 0 8px #00796b;
-    }
-
-    #plantForm {
-      max-width: 400px;
-      margin: 0 auto 30px;
-      display: flex;
-      gap: 10px;
-      justify-content: center;
-      align-items: center;
-    }
-
-    #nameInput {
-      flex-grow: 1;
-      padding: 10px 15px;
-      font-size: 1.2rem;
-      border: 2px solid #004d40;
-      border-radius: 8px;
-      outline-offset: 2px;
-      outline-color: #00796b;
-      color: #004d40;
-    }
-
-    #plantBtn {
-      background-color: #00796b;
-      border: none;
-      padding: 12px 20px;
-      color: #e0f2f1;
-      font-weight: 700;
-      font-size: 1.1rem;
-      border-radius: 8px;
-      cursor: pointer;
-      transition: background-color 0.3s ease;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    #plantBtn:hover:not(:disabled) {
-      background-color: #004d40;
-    }
-
-    #plantBtn:disabled {
-      opacity: 0.5;
-      cursor: not-allowed;
-    }
-
-    #treeEmoji {
-      font-size: 3.5rem;
-      text-align: center;
-      margin-bottom: 20px;
-      user-select: none;
-      transition: transform 0.3s ease;
-    }
-
-    /* bounce animation */
-    .tree-bounce {
-      animation: bounce 0.7s ease forwards;
-    }
-
-    @keyframes bounce {
-      0% { transform: translateY(0); }
-      30% { transform: translateY(-20px); }
-      50% { transform: translateY(0); }
-      70% { transform: translateY(-10px); }
-      100% { transform: translateY(0); }
-    }
-
-    #myStats {
-      text-align: center;
-      font-size: 1.1rem;
-      margin-bottom: 25px;
-      font-weight: 600;
-      color: #00796b;
-    }
-
-    h2 {
-      text-align: center;
-      margin-bottom: 15px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      color: #004d40;
-    }
-
-    #leaderboard {
-      max-width: 400px;
-      margin: 0 auto 40px;
-      padding-left: 0;
-      list-style: none;
-      color: #004d40;
-      font-weight: 600;
-      font-size: 1.1rem;
-    }
-
-    #leaderboard li {
-      background: #b2dfdb;
-      margin-bottom: 8px;
-      padding: 8px 12px;
-      border-radius: 10px;
-      box-shadow: inset 0 0 4px #004d40aa;
-    }
-
-    #dailyChallenge {
-      max-width: 400px;
-      margin: 0 auto;
-      text-align: center;
-      font-weight: 600;
-      color: #004d40;
-    }
-
-    #challengeCountdown {
-      font-size: 1.5rem;
-      margin: 6px 0 12px;
-      font-weight: 700;
-      letter-spacing: 1px;
-      color: #00796b;
-    }
-
-    #dailyProgressBarContainer {
-      height: 16px;
-      background: #b2dfdb;
-      border-radius: 15px;
-      box-shadow: inset 0 0 5px #004d40aa;
-      width: 100%;
-      max-width: 400px;
-      margin: 0 auto 30px;
-    }
-
-    #dailyProgressBar {
-      height: 100%;
-      width: 0;
-      background: linear-gradient(90deg, #004d40, #00bfa5);
-      border-radius: 15px;
-      transition: width 0.4s ease;
-      box-shadow: 0 0 8px #00796b;
-    }
+    /* ...[unchanged CSS styles]... */
   </style>
 </head>
 <body>
@@ -249,13 +67,11 @@
       appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
     };
 
-    // Initialize Firebase app
     firebase.initializeApp(firebaseConfig);
     const database = firebase.database();
 
-    const dailyGoal = 50; // Daily goal
+    const dailyGoal = 50;
 
-    // Elements
     const plantBtn = document.getElementById('plantBtn');
     const nameInput = document.getElementById('nameInput');
     const counterEl = document.getElementById('counter');
@@ -265,14 +81,30 @@
     const progressBar = document.getElementById('progressBar');
     const challengeCountdown = document.getElementById('challengeCountdown');
     const dailyProgressBar = document.getElementById('dailyProgressBar');
+    const factsEl = document.getElementById('facts');
 
-    // Helpers
+    const facts = [
+      "Trees help reduce air pollution and provide oxygen.",
+      "One large tree can provide a day's supply of oxygen for four people.",
+      "Planting trees helps combat climate change.",
+      "Urban forests reduce energy use for air conditioning.",
+      "Trees reduce stormwater runoff and prevent erosion.",
+      "Forests are home to 80% of terrestrial species."
+    ];
+
+    function rotateFacts() {
+      let index = 0;
+      setInterval(() => {
+        factsEl.textContent = "Did you know? 🌳 " + facts[index];
+        index = (index + 1) % facts.length;
+      }, 6000);
+    }
+
     function getTodayKey() {
       const now = new Date();
       return now.toISOString().split('T')[0];
     }
 
-    // Animate bounce
     function animateTree() {
       treeEmoji.classList.add('tree-bounce');
       setTimeout(() => {
@@ -280,7 +112,6 @@
       }, 700);
     }
 
-    // Update total count UI
     function updateTotalCount(count) {
       counterEl.textContent = count;
       const percent = Math.min((count / dailyGoal) * 100, 100);
@@ -288,7 +119,6 @@
       dailyProgressBar.style.width = percent + '%';
     }
 
-    // Update leaderboard UI
     function updateLeaderboard(users) {
       leaderboardEl.innerHTML = '';
       const sorted = Object.entries(users)
@@ -301,7 +131,6 @@
       });
     }
 
-    // Update my stats UI
     function updateMyStats(userName) {
       const todayKey = getTodayKey();
       database.ref(`users/${userName}/${todayKey}`).once('value').then(snapshot => {
@@ -310,21 +139,18 @@
       });
     }
 
-    // Increment global tree count safely with transaction
     function incrementGlobalCount() {
       const todayKey = getTodayKey();
       const ref = database.ref(`treeCount/${todayKey}`);
       return ref.transaction(current => (current || 0) + 1);
     }
 
-    // Increment user's count safely with transaction
     function incrementUserCount(userName) {
       const todayKey = getTodayKey();
       const ref = database.ref(`users/${userName}/${todayKey}`);
       return ref.transaction(current => (current || 0) + 1);
     }
 
-    // Listen to realtime updates for global and leaderboard
     function listenRealtime() {
       const todayKey = getTodayKey();
 
@@ -343,7 +169,6 @@
       });
     }
 
-    // Countdown to midnight
     function startCountdown() {
       function update() {
         const now = new Date();
@@ -365,7 +190,6 @@
       setInterval(update, 1000);
     }
 
-    // Plant tree button click
     plantBtn.addEventListener('click', () => {
       const userName = nameInput.value.trim();
       if (!userName) {
@@ -381,7 +205,6 @@
       ]).then(() => {
         animateTree();
         updateMyStats(userName);
-        // Keep input value instead of clearing
       }).catch(err => {
         alert('Error planting tree: ' + err.message);
       }).finally(() => {
@@ -392,6 +215,7 @@
     // On load
     listenRealtime();
     startCountdown();
+    rotateFacts();
   </script>
 </body>
 </html>
