@@ -9,116 +9,87 @@
       margin: 0;
       font-family: 'Segoe UI', sans-serif;
       background: #f0fdf4;
-      color: #064e3b;
-      text-align: center;
-      padding: 2rem;
+      color: #065f46;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
     }
-
     h1 {
       font-size: 2.5rem;
-      color: #065f46;
+      margin-bottom: 10px;
     }
-
     #counter {
       font-size: 3rem;
       font-weight: bold;
-      margin: 10px 0;
     }
-
     #facts {
-      margin: 20px auto;
+      margin: 20px 0;
       font-style: italic;
+      text-align: center;
       max-width: 500px;
-      color: #065f46;
     }
-
-    form {
+    #plantForm {
       display: flex;
       flex-direction: column;
       gap: 10px;
+      width: 100%;
       max-width: 400px;
-      margin: 20px auto;
+      margin: 20px 0;
     }
-
-    input, button {
+    #nameInput, #dedicationInput, #plantBtn {
       padding: 10px;
       border-radius: 8px;
-      font-size: 1rem;
       border: 1px solid #a7f3d0;
+      font-size: 1rem;
     }
-
-    button {
-      background-color: #10b981;
+    #plantBtn {
+      background: #10b981;
       color: white;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s;
+      transition: background 0.3s ease;
     }
-
-    button:hover {
-      background-color: #059669;
+    #plantBtn:hover {
+      background: #059669;
     }
-
     #treeEmoji {
       font-size: 3rem;
-      margin: 20px 0;
-      transition: transform 0.3s;
+      margin: 20px;
     }
-
     .tree-bounce {
       animation: bounce 0.5s ease;
     }
-
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-15px); }
     }
-
     #leaderboard {
-      margin-top: 30px;
-      max-width: 400px;
-      margin-left: auto;
-      margin-right: auto;
-      padding: 0;
       list-style: none;
+      padding: 0;
+      max-width: 400px;
+      width: 100%;
     }
-
     #leaderboard li {
       background: #d1fae5;
       padding: 10px;
       border-radius: 10px;
-      margin: 5px 0;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .medal {
-      margin-right: 10px;
-    }
-
-    .name {
-      font-weight: bold;
-    }
-
-    .count {
-      color: #065f46;
+      margin-bottom: 5px;
     }
   </style>
 </head>
 <body>
   <h1>TEKA Trees</h1>
   <div id="counter">0</div>
-  <div id="facts">Loading fact...</div>
+  <div id="facts"></div>
 
   <form id="plantForm">
-    <input type="text" id="nameInput" placeholder="Your name" required />
+    <input type="text" id="nameInput" placeholder="Enter your name" required />
     <input type="text" id="dedicationInput" placeholder="Dedication (optional)" />
-    <button type="submit">🌱 Plant a Tree</button>
+    <button type="submit" id="plantBtn">🌱 Plant Tree</button>
   </form>
 
   <div id="treeEmoji">🌳</div>
-
   <h2>Leaderboard</h2>
   <ul id="leaderboard"></ul>
 
@@ -134,13 +105,14 @@
       messagingSenderId: "823144374779",
       appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const counterEl = document.getElementById("counter");
-    const leaderboardEl = document.getElementById("leaderboard");
     const treeEmoji = document.getElementById("treeEmoji");
+    const leaderboardEl = document.getElementById("leaderboard");
+
+    const userCooldowns = {}; // store cooldowns per user
 
     function getTodayKey() {
       return new Date().toISOString().split("T")[0];
@@ -151,6 +123,23 @@
       setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 500);
     }
 
+    function updateLeaderboard(users) {
+      leaderboardEl.innerHTML = "";
+      const today = getTodayKey();
+      const entries = Object.entries(users).map(([user, days]) => [user, days[today] || 0]);
+      entries.sort((a, b) => b[1] - a[1]);
+
+      entries.slice(0, 10).forEach(([user, count], i) => {
+        const li = document.createElement("li");
+        let medal = "";
+        if (i === 0) medal = "🥇 ";
+        else if (i === 1) medal = "🥈 ";
+        else if (i === 2) medal = "🥉 ";
+        li.textContent = `${medal}${user}: ${count} tree${count !== 1 ? "s" : ""}`;
+        leaderboardEl.appendChild(li);
+      });
+    }
+
     document.getElementById("plantForm").addEventListener("submit", (e) => {
       e.preventDefault();
       const name = document.getElementById("nameInput").value.trim();
@@ -159,40 +148,29 @@
 
       if (!name) return alert("Please enter your name.");
 
+      const now = Date.now();
+      const last = userCooldowns[name] || 0;
+      if (now - last < 5000) {
+        alert("Please wait 5 seconds before planting another tree.");
+        return;
+      }
+
       db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
       db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
-
       if (dedication) {
         db.ref(`dedications/${today}`).push({ user: name, message: dedication });
       }
 
       animateTree();
+      userCooldowns[name] = now;
     });
 
-    db.ref(`treeCount/${getTodayKey()}`).on("value", (snapshot) => {
-      counterEl.textContent = snapshot.val() || 0;
+    db.ref("users").on("value", snap => {
+      updateLeaderboard(snap.val() || {});
     });
 
-    db.ref("users").on("value", (snapshot) => {
-      const users = snapshot.val() || {};
-      const today = getTodayKey();
-      const userData = Object.entries(users).map(([name, days]) => {
-        return { name, count: days[today] || 0 };
-      }).filter(u => u.count > 0);
-
-      userData.sort((a, b) => b.count - a.count);
-
-      leaderboardEl.innerHTML = "";
-      userData.forEach((user, index) => {
-        const li = document.createElement("li");
-        const medal = ["🥇", "🥈", "🥉"][index] || "🌿";
-        li.innerHTML = `
-          <span class="medal">${medal}</span>
-          <span class="name">${user.name}</span>
-          <span class="count">🌳 ${user.count}</span>
-        `;
-        leaderboardEl.appendChild(li);
-      });
+    db.ref(`treeCount/${getTodayKey()}`).on("value", snap => {
+      counterEl.textContent = snap.val() || 0;
     });
 
     const facts = [
