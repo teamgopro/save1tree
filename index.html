@@ -3,212 +3,264 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TEKA Trees</title>
+  <title>TEKA Trees - Modern</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
+    * {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0fdf4;
-      color: #065f46;
+      font-family: 'Inter', sans-serif;
+      background: #e6f4ea;
+      color: #1e3a2f;
       display: flex;
-      flex-direction: row;
       height: 100vh;
-      overflow: hidden;
+      padding: 20px;
+      gap: 30px;
     }
-
-    .main {
-      flex: 2;
-      padding: 30px;
+    main {
+      flex: 1;
+      max-width: 480px;
       display: flex;
       flex-direction: column;
       align-items: center;
-      overflow-y: auto;
-      background: #f0fdf4;
+      background: white;
+      border-radius: 16px;
+      padding: 30px 25px 40px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
-
-    .dedication-panel {
-      flex: 1;
-      background: rgba(255 255 255 / 0.15);
-      backdrop-filter: blur(12px);
-      border-left: 2px solid rgba(16, 185, 129, 0.3);
-      padding: 20px;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-      box-sizing: border-box;
-      color: #064e3b;
-      box-shadow: 0 8px 32px rgba(16, 185, 129, 0.2);
+    h1 {
+      margin: 0 0 15px;
+      font-weight: 600;
+      font-size: 2.5rem;
+      color: #065f46;
+      user-select: none;
     }
-
-    .dedication-panel h2 {
-      margin-top: 0;
-      font-size: 1.5rem;
+    #counter {
+      font-size: 3.5rem;
       font-weight: 700;
-      border-bottom: 2px solid #10b981;
-      padding-bottom: 8px;
-      margin-bottom: 15px;
+      margin-bottom: 8px;
       color: #047857;
       user-select: none;
     }
-
-    #dedicationList {
+    #facts {
+      font-style: italic;
+      max-width: 400px;
+      text-align: center;
+      color: #065f46dd;
+      margin-bottom: 30px;
+      min-height: 48px;
+      user-select: none;
+    }
+    form {
+      width: 100%;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      max-height: calc(100vh - 80px);
-      overflow-y: hidden;
     }
-
-    .dedication {
-      background: rgba(255 255 255 / 0.3);
-      border-radius: 14px;
-      padding: 14px 18px;
-      font-size: 0.95rem;
-      line-height: 1.3;
-      color: #064e3b;
-      box-shadow: 0 4px 12px rgba(6, 95, 70, 0.15);
-      opacity: 0;
-      transform: translateY(20px);
-      animation: fadeInUp 0.6s forwards;
-      word-wrap: break-word;
-      user-select: text;
-    }
-
-    .dedication strong {
-      font-weight: 700;
-      margin-right: 8px;
-      color: #065f46;
-    }
-
-    @keyframes fadeInUp {
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-    }
-
-    #counter {
-      font-size: 3rem;
-      font-weight: bold;
-    }
-
-    #facts {
-      margin: 20px 0;
-      font-style: italic;
-      text-align: center;
-      max-width: 500px;
-      color: #065f46cc;
-    }
-
-    #plantForm {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      width: 100%;
-      max-width: 400px;
-      margin: 20px 0;
-      position: relative;
-    }
-
-    #nameInput, #dedicationInput, #plantBtn {
-      padding: 10px;
-      border-radius: 8px;
-      border: 1px solid #a7f3d0;
+    input[type="text"] {
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1.5px solid #a7f3d0;
       font-size: 1rem;
+      font-weight: 500;
+      outline-offset: 2px;
       transition: border-color 0.3s ease;
     }
-
-    #nameInput:focus, #dedicationInput:focus {
-      border-color: #10b981;
-      outline: none;
+    input[type="text"]:focus {
+      border-color: #059669;
+      background: #f0fdf4;
     }
-
-    #plantBtn {
-      background: #10b981;
-      color: white;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.3s ease;
+    #nameInput.error {
+      border-color: #ef4444;
+      background: #fee2e2;
+    }
+    #nameError {
+      font-size: 0.85rem;
+      color: #b91c1c;
+      margin-top: -8px;
+      margin-bottom: 8px;
+      font-weight: 600;
+      display: none;
+    }
+    button {
+      padding: 14px 0;
       border: none;
+      border-radius: 14px;
+      background: #10b981;
+      font-weight: 700;
+      font-size: 1.15rem;
+      color: white;
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.3s ease;
     }
-
-    #plantBtn:hover {
+    button:hover:not(:disabled) {
       background: #059669;
     }
-
-    #treeEmoji {
-      font-size: 3rem;
-      margin: 20px;
+    button:disabled {
+      background: #a7f3d0;
+      cursor: not-allowed;
     }
-
+    #treeEmoji {
+      font-size: 4.5rem;
+      margin: 25px 0 15px;
+      user-select: none;
+      transition: transform 0.5s ease;
+    }
     .tree-bounce {
       animation: bounce 0.5s ease;
     }
-
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-15px); }
+      50% { transform: translateY(-20px); }
     }
-
-    #leaderboard {
+    h2 {
+      margin-top: 20px;
+      margin-bottom: 12px;
+      color: #065f46;
+      font-weight: 600;
+      font-size: 1.7rem;
+      user-select: none;
+    }
+    ul#leaderboard {
       list-style: none;
       padding: 0;
-      max-width: 400px;
+      margin: 0;
       width: 100%;
     }
-
-    #leaderboard li {
+    ul#leaderboard li {
       background: #d1fae5;
-      padding: 10px;
-      border-radius: 10px;
-      margin-bottom: 5px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      padding: 14px 18px;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #065f46;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      user-select: none;
+      box-shadow: 0 2px 5px rgb(5 150 105 / 0.15);
+      transition: background-color 0.3s ease;
+    }
+    ul#leaderboard li .medal {
+      font-size: 1.6rem;
+    }
+    ul#leaderboard li:nth-child(1) {
+      background: #fff9db;
+      color: #b47b00;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgb(180 123 0 / 0.3);
+    }
+    ul#leaderboard li:nth-child(2) {
+      background: #f0f7ff;
+      color: #2563eb;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgb(37 99 235 / 0.3);
+    }
+    ul#leaderboard li:nth-child(3) {
+      background: #fef0f0;
+      color: #dc2626;
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgb(220 38 38 / 0.3);
     }
 
-    #errorMessage {
-      color: #dc2626;
-      font-size: 0.9rem;
-      margin-top: 4px;
-      font-weight: 600;
-      user-select: none;
-      display: none;
+    /* Container for leaderboard and dedications side by side */
+    #rightPanel {
+      width: 380px;
+      display: flex;
+      flex-direction: column;
+      gap: 28px;
     }
+
+    /* Dedications box */
+    #dedicationsBox {
+      flex: 1;
+      background: rgba(255 255 255 / 0.15);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      padding: 20px 22px;
+      box-shadow: 0 8px 25px rgb(0 0 0 / 0.05);
+      display: flex;
+      flex-direction: column;
+    }
+    #dedicationsBox h2 {
+      margin: 0 0 16px 0;
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #065f46;
+      user-select: none;
+    }
+    #dedicationsList {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    #dedicationsList li {
+      background: rgba(255 255 255 / 0.45);
+      border-radius: 14px;
+      padding: 14px 18px;
+      font-size: 1rem;
+      color: #065f46dd;
+      font-weight: 500;
+      opacity: 0;
+      animation: fadeIn 1s forwards;
+      user-select: none;
+      box-shadow: 0 2px 10px rgb(5 150 105 / 0.08);
+    }
+    #dedicationsList li span.user {
+      font-weight: 700;
+      color: #047857;
+      margin-right: 8px;
+      user-select: text;
+    }
+
+    @keyframes fadeIn {
+      to {
+        opacity: 1;
+      }
+    }
+
   </style>
 </head>
 <body>
-  <div class="main">
+  <main>
     <h1>TEKA Trees</h1>
     <div id="counter">0</div>
     <div id="facts"></div>
 
     <form id="plantForm" autocomplete="off">
       <input type="text" id="nameInput" placeholder="Enter your name" autocomplete="off" />
-      <div id="errorMessage">Please enter your name to plant a tree.</div>
+      <div id="nameError">Please enter your name before planting.</div>
       <input type="text" id="dedicationInput" placeholder="Dedication (optional)" autocomplete="off" />
       <button type="submit" id="plantBtn">🌱 Plant Tree</button>
     </form>
 
     <div id="treeEmoji">🌳</div>
+
     <h2>Leaderboard</h2>
     <ul id="leaderboard"></ul>
-  </div>
+  </main>
 
-  <div class="dedication-panel">
-    <h2>🌱 Tree Dedications</h2>
-    <div id="dedicationList"></div>
-  </div>
+  <section id="rightPanel">
+    <div id="dedicationsBox">
+      <h2>Recent Dedications</h2>
+      <ul id="dedicationsList"></ul>
+    </div>
+  </section>
 
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script>
+    // Firebase config and init
     const firebaseConfig = {
       apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
       authDomain: "save1tree-f116f.firebaseapp.com",
@@ -221,128 +273,163 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
+    // Elements
     const counterEl = document.getElementById("counter");
     const treeEmoji = document.getElementById("treeEmoji");
     const leaderboardEl = document.getElementById("leaderboard");
-    const dedicationList = document.getElementById("dedicationList");
+    const dedicationsList = document.getElementById("dedicationsList");
     const nameInput = document.getElementById("nameInput");
-    const errorMessage = document.getElementById("errorMessage");
+    const dedicationInput = document.getElementById("dedicationInput");
+    const plantBtn = document.getElementById("plantBtn");
+    const nameError = document.getElementById("nameError");
 
+    // Cooldown tracker per user
     const userCooldowns = {};
 
-    function getTodayKey() {
-      return new Date().toISOString().split("T")[0];
-    }
-
-    function animateTree() {
-      treeEmoji.classList.add("tree-bounce");
-      setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 500);
-    }
-
-    function updateLeaderboard(users) {
-      leaderboardEl.innerHTML = "";
-      const today = getTodayKey();
-      const entries = Object.entries(users).map(([user, days]) => [user, days[today] || 0]);
-      entries.sort((a, b) => b[1] - a[1]);
-      entries.slice(0, 10).forEach(([user, count], i) => {
-        const li = document.createElement("li");
-        let medal = i === 0 ? "🥇 " : i === 1 ? "🥈 " : i === 2 ? "🥉 " : "";
-        li.textContent = `${medal}${user}: ${count} tree${count !== 1 ? "s" : ""}`;
-        leaderboardEl.appendChild(li);
-      });
-    }
-
-    function addDedication(user, message) {
-      // Create dedication div with fade-in animation
-      const div = document.createElement("div");
-      div.className = "dedication";
-      div.innerHTML = `<strong>${user}:</strong> ${message}`;
-      dedicationList.appendChild(div);
-
-      // Remove oldest dedication if more than 5
-      while (dedicationList.children.length > 5) {
-        dedicationList.removeChild(dedicationList.firstChild);
-      }
-    }
-
-    // Show or hide error message
-    function validateName() {
-      if (nameInput.value.trim() === "") {
-        errorMessage.style.display = "block";
-        nameInput.style.borderColor = "#dc2626";
-        return false;
-      } else {
-        errorMessage.style.display = "none";
-        nameInput.style.borderColor = "#10b981";
-        return true;
-      }
-    }
-
-    nameInput.addEventListener("input", () => {
-      validateName();
-    });
-
-    document.getElementById("plantForm").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const name = nameInput.value.trim();
-      const dedication = document.getElementById("dedicationInput").value.trim();
-
-      if (!validateName()) {
-        nameInput.focus();
-        return;
-      }
-
-      const now = Date.now();
-      const lastPlant = userCooldowns[name] || 0;
-      if (now - lastPlant < 5000) {
-        alert("Please wait 5 seconds before planting again.");
-        return;
-      }
-      userCooldowns[name] = now;
-
-      const today = getTodayKey();
-      db.ref(`treeCount/${today}`).transaction((n) => (n || 0) + 1);
-      db.ref(`users/${name}/${today}`).transaction((n) => (n || 0) + 1);
-
-      if (dedication) {
-        db.ref(`dedications/${today}`).push({ user: name, message: dedication });
-      }
-
-      animateTree();
-      e.target.reset();
-    });
-
-    // Initial leaderboard and live updates
-    db.ref("users").on("value", (snap) => {
-      updateLeaderboard(snap.val() || {});
-    });
-
-    // Update tree count
-    db.ref(`treeCount/${getTodayKey()}`).on("value", (snap) => {
-      counterEl.textContent = snap.val() || 0;
-    });
-
-    // Listen for new dedications (last 5)
-    db.ref(`dedications/${getTodayKey()}`).limitToLast(5).on("child_added", (snap) => {
-      const val = snap.val();
-      addDedication(val.user, val.message);
-    });
-
+    // Facts to rotate
     const facts = [
       "Trees absorb harmful gases and give us clean oxygen.",
       "One tree can remove up to 48 pounds of CO2 per year.",
       "Urban forests can reduce city temperatures by up to 10°F.",
       "Trees are home to more than 80% of land-based species.",
-      "Planting trees can reduce stress and improve mood.",
+      "Planting trees can reduce stress and improve mood."
     ];
-
     let factIndex = 0;
+
+    // Animate tree bounce
+    function animateTree() {
+      treeEmoji.classList.add("tree-bounce");
+      setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 500);
+    }
+
+    // Show next fact every 7 seconds
     function rotateFacts() {
       document.getElementById("facts").textContent = facts[factIndex];
       factIndex = (factIndex + 1) % facts.length;
     }
     rotateFacts();
     setInterval(rotateFacts, 7000);
+
+    // Get date key YYYY-MM-DD
+    function getTodayKey() {
+      return new Date().toISOString().split("T")[0];
+    }
+
+    // Validate name input
+    function validateName() {
+      if (nameInput.value.trim() === "") {
+        nameInput.classList.add("error");
+        nameError.style.display = "block";
+        return false;
+      } else {
+        nameInput.classList.remove("error");
+        nameError.style.display = "none";
+        return true;
+      }
+    }
+
+    // Update leaderboard display with medals for top 3
+    function updateLeaderboard(users) {
+      leaderboardEl.innerHTML = "";
+      const today = getTodayKey();
+      const entries = Object.entries(users).map(([user, days]) => [user, days[today] || 0]);
+      entries.sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([user, count], i) => {
+        if (count === 0) return;
+        const li = document.createElement("li");
+        const medal = ["🥇", "🥈", "🥉"][i] || "";
+        li.innerHTML = `<span class="medal">${medal}</span> ${user}: ${count} tree${count !== 1 ? 's' : ''}`;
+        leaderboardEl.appendChild(li);
+      });
+    }
+
+    // Update dedications display, show only last 5, fade in
+    function updateDedications(dedications) {
+      dedicationsList.innerHTML = "";
+      const lastFive = dedications.slice(-5);
+      lastFive.forEach(({ user, message }) => {
+        const li = document.createElement("li");
+        li.innerHTML = `<span class="user">${escapeHTML(user)}:</span> ${escapeHTML(message)}`;
+        dedicationsList.appendChild(li);
+      });
+    }
+
+    // Escape HTML for security
+    function escapeHTML(str) {
+      return str.replace(/[&<>"']/g, function (m) {
+        return ({
+          '&': '&amp;',
+          '<': '&lt;',
+          '>': '&gt;',
+          '"': '&quot;',
+          "'": '&#39;'
+        })[m];
+      });
+    }
+
+    // Animate tree bounce on planting
+    function plantTreeAnimation() {
+      animateTree();
+    }
+
+    // On form submit
+    document.getElementById("plantForm").addEventListener("submit", e => {
+      e.preventDefault();
+
+      if (!validateName()) {
+        nameInput.focus();
+        return;
+      }
+
+      const name = nameInput.value.trim();
+      const dedication = dedicationInput.value.trim();
+
+      const now = Date.now();
+      if (userCooldowns[name] && now - userCooldowns[name] < 5000) {
+        alert("Please wait 5 seconds before planting again.");
+        return;
+      }
+      userCooldowns[name] = now;
+
+      const today = getTodayKey();
+
+      // Increment global count
+      db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
+
+      // Increment user count
+      db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
+
+      // Add dedication if any
+      if (dedication) {
+        db.ref(`dedications/${today}`).push({ user: name, message: dedication });
+      }
+
+      plantTreeAnimation();
+
+      // Clear dedication input only, keep name input
+      dedicationInput.value = "";
+    });
+
+    // Listen for users data changes for leaderboard
+    db.ref("users").on("value", snap => {
+      updateLeaderboard(snap.val() || {});
+    });
+
+    // Listen for total trees count today
+    db.ref(`treeCount/${getTodayKey()}`).on("value", snap => {
+      counterEl.textContent = snap.val() || 0;
+    });
+
+    // Listen for dedications today, update live
+    db.ref(`dedications/${getTodayKey()}`).on("value", snap => {
+      const val = snap.val();
+      if (!val) {
+        updateDedications([]);
+        return;
+      }
+      // convert object to array of {user, message}
+      const dedicationsArr = Object.values(val);
+      updateDedications(dedicationsArr);
+    });
   </script>
 </body>
 </html>
