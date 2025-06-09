@@ -2,250 +2,161 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TEKA Trees – Global Goal Edition</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TEKA Trees</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-    * { box-sizing: border-box; }
     body {
-      margin: 0;
-      display: flex;
-      height: 100vh;
-      padding: 20px;
-      gap: 30px;
-      font-family: 'Inter', sans-serif;
+      font-family: 'Segoe UI', sans-serif;
       background: #e6f4ea;
-      color: #1e3a2f;
-      overflow: hidden;
+      margin: 0;
+      padding: 30px;
+      color: #065f46;
+      display: flex;
+      gap: 40px;
     }
-    main {
+    .left, .right {
       flex: 1;
-      max-width: 480px;
-      background: white;
-      border-radius: 16px;
-      padding: 30px 25px 40px;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    #counter {
+      font-size: 3rem;
+      font-weight: bold;
+    }
+    #facts {
+      margin: 20px 0;
+      font-style: italic;
+      max-width: 500px;
+    }
+    #plantForm {
       display: flex;
       flex-direction: column;
-      align-items: center;
-      overflow-y: auto;
+      gap: 10px;
+      max-width: 400px;
     }
-    h1 { font-weight: 600; font-size: 2.5rem; color: #065f46; margin-bottom: 15px; user-select: none; }
-    #globalGoal {
+    input, button {
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 8px;
+      border: 1px solid #a7f3d0;
+    }
+    #plantBtn {
+      background: #10b981;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    #plantBtn:hover {
+      background: #059669;
+    }
+    #treeEmoji {
+      font-size: 3rem;
+      margin: 20px 0;
+    }
+    .tree-bounce {
+      animation: bounce 0.5s ease;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    #leaderboard li {
+      background: #d1fae5;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 5px;
+    }
+    #leaderboard {
+      list-style: none;
+      padding: 0;
+      max-width: 400px;
+    }
+    .medal {
+      font-weight: bold;
+      margin-right: 5px;
+    }
+    #goalContainer {
+      margin-top: 30px;
       width: 100%;
-      margin-bottom: 25px;
-      user-select: none;
-    }
-    #globalGoalLabel {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: #047857;
-      margin-bottom: 6px;
-    }
-    #goalText {
-      font-weight: 400;
-      font-size: 0.9rem;
-      color: #065f46cc;
+      max-width: 400px;
     }
     #progressBar {
-      width: 100%;
-      height: 18px;
+      height: 20px;
       background: #d1fae5;
-      border-radius: 14px;
+      border-radius: 10px;
       overflow: hidden;
-      box-shadow: inset 0 2px 4px rgb(5 150 105 / 0.2);
+      margin-top: 5px;
     }
     #progressFill {
       height: 100%;
-      background: linear-gradient(90deg, #059669, #10b981);
-      width: 0%;
-      border-radius: 14px;
-      transition: width 1.2s ease;
-    }
-    #counter {
-      font-size: 3.5rem;
-      font-weight: 700;
-      color: #047857;
-      margin-bottom: 8px;
-      user-select: none;
-    }
-    #facts {
-      font-style: italic;
-      text-align: center;
-      max-width: 400px;
-      margin-bottom: 30px;
-      min-height: 48px;
-      color: #065f46dd;
-      user-select: none;
-    }
-    form {
-      width: 100%;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-      margin-bottom: 25px;
-    }
-    input[type="text"] {
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1.5px solid #a7f3d0;
-      font-size: 1rem;
-      font-weight: 500;
-      transition: border-color 0.3s ease;
-    }
-    input[type="text"]:focus { border-color: #059669; background: #f0fdf4; }
-    #nameInput.error { border-color: #ef4444; background: #fee2e2; }
-    #nameError {
-      color: #b91c1c;
-      font-size: 0.85rem;
-      margin-top: -8px;
-      margin-bottom: 8px;
-      font-weight: 600;
-      display: none;
-    }
-    button {
-      padding: 14px 0;
-      border: none;
-      border-radius: 14px;
       background: #10b981;
-      font-weight: 700;
-      font-size: 1.15rem;
-      color: white;
-      cursor: pointer;
-      transition: background 0.3s ease;
-      user-select: none;
+      width: 0%;
+      transition: width 0.5s ease;
     }
-    button:hover:not(:disabled) { background: #059669; }
-    button:disabled {
-      background: #a7f3d0;
-      cursor: not-allowed;
+    #donateContainer {
+      margin-top: 30px;
     }
-    #treeEmoji {
-      font-size: 4.5rem;
-      margin: 25px 0 15px;
-      user-select: none;
-      transition: transform 0.5s ease;
-    }
-    .tree-bounce { animation: bounce 0.5s ease; }
-    @keyframes bounce {
-      0%,100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
-    h2 { margin-top: 20px; color: #065f46; font-weight: 600; font-size: 1.7rem; user-select: none; }
-    ul#leaderboard {
-      list-style: none;
-      padding: 0;
-      width: 100%;
-      margin-bottom: 25px;
-    }
-    ul#leaderboard li {
-      background: #d1fae5;
-      border-radius: 14px;
-      margin-bottom: 10px;
-      padding: 14px 18px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      color: #065f46;
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      box-shadow: 0 2px 5px rgb(5 150 105 / 0.15);
-    }
-    ul#leaderboard li .medal { font-size: 1.6rem; }
-    ul#leaderboard li:nth-child(1) { background: #fff9db; color: #b47b00; }
-    ul#leaderboard li:nth-child(2) { background: #f0f7ff; color: #2563eb; }
-    ul#leaderboard li:nth-child(3) { background: #fef0f0; color: #dc2626; }
-    #rightPanel {
-      width: 380px;
-      display: flex;
-      flex-direction: column;
-      gap: 28px;
-    }
-    #dedicationsBox {
-      flex: 1;
-      background: rgba(255 255 255 / 0.15);
-      backdrop-filter: blur(10px);
-      border-radius: 20px;
-      padding: 20px;
-      box-shadow: 0 8px 25px rgb(0 0 0 / 0.05);
-      display: flex;
-      flex-direction: column;
+    #dedications {
+      background: rgba(255, 255, 255, 0.7);
+      border: 1px solid #b0eacd;
+      padding: 15px;
+      border-radius: 12px;
+      max-height: 300px;
       overflow: hidden;
-    }
-    #dedicationsBox h2 {
-      margin: 0;
-      font-size: 1.6rem;
-      font-weight: 600;
-      color: #065f46;
-      user-select: none;
-    }
-    #dedicationsList {
-      list-style: none;
-      padding: 0;
-      margin: 16px 0 0 0;
-      flex: 1;
-      overflow-y: auto;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 10px;
+      font-size: 0.95rem;
+      transition: all 0.5s ease;
     }
-    #dedicationsList li {
-      background: rgba(255 255 255 / 0.45);
-      border-radius: 14px;
-      padding: 14px 18px;
-      font-size: 1rem;
-      color: #065f46dd;
-      font-weight: 500;
-      opacity: 0;
-      animation: fadeIn 1s forwards;
-      box-shadow: 0 2px 10px rgb(5 150 105 / 0.08);
+    .dedication {
+      animation: fadein 0.6s ease-in-out;
     }
-    #dedicationsList li span.user {
-      font-weight: 700;
-      color: #047857;
-      margin-right: 8px;
-      user-select: text;
-    }
-    @keyframes fadeIn {
-      to { opacity: 1; }
+    @keyframes fadein {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
   </style>
 </head>
 <body>
-  <main>
+  <div class="left">
     <h1>TEKA Trees</h1>
-    <section id="globalGoal">
-      <div id="globalGoalLabel">
-        <span>🌍 Global Goal Progress</span>
-        <span id="goalText">0 / 100,000,000 trees</span>
-      </div>
-      <div id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100000000" aria-valuenow="0">
-        <div id="progressFill"></div>
-      </div>
-    </section>
     <div id="counter">0</div>
     <div id="facts"></div>
     <form id="plantForm">
       <input type="text" id="nameInput" placeholder="Enter your name" />
-      <div id="nameError">Please enter your name before planting.</div>
       <input type="text" id="dedicationInput" placeholder="Dedication (optional)" />
       <button type="submit" id="plantBtn">🌱 Plant Tree</button>
     </form>
     <div id="treeEmoji">🌳</div>
+
+    <div id="goalContainer">
+      <h2>Global Goal: 100 Million Trees</h2>
+      <div id="progressBar"><div id="progressFill"></div></div>
+    </div>
+
     <h2>Leaderboard</h2>
     <ul id="leaderboard"></ul>
-  </main>
-  <section id="rightPanel">
-    <div id="dedicationsBox">
-      <h2>Recent Dedications</h2>
-      <ul id="dedicationsList"></ul>
+
+    <div id="donateContainer">
+      <h2>Support Our Mission</h2>
+      <p>Donate to plant trees – every $1 = 100 🌳</p>
+      <div id="paypal-donate-button-container"></div>
     </div>
-  </section>
+  </div>
+
+  <div class="right">
+    <h2>🌿 Recent Dedications</h2>
+    <div id="dedications"></div>
+  </div>
+
+  <!-- Firebase + PayPal -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script src="https://www.paypalobjects.com/donate/sdk/donate-sdk.js" charset="UTF-8"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
@@ -259,37 +170,26 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const GLOBAL_GOAL = 100_000_000;
-    const nameInput = document.getElementById("nameInput");
-    const nameError = document.getElementById("nameError");
-    const dedicationInput = document.getElementById("dedicationInput");
     const counterEl = document.getElementById("counter");
-    const treeEmoji = document.getElementById("treeEmoji");
     const leaderboardEl = document.getElementById("leaderboard");
-    const dedicationsList = document.getElementById("dedicationsList");
-    const goalText = document.getElementById("goalText");
+    const factsEl = document.getElementById("facts");
+    const dedicationEl = document.getElementById("dedications");
     const progressFill = document.getElementById("progressFill");
-    const progressBar = document.getElementById("progressBar");
+    const treeEmoji = document.getElementById("treeEmoji");
 
-    let factIndex = 0;
+    const cooldowns = {};
+
     const facts = [
       "Trees absorb harmful gases and give us clean oxygen.",
-      "One tree can remove up to 48 pounds of CO₂ annually.",
-      "Urban forests can cool cities by up to 10°F.",
-      "Trees host over 80% of land species.",
-      "Planting trees boosts mood & reduces stress."
+      "One tree can remove up to 48 pounds of CO2 per year.",
+      "Urban forests can reduce city temperatures by up to 10°F.",
+      "Trees are home to more than 80% of land-based species.",
+      "Planting trees can reduce stress and improve mood."
     ];
-
-    const userCooldowns = {};
-
-    function animateTree() {
-      treeEmoji.classList.add("tree-bounce");
-      setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 500);
-    }
-
+    let factIndex = 0;
     function rotateFacts() {
-      document.getElementById("facts").textContent = facts[factIndex++];
-      if (factIndex >= facts.length) factIndex = 0;
+      factsEl.textContent = facts[factIndex];
+      factIndex = (factIndex + 1) % facts.length;
     }
     rotateFacts();
     setInterval(rotateFacts, 7000);
@@ -298,95 +198,94 @@
       return new Date().toISOString().split("T")[0];
     }
 
-    function validateName() {
-      if (nameInput.value.trim() === "") {
-        nameInput.classList.add("error");
-        nameError.style.display = "block";
-        return false;
-      } else {
-        nameInput.classList.remove("error");
-        nameError.style.display = "none";
-        return true;
-      }
+    function animateTree() {
+      treeEmoji.classList.add("tree-bounce");
+      setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 500);
     }
 
     function updateLeaderboard(users) {
       leaderboardEl.innerHTML = "";
       const today = getTodayKey();
-      const arr = Object.entries(users).map(([u, dates]) => [u, dates[today] || 0]);
-      arr.sort((a, b) => b[1] - a[1]).slice(0,10).forEach((item, i) => {
-        const [u, c] = item;
-        if (c === 0) return;
+      const entries = Object.entries(users).map(([user, days]) => [user, days[today] || 0]);
+      entries.sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([user, count], index) => {
         const li = document.createElement("li");
-        const medals = ["🥇","🥈","🥉"];
-        const m = medals[i] || "";
-        li.innerHTML = `<span class="medal">${m}</span>${u}: ${c} tree${c>1?'s':''}`;
+        const medals = ["🥇", "🥈", "🥉"];
+        li.innerHTML = `<span class="medal">${medals[index] || ""}</span> ${user}: ${count} tree${count !== 1 ? "s" : ""}`;
         leaderboardEl.appendChild(li);
       });
     }
 
-    function updateDedications(arr) {
-      dedicationsList.innerHTML = "";
-      const last = arr.slice(-5);
-      last.forEach(item => {
-        const li = document.createElement("li");
-        li.innerHTML = `<span class="user">${escapeHTML(item.user)}:</span>${escapeHTML(item.message)}`;
-        dedicationsList.appendChild(li);
-      });
-    }
-
-    function escapeHTML(s) {
-      return s.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
-    }
-
     function updateGlobalProgress(total) {
-      const pct = Math.min(total / GLOBAL_GOAL * 100, 100).toFixed(3);
-      progressFill.style.width = pct + '%';
-      goalText.textContent = `${total.toLocaleString()} / ${GLOBAL_GOAL.toLocaleString()} trees`;
-      progressBar.setAttribute("aria-valuenow", total);
+      const percent = Math.min(100, (total / 100000000) * 100);
+      progressFill.style.width = `${percent}%`;
     }
 
-    function fetchGlobalTotal() {
-      db.ref("treeCount").once("value", snap => {
-        const data = snap.val() || {};
-        let sum = Object.values(data).reduce((s,n) => s + (n || 0), 0);
-        updateGlobalProgress(sum);
+    function updateDedications(snapshot) {
+      dedicationEl.innerHTML = "";
+      const list = [];
+      snapshot.forEach(child => list.push(child.val()));
+      list.slice(-5).forEach(d => {
+        const div = document.createElement("div");
+        div.className = "dedication";
+        div.textContent = `${d.user || "Anonymous"}: “${d.message}”`;
+        dedicationEl.appendChild(div);
       });
     }
 
     document.getElementById("plantForm").addEventListener("submit", e => {
       e.preventDefault();
-      if (!validateName()) return;
+      const nameInput = document.getElementById("nameInput");
+      const dedication = document.getElementById("dedicationInput").value.trim();
+      const name = nameInput.value.trim() || "Name not entered";
 
-      const name = nameInput.value.trim();
-      const msg = dedicationInput.value.trim();
       const now = Date.now();
-      if (userCooldowns[name] && now - userCooldowns[name] < 5000) {
-        alert("Please wait 5 seconds before planting again.");
+      if (cooldowns[name] && now - cooldowns[name] < 5000) {
+        alert("🌱 Please wait 5 seconds before planting again.");
         return;
       }
-      userCooldowns[name] = now;
+      cooldowns[name] = now;
 
-      const day = getTodayKey();
-      db.ref("treeCount/" + day).transaction(n => (n||0)+1);
-      db.ref("users/" + name + "/" + day).transaction(n => (n||0)+1);
-      if (msg) db.ref(`dedications/${day}`).push({ user: name, message: msg });
-
+      const today = getTodayKey();
+      db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
+      db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
+      if (dedication) {
+        db.ref(`dedications/${today}`).push({ user: name, message: dedication });
+      }
       animateTree();
-      dedicationInput.value = "";
-
-      fetchGlobalTotal();
     });
 
     db.ref("users").on("value", snap => updateLeaderboard(snap.val() || {}));
-    db.ref(`treeCount/${getTodayKey()}`).on("value", snap => counterEl.textContent = snap.val() || 0);
-    db.ref(`dedications/${getTodayKey()}`).on("value", snap => {
-      const v = snap.val() || {};
-      const arr = Object.values(v);
-      updateDedications(arr);
+    db.ref(`treeCount/${getTodayKey()}`).on("value", snap => {
+      counterEl.textContent = snap.val() || 0;
     });
+    db.ref("treeCount").on("value", snap => {
+      let total = 0;
+      snap.forEach(child => total += child.val() || 0);
+      updateGlobalProgress(total);
+    });
+    db.ref(`dedications/${getTodayKey()}`).on("value", updateDedications);
 
-    fetchGlobalTotal();
+    function addDonationTrees(numTrees) {
+      const today = getTodayKey();
+      db.ref(`treeCount/${today}`).transaction(n => (n || 0) + numTrees);
+    }
+
+    PayPal.Donation.Button({
+      env: 'sandbox', // change to 'sandbox' for testing
+      hosted_button_id: 'BVWWLMB3DZXW4',
+      image: {
+        src: 'https://www.paypalobjects.com/en_US/i/btn/btn_donateCC_LG.gif',
+        alt: 'Donate with PayPal button'
+      },
+      onComplete: donation => {
+        const dollars = parseFloat(donation.amt);
+        if (!isNaN(dollars) && dollars > 0) {
+          const trees = Math.round(dollars * 100);
+          addDonationTrees(trees);
+          alert(`🌲 ${trees} trees planted from your donation. Thank you!`);
+        }
+      }
+    }).render('#paypal-donate-button-container');
   </script>
 </body>
 </html>
