@@ -2,90 +2,119 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>TEKA Trees</title>
   <style>
     body {
       margin: 0;
-      padding: 30px;
       font-family: 'Segoe UI', sans-serif;
-      background-color: #f0fdf4;
-      color: #065f46;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
+      background: #f0fdf4;
+      color: #064e3b;
+      text-align: center;
+      padding: 2rem;
     }
+
     h1 {
       font-size: 2.5rem;
-      margin-bottom: 10px;
+      color: #065f46;
     }
+
     #counter {
       font-size: 3rem;
       font-weight: bold;
+      margin: 10px 0;
     }
+
     #facts {
-      margin: 20px 0;
+      margin: 20px auto;
       font-style: italic;
       max-width: 500px;
-      text-align: center;
+      color: #065f46;
     }
+
     form {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      width: 100%;
       max-width: 400px;
+      margin: 20px auto;
     }
+
     input, button {
       padding: 10px;
-      border: 1px solid #a7f3d0;
       border-radius: 8px;
       font-size: 1rem;
+      border: 1px solid #a7f3d0;
     }
+
     button {
-      background: #10b981;
+      background-color: #10b981;
       color: white;
       font-weight: bold;
       cursor: pointer;
       transition: background 0.3s;
     }
+
     button:hover {
-      background: #059669;
+      background-color: #059669;
     }
+
     #treeEmoji {
       font-size: 3rem;
-      margin: 20px;
+      margin: 20px 0;
+      transition: transform 0.3s;
     }
+
     .tree-bounce {
       animation: bounce 0.5s ease;
     }
+
     @keyframes bounce {
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-15px); }
     }
-    ul {
-      list-style: none;
-      padding: 0;
+
+    #leaderboard {
+      margin-top: 30px;
       max-width: 400px;
-      width: 100%;
+      margin-left: auto;
+      margin-right: auto;
+      padding: 0;
+      list-style: none;
     }
-    li {
+
+    #leaderboard li {
       background: #d1fae5;
       padding: 10px;
       border-radius: 10px;
-      margin-bottom: 5px;
+      margin: 5px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .medal {
+      margin-right: 10px;
+    }
+
+    .name {
+      font-weight: bold;
+    }
+
+    .count {
+      color: #065f46;
     }
   </style>
 </head>
 <body>
   <h1>TEKA Trees</h1>
   <div id="counter">0</div>
-  <div id="facts"></div>
+  <div id="facts">Loading fact...</div>
 
   <form id="plantForm">
     <input type="text" id="nameInput" placeholder="Your name" required />
     <input type="text" id="dedicationInput" placeholder="Dedication (optional)" />
-    <button type="submit">🌱 Plant Tree</button>
+    <button type="submit">🌱 Plant a Tree</button>
   </form>
 
   <div id="treeEmoji">🌳</div>
@@ -122,27 +151,17 @@
       setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 500);
     }
 
-    function updateLeaderboard(users) {
-      leaderboardEl.innerHTML = "";
-      const today = getTodayKey();
-      const entries = Object.entries(users).map(([user, records]) => [user, records[today] || 0]);
-      entries.sort((a, b) => b[1] - a[1]);
-      entries.forEach(([user, count]) => {
-        const li = document.createElement("li");
-        li.textContent = `${user}: ${count} tree${count !== 1 ? 's' : ''}`;
-        leaderboardEl.appendChild(li);
-      });
-    }
-
-    document.getElementById("plantForm").addEventListener("submit", e => {
+    document.getElementById("plantForm").addEventListener("submit", (e) => {
       e.preventDefault();
       const name = document.getElementById("nameInput").value.trim();
       const dedication = document.getElementById("dedicationInput").value.trim();
+      const today = getTodayKey();
+
       if (!name) return alert("Please enter your name.");
 
-      const today = getTodayKey();
       db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
       db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
+
       if (dedication) {
         db.ref(`dedications/${today}`).push({ user: name, message: dedication });
       }
@@ -150,12 +169,30 @@
       animateTree();
     });
 
-    db.ref(`treeCount/${getTodayKey()}`).on("value", snap => {
-      counterEl.textContent = snap.val() || 0;
+    db.ref(`treeCount/${getTodayKey()}`).on("value", (snapshot) => {
+      counterEl.textContent = snapshot.val() || 0;
     });
 
-    db.ref("users").on("value", snap => {
-      updateLeaderboard(snap.val() || {});
+    db.ref("users").on("value", (snapshot) => {
+      const users = snapshot.val() || {};
+      const today = getTodayKey();
+      const userData = Object.entries(users).map(([name, days]) => {
+        return { name, count: days[today] || 0 };
+      }).filter(u => u.count > 0);
+
+      userData.sort((a, b) => b.count - a.count);
+
+      leaderboardEl.innerHTML = "";
+      userData.forEach((user, index) => {
+        const li = document.createElement("li");
+        const medal = ["🥇", "🥈", "🥉"][index] || "🌿";
+        li.innerHTML = `
+          <span class="medal">${medal}</span>
+          <span class="name">${user.name}</span>
+          <span class="count">🌳 ${user.count}</span>
+        `;
+        leaderboardEl.appendChild(li);
+      });
     });
 
     const facts = [
@@ -165,7 +202,6 @@
       "Trees are home to more than 80% of land-based species.",
       "Planting trees can reduce stress and improve mood."
     ];
-
     let factIndex = 0;
     function rotateFacts() {
       document.getElementById("facts").textContent = facts[factIndex];
