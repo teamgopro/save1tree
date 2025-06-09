@@ -52,6 +52,15 @@
     margin: 0;
     color: #065f46;
   }
+
+<div id="progress-container" class="card" aria-label="Progress Bar">
+  <h2>Tree Goal Progress 🌍</h2>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+  </div>
+  <p id="progress-text">0% of 100,000,000 trees</p>
+</div>
+
   #clicks-count {
     font-size: 1rem;
     margin: 0.5rem 0 1rem;
@@ -216,6 +225,7 @@
     }
   }
 </style>
+
 </head>
 <body>
   <div id="loading-screen" aria-live="polite" aria-busy="true">
