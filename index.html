@@ -1,490 +1,503 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TEKA Trees</title>
-  <style>
-    /* --- Reset & base --- */
-    * {
-      box-sizing: border-box;
-    }
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #f0fdf4;
-      color: #065f46;
-      display: flex;
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>TEKA Trees - Plant & Click</title>
+<style>
+  /* Reset */
+  * {
+    box-sizing: border-box;
+  }
+  body, html {
+    margin: 0; padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #a8e6cf, #dcedc1);
+    color: #064635;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+  }
+  h1 {
+    text-align: center;
+    margin: 1rem 0 0.2rem;
+    font-size: 2.8rem;
+    color: #047857;
+    text-shadow: 0 1px 3px #2f855a88;
+  }
+  #app {
+    flex-grow: 1;
+    display: flex;
+    max-width: 1100px;
+    margin: 0 auto 2rem;
+    gap: 2rem;
+    padding: 0 1rem;
+    flex-wrap: wrap;
+  }
+  /* Left panel */
+  #left-panel {
+    flex: 1 1 450px;
+    background: #def7ec;
+    border-radius: 20px;
+    box-shadow: 0 6px 20px rgb(5 150 105 / 0.25);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem 1.5rem;
+    user-select: none;
+  }
+  #tree-count {
+    font-size: 4rem;
+    font-weight: 900;
+    margin: 0;
+    color: #065f46;
+  }
+  #clicks-count {
+    font-size: 1rem;
+    margin: 0.5rem 0 1rem;
+    color: #047857cc;
+  }
+  #plant-btn {
+    margin-top: 0.6rem;
+    background: linear-gradient(45deg, #22c55e, #166534);
+    border: none;
+    border-radius: 14px;
+    color: white;
+    font-weight: 700;
+    font-size: 1.3rem;
+    padding: 14px 32px;
+    cursor: pointer;
+    box-shadow: 0 6px 15px rgb(5 150 105 / 0.45);
+    transition: background 0.3s ease;
+  }
+  #plant-btn:hover:not(:disabled) {
+    background: linear-gradient(45deg, #166534, #22c55e);
+  }
+  #plant-btn:disabled {
+    background: #94a3b8;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+  #tree-emoji {
+    font-size: 5rem;
+    margin: 1.5rem 0 1rem;
+    user-select: none;
+    cursor: default;
+    animation-duration: 0.5s;
+  }
+  #tree-emoji.animate {
+    animation-name: bounce;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-20px); }
+  }
+  /* Form inputs */
+  form {
+    width: 100%;
+    max-width: 420px;
+    margin-top: 1.2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  input[type="text"] {
+    padding: 12px 14px;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: 1.5px solid #bbf7d0;
+    outline-offset: 2px;
+    transition: border-color 0.3s ease;
+  }
+  input[type="text"]:focus {
+    border-color: #22c55e;
+  }
+  /* Right panel */
+  #right-panel {
+    flex: 1 1 350px;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+  section.card {
+    background: #d1fae5cc;
+    backdrop-filter: saturate(180%) blur(15px);
+    border-radius: 20px;
+    box-shadow: 0 0 30px rgb(16 185 129 / 0.3);
+    padding: 1.8rem 2rem;
+    overflow-y: auto;
+    max-height: 470px;
+  }
+  section.card h2 {
+    margin-top: 0;
+    font-size: 1.8rem;
+    color: #16a34a;
+    user-select: none;
+  }
+  ul.leaderboard-list,
+  ul.dedications-list {
+    list-style: none;
+    padding: 0;
+    margin: 1rem 0 0 0;
+  }
+  ul.leaderboard-list li {
+    background: #a7f3d0;
+    margin-bottom: 12px;
+    padding: 12px 18px;
+    border-radius: 14px;
+    font-weight: 700;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    box-shadow: 0 2px 12px rgb(5 150 105 / 0.25);
+    transition: transform 0.3s ease;
+    cursor: default;
+  }
+  ul.leaderboard-list li:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 20px rgb(5 150 105 / 0.4);
+  }
+  ul.dedications-list li {
+    margin-bottom: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    background: #bbf7d0cc;
+    color: #064635dd;
+    font-style: italic;
+    font-size: 1rem;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgb(5 150 105 / 0.15);
+  }
+  ul.dedications-list li strong {
+    color: #047857;
+    font-weight: 800;
+    font-style: normal;
+  }
+  .medal {
+    font-size: 1.6rem;
+  }
+  /* Loading Screen */
+  #loading-screen {
+    position: fixed;
+    inset: 0;
+    background: #22c55e;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    flex-direction: column;
+    color: white;
+    font-weight: 700;
+    font-size: 1.5rem;
+    user-select: none;
+  }
+  #loading-spinner {
+    border: 5px solid #a7f3d0;
+    border-top: 5px solid white;
+    border-radius: 50%;
+    width: 60px;
+    height: 60px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+  }
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+  /* Responsive */
+  @media (max-width: 900px) {
+    #app {
       flex-direction: column;
       align-items: center;
-      padding: 30px;
-      min-height: 100vh;
     }
-    h1 {
-      font-size: 2.8rem;
-      margin-bottom: 15px;
-      font-weight: 900;
-      color: #10b981;
-      text-shadow: 0 1px 6px rgba(16,185,129,0.3);
+    #left-panel, #right-panel {
+      flex: 1 1 100%;
+      max-width: 600px;
     }
-    /* --- Layout --- */
-    #app-container {
-      display: flex;
-      width: 100%;
-      max-width: 1100px;
-      gap: 30px;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-
-    /* --- Left side (main content) --- */
-    #left-side {
-      flex: 1 1 500px;
-      background: #d1fae5;
-      border-radius: 16px;
-      box-shadow: 0 0 20px rgba(16, 185, 129, 0.25);
-      padding: 25px 30px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-    #counter {
-      font-size: 4rem;
-      font-weight: 900;
-      color: #047857;
-      margin: 0;
-      user-select: none;
-    }
-    #facts {
-      margin: 20px 0 30px;
-      font-style: italic;
-      font-size: 1.15rem;
-      max-width: 450px;
-      text-align: center;
-      color: #065f46cc;
-      min-height: 48px;
-      transition: opacity 0.8s ease;
-    }
-    form#plantForm {
-      display: flex;
-      flex-direction: column;
-      gap: 15px;
-      width: 100%;
-      max-width: 420px;
-    }
-    input[type="text"] {
-      padding: 12px 14px;
-      font-size: 1rem;
-      border-radius: 12px;
-      border: 1.5px solid #a7f3d0;
-      outline-offset: 2px;
-      transition: border-color 0.3s ease;
-    }
-    input[type="text"]:focus {
-      border-color: #059669;
-    }
-    button#plantBtn {
-      background: linear-gradient(45deg, #34d399, #059669);
-      color: white;
-      font-weight: 700;
-      font-size: 1.2rem;
-      border: none;
-      padding: 14px;
-      border-radius: 14px;
-      cursor: pointer;
-      user-select: none;
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.4);
-      transition: background 0.3s ease;
-    }
-    button#plantBtn:hover {
-      background: linear-gradient(45deg, #059669, #047857);
-    }
-
-    #treeEmoji {
-      font-size: 5rem;
-      margin: 30px 0 10px;
-      user-select: none;
-      cursor: default;
-      animation: bounce 0.6s ease;
-      animation-iteration-count: 1;
-    }
-    @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-20px); }
-    }
-
-    /* --- Right side (leaderboard + dedications) --- */
-    #right-side {
-      flex: 1 1 350px;
-      display: flex;
-      flex-direction: column;
-      gap: 35px;
-    }
-
-    /* Leaderboard */
-    #leaderboard-container {
-      background: #ffffffcc;
-      backdrop-filter: saturate(180%) blur(20px);
-      border-radius: 18px;
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
-      padding: 25px 30px;
-      max-height: 450px;
-      overflow-y: auto;
-    }
-    #leaderboard-container h3 {
-      margin: 0 0 18px 0;
-      color: #059669;
-      font-weight: 800;
-      font-size: 1.8rem;
-      user-select: none;
-    }
-    #leaderboard {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    #leaderboard li {
-      background: #a7f3d0;
-      padding: 12px 18px;
-      border-radius: 14px;
-      margin-bottom: 12px;
-      font-weight: 600;
-      font-size: 1.1rem;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      box-shadow: 0 2px 8px rgba(5,150,105,0.25);
-      user-select: none;
-      transition: transform 0.3s ease;
-      cursor: default;
-    }
-    #leaderboard li:hover {
-      transform: scale(1.05);
-      box-shadow: 0 6px 14px rgba(5,150,105,0.4);
-    }
-    .medal {
-      font-size: 1.6rem;
-      user-select: none;
-    }
-
-    /* Dedications */
-    #dedications-container {
-      background: #ffffffbb;
-      backdrop-filter: saturate(180%) blur(30px);
-      border-radius: 18px;
-      box-shadow: 0 0 25px rgba(16, 185, 129, 0.3);
-      padding: 25px 30px;
-      max-height: 400px;
-      overflow-y: auto;
-      position: relative;
-    }
-    #dedications-container h3 {
-      margin: 0 0 18px 0;
-      color: #059669;
-      font-weight: 800;
-      font-size: 1.8rem;
-      user-select: none;
-    }
-    #dedications {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    #dedications li {
-      padding: 14px 18px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-      background: #d1fae5cc;
-      color: #065f46dd;
-      font-size: 1rem;
-      font-weight: 600;
-      line-height: 1.3;
-      box-shadow: 0 2px 6px rgba(5,150,105,0.2);
-      opacity: 0;
-      animation: fadeInUp 0.7s forwards;
-      user-select: none;
-    }
-    #dedications li .dedication-user {
-      font-weight: 800;
-      color: #047857;
-      margin-bottom: 4px;
-    }
-    #dedications li .dedication-message {
-      font-style: italic;
-      color: #065f46cc;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(12px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    /* Responsive */
-    @media (max-width: 900px) {
-      #app-container {
-        flex-direction: column;
-        align-items: center;
-      }
-      #right-side {
-        width: 100%;
-      }
-      #left-side {
-        width: 100%;
-        max-width: 600px;
-      }
-    }
-
-  </style>
+  }
+</style>
 </head>
 <body>
+  <div id="loading-screen" aria-live="polite" aria-busy="true">
+    <div id="loading-spinner" role="img" aria-label="Loading spinner"></div>
+    Loading TEKA Trees...
+  </div>
+
   <h1>🌳 TEKA Trees 🌳</h1>
-  <div id="app-container">
-    <!-- Left side -->
-    <section id="left-side">
-      <div id="counter">0</div>
-      <div id="facts"></div>
-      <form id="plantForm" autocomplete="off" spellcheck="false">
-        <input
-          type="text"
-          id="nameInput"
-          placeholder="Enter your name"
-          required
-          maxlength="25"
-        />
-        <input
-          type="text"
-          id="dedicationInput"
-          placeholder="Dedication (optional)"
-          maxlength="60"
-        />
-        <button type="submit" id="plantBtn" aria-label="Plant a Tree Button">
-          🌱 Plant Tree
-        </button>
+  <div id="app" role="main" aria-label="TEKA Trees planting app">
+    <section id="left-panel" aria-label="Plant Trees Section">
+      <p id="tree-count" aria-live="polite" aria-atomic="true" aria-relevant="text">0</p>
+      <p id="clicks-count" aria-live="polite" aria-atomic="true">Clicks: 0 / 100 (1 tree)</p>
+      <button id="plant-btn" disabled aria-disabled="true" aria-label="Plant a tree button">🌱 Plant Tree</button>
+      <div id="tree-emoji" aria-hidden="true">🌳</div>
+
+      <form id="dedication-form" autocomplete="off" spellcheck="false" aria-label="Dedication form">
+        <input type="text" id="name-input" placeholder="Your name" maxlength="25" required aria-required="true" />
+        <input type="text" id="dedication-input" placeholder="Add a dedication (optional)" maxlength="60" />
       </form>
-      <div id="treeEmoji">🌳</div>
     </section>
 
-    <!-- Right side -->
-    <section id="right-side">
-      <div id="leaderboard-container" aria-label="Leaderboard Section">
-        <h3>Leaderboard</h3>
-        <ul id="leaderboard"></ul>
-      </div>
+    <section id="right-panel" aria-label="Leaderboard and Dedications">
+      <section class="card" aria-label="Leaderboard">
+        <h2>Leaderboard 🏆</h2>
+        <ul class="leaderboard-list" id="leaderboard" aria-live="polite" aria-atomic="true" aria-relevant="additions"></ul>
+      </section>
 
-      <div id="dedications-container" aria-label="Dedications Section">
-        <h3>Recent Dedications</h3>
-        <ul id="dedications"></ul>
-      </div>
+      <section class="card" aria-label="Recent Dedications">
+        <h2>Recent Dedications 💬</h2>
+        <ul class="dedications-list" id="dedications" aria-live="polite" aria-atomic="true" aria-relevant="additions">
+          <li>No dedications yet 🌿</li>
+        </ul>
+      </section>
     </section>
   </div>
 
-  <!-- Firebase -->
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-database-compat.js"></script>
+<script>
+  // Your Firebase config - REPLACE these values with your own Firebase project config
+  const firebaseConfig = {
+    apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
+    authDomain: "save1tree-f116f.firebaseapp.com",
+    databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
+    projectId: "save1tree-f116f",
+    storageBucket: "save1tree-f116f.firebasestorage.app",
+    messagingSenderId: "823144374779",
+    appId: "1:823144374779:web:54a54f23cef8638dea6b5e",
+  };
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.database();
 
-  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
-      authDomain: "save1tree-f116f.firebaseapp.com",
-      databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
-      projectId: "save1tree-f116f",
-      storageBucket: "save1tree-f116f.appspot.com",
-      messagingSenderId: "823144374779",
-      appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
-    };
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
+  // Elements
+  const loadingScreen = document.getElementById("loading-screen");
+  const treeCountEl = document.getElementById("tree-count");
+  const clicksCountEl = document.getElementById("clicks-count");
+  const plantBtn = document.getElementById("plant-btn");
+  const treeEmoji = document.getElementById("tree-emoji");
+  const nameInput = document.getElementById("name-input");
+  const dedicationInput = document.getElementById("dedication-input");
+  const leaderboardEl = document.getElementById("leaderboard");
+  const dedicationsEl = document.getElementById("dedications");
 
-    const counterEl = document.getElementById("counter");
-    const factsEl = document.getElementById("facts");
-    const treeEmoji = document.getElementById("treeEmoji");
-    const leaderboardEl = document.getElementById("leaderboard");
-    const dedicationsEl = document.getElementById("dedications");
-    const plantForm = document.getElementById("plantForm");
-    const nameInput = document.getElementById("nameInput");
-    const dedicationInput = document.getElementById("dedicationInput");
+  // Constants
+  const CLICK_LIMIT = 100; // clicks per tree
+  const COOLDOWN_MS = 5000; // 5 seconds per user cooldown
+  const GLOBAL_GOAL = 100_000_000; // 100 million trees goal
 
-    // Facts to rotate
-    const facts = [
-      "Trees absorb harmful gases and give us clean oxygen.",
-      "One tree can remove up to 48 pounds of CO2 per year.",
-      "Urban forests can reduce city temperatures by up to 10°F.",
-      "Trees are home to more than 80% of land-based species.",
-      "Planting trees can reduce stress and improve mood.",
-      "Every minute, 23,000 acres of forest are lost worldwide.",
-      "Trees help prevent soil erosion and improve water quality.",
-      "The world's oldest tree is over 5,000 years old.",
-      "Trees provide food, shelter, and medicine for millions of people.",
-      "Reforestation can help combat climate change effectively."
-    ];
-    let factIndex = 0;
+  // State
+  let clickCounter = 0;
+  let userCooldown = false;
+  let totalTrees = 0;
 
-    // Animate tree bounce
-    function animateTree() {
-      treeEmoji.classList.add("tree-bounce");
-      setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 600);
+  // Helpers
+  function formatNumber(n) {
+    return n.toLocaleString();
+  }
+  function getTodayKey() {
+    const now = new Date();
+    return now.toISOString().slice(0, 10);
+  }
+
+  // Animate tree bounce
+  function animateTree() {
+    treeEmoji.classList.add("animate");
+    setTimeout(() => treeEmoji.classList.remove("animate"), 500);
+  }
+
+  // Enable or disable Plant button depending on input and cooldown
+  function updatePlantBtnState() {
+    const hasName = nameInput.value.trim().length > 0;
+    plantBtn.disabled = !(hasName && !userCooldown && clickCounter >= CLICK_LIMIT);
+    plantBtn.setAttribute("aria-disabled", plantBtn.disabled);
+  }
+
+  // Fetch data & update UI
+  async function fetchData() {
+    try {
+      const snapshot = await db.ref("/").once("value");
+      const data = snapshot.val() || {};
+
+      // Calculate total trees and prepare leaderboard
+      let count = 0;
+      const userCounts = {};
+
+      Object.values(data).forEach(dateGroup => {
+        Object.entries(dateGroup).forEach(([user, userData]) => {
+          let userCount = 0;
+          if (typeof userData === "object") {
+            // sum count + array lengths (for dedications)
+            if (userData.count) userCount += userData.count;
+          }
+          count += userCount;
+          if (userCounts[user]) userCounts[user] += userCount;
+          else userCounts[user] = userCount;
+        });
+      });
+
+      totalTrees = count;
+      treeCountEl.textContent = formatNumber(totalTrees);
+
+      // Update clicks count
+      clicksCountEl.textContent = `Clicks: ${clickCounter} / ${CLICK_LIMIT} (1 tree)`;
+
+      // Build sorted leaderboard array
+      const sortedUsers = Object.entries(userCounts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 10);
+
+      renderLeaderboard(sortedUsers);
+      renderDedications(data);
+
+      // Hide loading screen on first load
+      loadingScreen.style.display = "none";
+
+      updatePlantBtnState();
+    } catch (error) {
+      console.error("Error fetching data:", error);
+    }
+  }
+
+  // Render leaderboard with medals and emojis
+  function renderLeaderboard(sortedUsers) {
+    leaderboardEl.innerHTML = "";
+    if (sortedUsers.length === 0) {
+      leaderboardEl.innerHTML = "<li>No trees planted yet 🌱</li>";
+      return;
     }
 
-    // Show rotating facts
-    function rotateFacts() {
-      factsEl.style.opacity = 0;
-      setTimeout(() => {
-        factsEl.textContent = facts[factIndex];
-        factsEl.style.opacity = 1;
-        factIndex = (factIndex + 1) % facts.length;
-      }, 700);
-    }
-    rotateFacts();
-    setInterval(rotateFacts, 7000);
-
-    // Get today's date string
-    function getTodayKey() {
-      return new Date().toISOString().split("T")[0];
-    }
-
-    // Medals for leaderboard
     const medals = ["🥇", "🥈", "🥉"];
 
-    // Render leaderboard with emoji places
-    function renderLeaderboard(data) {
-      leaderboardEl.innerHTML = "";
-      if (!data) {
-        leaderboardEl.innerHTML = "<li>No data yet</li>";
-        return;
-      }
-      // Map and sort
-      const today = getTodayKey();
-      const usersArray = Object.entries(data).map(([username, days]) => {
-        return {
-          username,
-          count: days[today] || 0
-        };
-      });
-      usersArray.sort((a, b) => b.count - a.count);
+    sortedUsers.forEach(([user, count], i) => {
+      const medal = medals[i] || "🌲";
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="medal" aria-label="Rank ${i+1}">${medal}</span> <strong>${user}</strong> — ${formatNumber(count)} trees`;
+      leaderboardEl.appendChild(li);
+    });
+  }
 
-      usersArray.slice(0, 10).forEach((user, idx) => {
-        const li = document.createElement("li");
-        const medal = medals[idx] || "🌲";
-        li.innerHTML = `<span class="medal">${medal}</span> <span>${user.username}: <strong>${user.count} tree${user.count !== 1 ? 's' : ''}</strong></span>`;
-        leaderboardEl.appendChild(li);
-      });
-
-      if (usersArray.length === 0) {
-        leaderboardEl.innerHTML = "<li>No trees planted yet</li>";
-      }
-    }
-
-    // Render last 5 dedications with fade in
-    function renderDedications(data) {
-      dedicationsEl.innerHTML = "";
-      if (!data) return;
-      // Get last 5 dedications across all dates
-      const allDeds = [];
-      Object.values(data).forEach(dateGroup => {
-        Object.values(dateGroup).forEach(arr => {
-          if (Array.isArray(arr)) {
-            allDeds.push(...arr);
-          } else if (typeof arr === "object") {
-            Object.values(arr).forEach(subArr => {
-              allDeds.push(...subArr);
-            });
-          }
-        });
-      });
-      const lastFive = allDeds.slice(-5);
-      if (lastFive.length === 0) {
-        dedicationsEl.innerHTML = `<li>No dedications yet 🌿</li>`;
-        return;
-      }
-      lastFive.forEach((ded, i) => {
-        if (!ded || !ded.user) return;
-        const message = ded.message ? ded.message.trim() : "";
-        const li = document.createElement("li");
-        li.style.animationDelay = `${i * 0.3}s`;
-        li.innerHTML = `<div class="dedication-user">👤 ${ded.user}</div>`;
-        if (message.length > 0) {
-          li.innerHTML += `<div class="dedication-message">💬 "${message}"</div>`;
-        }
-        dedicationsEl.appendChild(li);
-      });
-    }
-
-    // Update global tree count
-    function updateCounter(count) {
-      counterEl.textContent = count.toLocaleString();
-    }
-
-    // Fetch and render all data from Firebase
-    function fetchData() {
-      db.ref("/").once("value").then(snapshot => {
-        const data = snapshot.val() || {};
-        // Calculate total trees
-        let totalTrees = 0;
-        Object.values(data).forEach(dateGroup => {
-          Object.values(dateGroup).forEach(userData => {
-            if (typeof userData === "object") {
-              Object.values(userData).forEach(val => {
-                if (typeof val === "number") totalTrees += val;
-                else if (Array.isArray(val)) totalTrees += val.length;
-              });
-            }
+  // Render dedications (last 5 with fade in/out animation)
+  function renderDedications(data) {
+    dedicationsEl.innerHTML = "";
+    // Collect all dedications in an array [ { user, message, timestamp }, ...]
+    const allDeds = [];
+    Object.values(data).forEach(dateGroup => {
+      Object.values(dateGroup).forEach(userData => {
+        if (userData.dedications) {
+          Object.values(userData.dedications).forEach(ded => {
+            if (ded.user) allDeds.push(ded);
           });
-        });
-        updateCounter(totalTrees);
-
-        renderLeaderboard(data);
-        renderDedications(data);
+        }
       });
+    });
+
+    // Sort dedications by timestamp descending
+    allDeds.sort((a, b) => b.timestamp - a.timestamp);
+
+    if (allDeds.length === 0) {
+      dedicationsEl.innerHTML = `<li>No dedications yet 🌿</li>`;
+      return;
     }
 
-    // Plant tree logic
-    plantForm.addEventListener("submit", (e) => {
-      e.preventDefault();
+    const lastFive = allDeds.slice(0, 5);
 
-      let username = nameInput.value.trim();
-      if (!username) {
-        alert("Please enter your name to plant a tree 🌱");
-        return;
-      }
-      if (username.length > 25) username = username.slice(0, 25);
+    lastFive.forEach((ded, i) => {
+      const li = document.createElement("li");
+      li.style.animation = `fadeIn 0.8s ease forwards`;
+      li.style.animationDelay = `${i * 0.25}s`;
+      li.innerHTML = `<strong>${ded.user}</strong>: “${ded.message || ""}”`;
+      dedicationsEl.appendChild(li);
+    });
+  }
 
-      const dedication = dedicationInput.value.trim();
-      const today = getTodayKey();
+  // Handle click logic
+  function handleClick() {
+    if (userCooldown) return;
+    clickCounter++;
+    clicksCountEl.textContent = `Clicks: ${clickCounter} / ${CLICK_LIMIT} (1 tree)`;
+    animateTree();
+    if (clickCounter >= CLICK_LIMIT) {
+      updatePlantBtnState();
+    }
+  }
 
-      // Update Firebase counts
-      const userDayRef = db.ref(`${today}/${username}/count`);
-      const userDedRef = db.ref(`${today}/${username}/dedications`);
+  // Plant tree logic: add 1 tree to user & optional dedication, reset clicks, start cooldown
+  async function plantTree() {
+    if (userCooldown) return;
+    let username = nameInput.value.trim();
+    if (!username) {
+      alert("Please enter your name to plant a tree 🌱");
+      return;
+    }
+    if (username.length > 25) username = username.slice(0, 25);
 
-      // Increase count by 1 and add dedication
-      userDayRef.transaction((current) => (current || 0) + 1);
+    const dedication = dedicationInput.value.trim();
+    const today = getTodayKey();
 
+    // Disable button & start cooldown
+    userCooldown = true;
+    updatePlantBtnState();
+    plantBtn.disabled = true;
+
+    // Write to Firebase
+    try {
+      const userRef = db.ref(`${today}/${username}`);
+
+      // Transaction for count increment
+      await userRef.child("count").transaction(current => (current || 0) + 1);
+
+      // Add dedication if exists
       if (dedication.length > 0) {
-        userDedRef.push({
+        await userRef.child("dedications").push({
           user: username,
           message: dedication,
           timestamp: Date.now()
         });
       }
+    } catch (err) {
+      console.error("Error planting tree:", err);
+      alert("Something went wrong. Please try again.");
+      userCooldown = false;
+      updatePlantBtnState();
+      return;
+    }
 
-      // Reset inputs
-      dedicationInput.value = "";
+    // Reset clicks and dedication input
+    clickCounter = 0;
+    dedicationInput.value = "";
 
-      // Animate tree
-      animateTree();
+    // Refresh UI
+    await fetchData();
 
-      // Refresh data
-      fetchData();
-    });
+    // Start cooldown timer
+    setTimeout(() => {
+      userCooldown = false;
+      updatePlantBtnState();
+    }, COOLDOWN_MS);
+  }
 
-    // Initial fetch and interval refresh
-    fetchData();
-    setInterval(fetchData, 8000);
-  </script>
+  // Fade-in animation keyframes
+  const styleEl = document.createElement("style");
+  styleEl.textContent = `
+    @keyframes fadeIn {
+      from {opacity: 0; transform: translateY(15px);}
+      to {opacity: 1; transform: translateY(0);}
+    }
+  `;
+  document.head.appendChild(styleEl);
+
+  // Event listeners
+  document.getElementById("tree-emoji").addEventListener("click", handleClick);
+  plantBtn.addEventListener("click", plantTree);
+  nameInput.addEventListener("input", updatePlantBtnState);
+  dedicationInput.addEventListener("input", updatePlantBtnState);
+
+  // Initial load
+  fetchData();
+
+  // Auto refresh leaderboard & dedications every 8 seconds
+  setInterval(fetchData, 8000);
+
+</script>
 </body>
 </html>
