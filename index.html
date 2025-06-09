@@ -47,10 +47,11 @@
       max-width: 400px;
       display: flex;
       gap: 10px;
-      justify-content: center;
+      flex-direction: column;
+      align-items: center;
     }
     input[type="text"] {
-      flex-grow: 1;
+      width: 100%;
       padding: 10px;
       font-size: 1rem;
       border: 2px solid #004d40;
@@ -106,9 +107,6 @@
       display: none;
       transition: transform 1s ease, opacity 1s ease;
     }
-    #slowDownToggle {
-      margin-bottom: 30px;
-    }
   </style>
 </head>
 <body>
@@ -121,17 +119,10 @@
   <div id="progressBar"></div>
 
   <form id="plantForm">
-    <input
-      type="text"
-      id="dedicationInput"
-      placeholder="Dedicate this tree (optional, max 50 chars)"
-      maxlength="50"
-      autocomplete="off"
-    />
+    <input type="text" id="usernameInput" placeholder="Enter your name" maxlength="50" required />
+    <input type="text" id="dedicationInput" placeholder="Dedicate this tree (optional, max 50 chars)" maxlength="50" autocomplete="off" />
     <button type="submit" id="plantBtn">Plant Tree 🌳</button>
   </form>
-
-  <button id="slowDownToggle">Slow Down Mode: OFF</button>
 
   <h2>Daily Challenge Progress</h2>
   <div id="dailyProgressBar"></div>
@@ -141,205 +132,6 @@
   <ul id="leaderboard"></ul>
 
   <div id="tree" aria-hidden="true">🌳</div>
-
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-  <script>
-    // --- Firebase config ---
-    const firebaseConfig = {
-      apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
-      authDomain: "save1tree-f116f.firebaseapp.com",
-      databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
-      projectId: "save1tree-f116f",
-      storageBucket: "save1tree-f116f.appspot.com",
-      messagingSenderId: "823144374779",
-      appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
-    };
-
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.database();
-
-    // Elements
-    const plantForm = document.getElementById("plantForm");
-    const dedicationInput = document.getElementById("dedicationInput");
-    const leaderboardEl = document.getElementById("leaderboard");
-    const counterEl = document.getElementById("counter");
-    const progressBar = document.getElementById("progressBar");
-    const dailyProgressBar = document.getElementById("dailyProgressBar");
-    const myStats = document.getElementById("myStats");
-    const challengeCountdown = document.getElementById("challengeCountdown");
-    const plantBtn = document.getElementById("plantBtn");
-    const slowDownToggle = document.getElementById("slowDownToggle");
-    const treeEmoji = document.getElementById("tree");
-
-    // Constants
-    const dailyGoal = 50;
-    const slowDownInterval = 10000; // 10 seconds between plants in slow down mode
-
-    // User ID fixed (no login)
-    const userId = "anonymousUser";
-
-    // Slow down mode state
-    let slowDownMode = false;
-    let lastPlantTime = 0;
-
-    // Helper - get today's date key "YYYY-MM-DD"
-    function getTodayKey() {
-      const now = new Date();
-      return now.toISOString().slice(0, 10);
-    }
-
-    // Animate tree emoji on plant
-    function animateTree() {
-      treeEmoji.style.display = "inline-block";
-      treeEmoji.style.opacity = "1";
-      treeEmoji.style.transform = "scale(1)";
-      setTimeout(() => {
-        treeEmoji.style.transition = "opacity 1s ease, transform 1s ease";
-        treeEmoji.style.opacity = "0";
-        treeEmoji.style.transform = "scale(2)";
-        setTimeout(() => {
-          treeEmoji.style.display = "none";
-          treeEmoji.style.transition = "";
-          treeEmoji.style.transform = "";
-        }, 1000);
-      }, 200);
-    }
-
-    // Update leaderboard and stats display
-    async function updateLeaderboard() {
-      const snapshot = await db.ref("users").once("value");
-      const usersData = snapshot.val() || {};
-
-      let entries = [];
-      for (const uid in usersData) {
-        let total = 0;
-        for (const key in usersData[uid]) {
-          if (key !== "username") {
-            const val = usersData[uid][key];
-            if (typeof val === "number") total += val;
-          }
-        }
-        entries.push({ uid, count: total });
-      }
-
-      entries.sort((a, b) => b.count - a.count);
-
-      leaderboardEl.innerHTML = "";
-      entries.slice(0, 10).forEach(entry => {
-        const name = entry.uid === userId ? "You" : entry.uid.substring(0, 6);
-        const li = document.createElement("li");
-        li.textContent = `${name}: ${entry.count} tree${entry.count !== 1 ? "s" : ""}`;
-        leaderboardEl.appendChild(li);
-      });
-
-      const totalTrees = entries.reduce((sum, e) => sum + e.count, 0);
-      counterEl.textContent = totalTrees.toLocaleString();
-
-      const progress = Math.min(totalTrees / 1000, 1);
-      progressBar.style.width = (progress * 100) + "%";
-
-      // Update myStats
-      const myData = usersData[userId] || {};
-      let myCount = 0;
-      for (const key in myData) {
-        if (key !== "username" && typeof myData[key] === "number") myCount += myData[key];
-      }
-      myStats.textContent = `You have planted ${myCount} tree${myCount !== 1 ? "s" : ""}.`;
-
-      updateDailyChallenge(usersData);
-    }
-
-    // Update daily challenge bar and countdown
-    function updateDailyChallenge(usersData) {
-      const today = getTodayKey();
-      let dailyTotal = 0;
-
-      if (usersData) {
-        for (const user in usersData) {
-          if (usersData[user][today]) dailyTotal += usersData[user][today];
-        }
-      }
-
-      const progress = Math.min(dailyTotal / dailyGoal, 1);
-      dailyProgressBar.style.width = (progress * 100) + "%";
-
-      // Countdown to midnight UTC
-      const now = new Date();
-      const tomorrow = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate() + 1));
-      const diff = tomorrow.getTime() - now.getTime();
-
-      const hrs = Math.floor(diff / (1000 * 60 * 60));
-      const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      const secs = Math.floor((diff % (1000 * 60)) / 1000);
-
-      const pad = n => n.toString().padStart(2, "0");
-      challengeCountdown.textContent = `${pad(hrs)}:${pad(mins)}:${pad(secs)}`;
-    }
-
-    // Handle slow down toggle button
-    slowDownToggle.addEventListener("click", () => {
-      slowDownMode = !slowDownMode;
-      slowDownToggle.textContent = `Slow Down Mode: ${slowDownMode ? "ON" : "OFF"}`;
-      if (!slowDownMode) {
-        plantBtn.disabled = false; // re-enable button immediately if turning off slow mode
-      }
-    });
-
-    plantForm.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
-      const now = Date.now();
-
-      if (slowDownMode && now - lastPlantTime < slowDownInterval) {
-        const waitSeconds = Math.ceil((slowDownInterval - (now - lastPlantTime)) / 1000);
-        alert(`Slow Down Mode is ON! Please wait ${waitSeconds} more second${waitSeconds !== 1 ? "s" : ""} before planting again.`);
-        return;
-      }
-
-      const dedication = dedicationInput.value.trim().slice(0, 50);
-      const today = getTodayKey();
-
-      plantBtn.disabled = true;
-
-      // Update count for user for today
-      const userDayRef = db.ref(`users/${userId}/${today}`);
-      const snapshot = await userDayRef.once("value");
-      const currentCount = snapshot.val() || 0;
-      await userDayRef.set(currentCount + 1);
-
-      // Store dedication if provided
-      if (dedication) {
-        const dedicationRef = db.ref(`dedications/${userId}/${Date.now()}`);
-        await dedicationRef.set(dedication);
-      }
-
-      dedicationInput.value = "";
-      lastPlantTime = now;
-
-      animateTree();
-      await updateLeaderboard();
-
-      // Re-enable button after delay if slowDownMode ON, else immediately
-      if (slowDownMode) {
-        setTimeout(() => {
-          plantBtn.disabled = false;
-        }, slowDownInterval);
-      } else {
-        plantBtn.disabled = false;
-      }
-    });
-
-    // Initial calls
-    updateLeaderboard();
-
-    // Periodically update leaderboard and countdowns
-    setInterval(updateLeaderboard, 60000);
-    setInterval(() => {
-      updateDailyChallenge(null);
-    }, 1000);
-
-  </script>
 
 </body>
 </html>
