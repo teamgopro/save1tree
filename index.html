@@ -3,171 +3,161 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TEKA Trees 🌳</title>
+  <title>TEKA Trees</title>
   <style>
     body {
-      font-family: 'Segoe UI', sans-serif;
-      background: linear-gradient(135deg, #ecfdf5, #d1fae5);
       margin: 0;
-      padding: 0;
-      color: #065f46;
+      font-family: 'Segoe UI', sans-serif;
+      background: #e8f5e9;
+      color: #1b5e20;
       display: flex;
       flex-direction: row;
-      min-height: 100vh;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px;
+      gap: 40px;
     }
 
-    main {
-      flex: 3;
-      padding: 30px;
-    }
-
-    aside {
-      flex: 1;
-      background: rgba(255, 255, 255, 0.4);
-      padding: 20px;
-      border-left: 2px solid #a7f3d0;
-      overflow-y: auto;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .main {
+      max-width: 500px;
     }
 
     h1 {
-      font-size: 2.5rem;
-      margin-bottom: 10px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      font-size: 2.8rem;
+      margin-bottom: 0.5rem;
+      color: #2e7d32;
     }
 
-    #donateBtn {
-      background: #10b981;
-      color: white;
-      padding: 10px 20px;
-      border: none;
+    .goal-bar-container {
+      background: #c8e6c9;
+      border-radius: 15px;
+      overflow: hidden;
+      height: 20px;
+      margin: 10px 0 30px;
+    }
+
+    .goal-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #43a047, #66bb6a);
+      transition: width 0.5s ease-in-out;
+    }
+
+    .counter {
+      font-size: 3rem;
       font-weight: bold;
-      border-radius: 10px;
-      cursor: pointer;
-      transition: 0.3s;
     }
 
-    #donateBtn:hover {
-      background: #059669;
-    }
-
-    #counter, #clicks {
-      font-size: 2rem;
-      font-weight: bold;
-      margin: 10px 0;
-    }
-
-    #plantForm {
-      margin: 20px 0;
+    .form-group {
       display: flex;
       flex-direction: column;
       gap: 10px;
-      max-width: 400px;
+      margin: 20px 0;
     }
 
     input, button {
-      padding: 10px;
+      padding: 12px;
       font-size: 1rem;
       border-radius: 8px;
-      border: 1px solid #a7f3d0;
+      border: 1px solid #a5d6a7;
     }
 
-    #plantBtn, #clickBtn {
-      background: #34d399;
+    button {
+      background: #66bb6a;
       color: white;
-      border: none;
       cursor: pointer;
       font-weight: bold;
-      transition: 0.3s;
     }
 
-    #plantBtn:hover, #clickBtn:hover {
-      background: #059669;
+    button:disabled {
+      background: #c8e6c9;
+      cursor: not-allowed;
     }
 
-    #progressBarOuter {
-      background: #d1fae5;
-      height: 20px;
-      border-radius: 10px;
-      overflow: hidden;
-      margin: 20px 0;
-      max-width: 400px;
+    .tree {
+      font-size: 3rem;
+      text-align: center;
+      animation: none;
     }
 
-    #progressBar {
-      height: 100%;
-      background: #10b981;
-      width: 0%;
-      transition: width 0.5s ease;
+    .bounce {
+      animation: bounce 0.5s ease;
     }
 
-    ul#leaderboard {
-      list-style: none;
-      padding: 0;
-      max-width: 400px;
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
     }
 
-    ul#leaderboard li {
-      background: #ecfdf5;
-      margin-bottom: 5px;
+    .leaderboard {
+      margin-top: 30px;
+    }
+
+    .leaderboard li {
+      background: #f1f8e9;
       padding: 10px;
       border-radius: 8px;
+      margin-bottom: 5px;
     }
 
-    .medal {
-      font-weight: bold;
-      margin-right: 5px;
+    .chat {
+      width: 300px;
+      background: rgba(255,255,255,0.8);
+      border-radius: 15px;
+      padding: 15px;
+      height: 400px;
+      overflow-y: auto;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     }
 
-    .dedicationMsg {
-      background: rgba(255, 255, 255, 0.7);
-      border-radius: 12px;
+    .chat h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+      color: #388e3c;
+    }
+
+    .dedication {
+      background: #e0f2f1;
       padding: 10px;
-      animation: fadeInOut 10s ease-in-out;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      animation: fadeIn 0.6s ease;
     }
 
-    @keyframes fadeInOut {
-      0% { opacity: 0; transform: translateY(20px); }
-      10%, 90% { opacity: 1; transform: translateY(0); }
-      100% { opacity: 0; transform: translateY(-20px); }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
+
   </style>
 </head>
 <body>
-  <main>
-    <h1>
-      TEKA Trees 🌳
-      <button id="donateBtn">Donate</button>
-    </h1>
+  <div class="main">
+    <h1>TEKA Trees</h1>
+    <div class="counter" id="treeCount">0</div>
+    <div class="goal-bar-container"><div class="goal-bar" id="goalBar"></div></div>
 
-    <div id="counter">🌱 0 Trees Planted</div>
-    <div id="clicks">🔥 0 Clicks to Support</div>
-
-    <div id="progressBarOuter">
-      <div id="progressBar"></div>
-    </div>
-
-    <form id="plantForm">
-      <input type="text" id="nameInput" placeholder="Enter your name" />
-      <input type="text" id="dedicationInput" placeholder="Dedication message (optional)" />
-      <button id="plantBtn">🌱 Plant Tree</button>
-      <button id="clickBtn" type="button">🔥 Click to Support</button>
+    <form id="treeForm" class="form-group">
+      <input type="text" id="username" placeholder="Enter your name" required />
+      <input type="text" id="dedication" placeholder="Dedication (optional)" />
+      <button type="submit" id="plantBtn">🌱 Plant Tree</button>
     </form>
 
-    <h2>Leaderboard</h2>
-    <ul id="leaderboard"></ul>
-  </main>
+    <div class="tree" id="treeEmoji">🌳</div>
 
-  <aside id="dedicationsContainer">
-    <h3>Latest Dedications</h3>
-  </aside>
+    <h2>Top Planters</h2>
+    <ul id="leaderboard" class="leaderboard"></ul>
+  </div>
 
+  <div class="chat">
+    <h2>🌿 Dedications</h2>
+    <div id="dedications"></div>
+  </div>
+
+  <!-- Firebase -->
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
   <script>
     const firebaseConfig = {
       apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
@@ -178,97 +168,77 @@
       messagingSenderId: "823144374779",
       appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    const nameInput = document.getElementById("nameInput");
-    const dedicationInput = document.getElementById("dedicationInput");
+    const goal = 100_000_000;
+    const treeCountEl = document.getElementById("treeCount");
+    const goalBar = document.getElementById("goalBar");
+    const leaderboardEl = document.getElementById("leaderboard");
+    const dedicationsEl = document.getElementById("dedications");
+    const treeEmoji = document.getElementById("treeEmoji");
     const plantBtn = document.getElementById("plantBtn");
-    const clickBtn = document.getElementById("clickBtn");
-    const counter = document.getElementById("counter");
-    const clicksEl = document.getElementById("clicks");
-    const leaderboard = document.getElementById("leaderboard");
-    const progressBar = document.getElementById("progressBar");
-    const dedicationsContainer = document.getElementById("dedicationsContainer");
 
-    const GLOBAL_GOAL = 100_000_000;
-    let lastClickTime = 0;
+    let lastPlantTime = 0;
 
-    function updateProgressBar(count) {
-      const percent = Math.min((count / GLOBAL_GOAL) * 100, 100);
-      progressBar.style.width = `${percent}%`;
-    }
-
-    function getToday() {
+    function getTodayKey() {
       return new Date().toISOString().split("T")[0];
     }
 
-    function updateLeaderboard(users) {
-      leaderboard.innerHTML = '';
-      const today = getToday();
-      const list = Object.entries(users).map(([name, days]) => [name, days[today] || 0]);
-      list.sort((a, b) => b[1] - a[1]);
-      list.slice(0, 10).forEach(([name, count], i) => {
-        const li = document.createElement("li");
-        const medals = ["🥇", "🥈", "🥉"];
-        li.innerHTML = `<span class="medal">${medals[i] || ''}</span>${name}: ${count} trees`;
-        leaderboard.appendChild(li);
-      });
+    function animateTree() {
+      treeEmoji.classList.add("bounce");
+      setTimeout(() => treeEmoji.classList.remove("bounce"), 500);
     }
 
-    function addDedication(name, message) {
-      const div = document.createElement("div");
-      div.className = "dedicationMsg";
-      div.textContent = `${name}: “${message}”`;
-      dedicationsContainer.appendChild(div);
-      while (dedicationsContainer.childElementCount > 6) {
-        dedicationsContainer.children[1].remove();
-      }
-    }
-
-    function safeName(name) {
-      return name.replace(/[.#$[\]]/g, "_");
-    }
-
-    plantBtn.addEventListener("click", e => {
+    document.getElementById("treeForm").addEventListener("submit", e => {
       e.preventDefault();
-      const name = nameInput.value.trim() || "Anonymous 🌱";
-      const dedication = dedicationInput.value.trim();
-      const today = getToday();
+      const name = document.getElementById("username").value.trim();
+      const dedication = document.getElementById("dedication").value.trim();
 
+      if (!name) return alert("Please enter your name.");
+      if (Date.now() - lastPlantTime < 5000) return alert("Please wait 5 seconds before planting again.");
+
+      lastPlantTime = Date.now();
+
+      const today = getTodayKey();
       db.ref(`treeCount`).transaction(n => (n || 0) + 1);
-      db.ref(`users/${safeName(name)}/${today}`).transaction(n => (n || 0) + 1);
-      if (dedication) {
-        db.ref(`dedications/${today}`).push({ name, message: dedication });
-      }
-    });
+      db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
 
-    clickBtn.addEventListener("click", () => {
-      const now = Date.now();
-      if (now - lastClickTime < 5000) return;
-      lastClickTime = now;
-      db.ref("clicks").transaction(n => (n || 0) + 1);
+      if (dedication) {
+        db.ref(`dedications/${today}`).push({ user: name, message: dedication, time: Date.now() });
+      }
+
+      animateTree();
     });
 
     db.ref("treeCount").on("value", snap => {
       const count = snap.val() || 0;
-      counter.textContent = `🌱 ${count.toLocaleString()} Trees Planted`;
-      updateProgressBar(count);
-    });
-
-    db.ref("clicks").on("value", snap => {
-      const count = snap.val() || 0;
-      clicksEl.textContent = `🔥 ${count.toLocaleString()} Clicks to Support`;
+      treeCountEl.textContent = count.toLocaleString();
+      goalBar.style.width = Math.min((count / goal) * 100, 100) + "%";
     });
 
     db.ref("users").on("value", snap => {
-      updateLeaderboard(snap.val() || {});
+      const today = getTodayKey();
+      const users = snap.val() || {};
+      const list = Object.entries(users).map(([user, data]) => [user, data[today] || 0]);
+      list.sort((a, b) => b[1] - a[1]);
+      leaderboardEl.innerHTML = "";
+      list.slice(0, 10).forEach(([user, count]) => {
+        const li = document.createElement("li");
+        li.textContent = `${user}: ${count} 🌳`;
+        leaderboardEl.appendChild(li);
+      });
     });
 
-    db.ref(`dedications/${getToday()}`).limitToLast(5).on("child_added", snap => {
-      const { name, message } = snap.val();
-      addDedication(name, message);
+    db.ref(`dedications/${getTodayKey()}`).on("value", snap => {
+      const dedications = Object.values(snap.val() || {}).sort((a, b) => b.time - a.time).slice(0, 5);
+      dedicationsEl.innerHTML = "";
+      dedications.forEach(d => {
+        const div = document.createElement("div");
+        div.className = "dedication";
+        div.innerHTML = `<strong>${d.user}</strong>: ${d.message}`;
+        dedicationsEl.appendChild(div);
+      });
     });
   </script>
 </body>
