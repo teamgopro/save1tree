@@ -3,55 +3,82 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TEKA Trees - Modern</title>
+  <title>TEKA Trees – Global Goal Edition</title>
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
     body {
       margin: 0;
-      font-family: 'Inter', sans-serif;
-      background: #e6f4ea;
-      color: #1e3a2f;
       display: flex;
       height: 100vh;
       padding: 20px;
       gap: 30px;
+      font-family: 'Inter', sans-serif;
+      background: #e6f4ea;
+      color: #1e3a2f;
+      overflow: hidden;
     }
     main {
       flex: 1;
       max-width: 480px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
       background: white;
       border-radius: 16px;
       padding: 30px 25px 40px;
       box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      overflow-y: auto;
     }
-    h1 {
-      margin: 0 0 15px;
-      font-weight: 600;
-      font-size: 2.5rem;
-      color: #065f46;
+    h1 { font-weight: 600; font-size: 2.5rem; color: #065f46; margin-bottom: 15px; user-select: none; }
+    #globalGoal {
+      width: 100%;
+      margin-bottom: 25px;
       user-select: none;
+    }
+    #globalGoalLabel {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: #047857;
+      margin-bottom: 6px;
+    }
+    #goalText {
+      font-weight: 400;
+      font-size: 0.9rem;
+      color: #065f46cc;
+    }
+    #progressBar {
+      width: 100%;
+      height: 18px;
+      background: #d1fae5;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: inset 0 2px 4px rgb(5 150 105 / 0.2);
+    }
+    #progressFill {
+      height: 100%;
+      background: linear-gradient(90deg, #059669, #10b981);
+      width: 0%;
+      border-radius: 14px;
+      transition: width 1.2s ease;
     }
     #counter {
       font-size: 3.5rem;
       font-weight: 700;
-      margin-bottom: 8px;
       color: #047857;
+      margin-bottom: 8px;
       user-select: none;
     }
     #facts {
       font-style: italic;
-      max-width: 400px;
       text-align: center;
-      color: #065f46dd;
+      max-width: 400px;
       margin-bottom: 30px;
       min-height: 48px;
+      color: #065f46dd;
       user-select: none;
     }
     form {
@@ -59,6 +86,7 @@
       display: flex;
       flex-direction: column;
       gap: 12px;
+      margin-bottom: 25px;
     }
     input[type="text"] {
       padding: 14px 16px;
@@ -66,20 +94,13 @@
       border: 1.5px solid #a7f3d0;
       font-size: 1rem;
       font-weight: 500;
-      outline-offset: 2px;
       transition: border-color 0.3s ease;
     }
-    input[type="text"]:focus {
-      border-color: #059669;
-      background: #f0fdf4;
-    }
-    #nameInput.error {
-      border-color: #ef4444;
-      background: #fee2e2;
-    }
+    input[type="text"]:focus { border-color: #059669; background: #f0fdf4; }
+    #nameInput.error { border-color: #ef4444; background: #fee2e2; }
     #nameError {
-      font-size: 0.85rem;
       color: #b91c1c;
+      font-size: 0.85rem;
       margin-top: -8px;
       margin-bottom: 8px;
       font-weight: 600;
@@ -94,12 +115,10 @@
       font-size: 1.15rem;
       color: white;
       cursor: pointer;
+      transition: background 0.3s ease;
       user-select: none;
-      transition: background-color 0.3s ease;
     }
-    button:hover:not(:disabled) {
-      background: #059669;
-    }
+    button:hover:not(:disabled) { background: #059669; }
     button:disabled {
       background: #a7f3d0;
       cursor: not-allowed;
@@ -110,26 +129,17 @@
       user-select: none;
       transition: transform 0.5s ease;
     }
-    .tree-bounce {
-      animation: bounce 0.5s ease;
-    }
+    .tree-bounce { animation: bounce 0.5s ease; }
     @keyframes bounce {
-      0%, 100% { transform: translateY(0); }
+      0%,100% { transform: translateY(0); }
       50% { transform: translateY(-20px); }
     }
-    h2 {
-      margin-top: 20px;
-      margin-bottom: 12px;
-      color: #065f46;
-      font-weight: 600;
-      font-size: 1.7rem;
-      user-select: none;
-    }
+    h2 { margin-top: 20px; color: #065f46; font-weight: 600; font-size: 1.7rem; user-select: none; }
     ul#leaderboard {
       list-style: none;
       padding: 0;
-      margin: 0;
       width: 100%;
+      margin-bottom: 25px;
     }
     ul#leaderboard li {
       background: #d1fae5;
@@ -142,53 +152,31 @@
       display: flex;
       align-items: center;
       gap: 14px;
-      user-select: none;
       box-shadow: 0 2px 5px rgb(5 150 105 / 0.15);
-      transition: background-color 0.3s ease;
     }
-    ul#leaderboard li .medal {
-      font-size: 1.6rem;
-    }
-    ul#leaderboard li:nth-child(1) {
-      background: #fff9db;
-      color: #b47b00;
-      font-weight: 700;
-      box-shadow: 0 2px 8px rgb(180 123 0 / 0.3);
-    }
-    ul#leaderboard li:nth-child(2) {
-      background: #f0f7ff;
-      color: #2563eb;
-      font-weight: 700;
-      box-shadow: 0 2px 8px rgb(37 99 235 / 0.3);
-    }
-    ul#leaderboard li:nth-child(3) {
-      background: #fef0f0;
-      color: #dc2626;
-      font-weight: 700;
-      box-shadow: 0 2px 8px rgb(220 38 38 / 0.3);
-    }
-
-    /* Container for leaderboard and dedications side by side */
+    ul#leaderboard li .medal { font-size: 1.6rem; }
+    ul#leaderboard li:nth-child(1) { background: #fff9db; color: #b47b00; }
+    ul#leaderboard li:nth-child(2) { background: #f0f7ff; color: #2563eb; }
+    ul#leaderboard li:nth-child(3) { background: #fef0f0; color: #dc2626; }
     #rightPanel {
       width: 380px;
       display: flex;
       flex-direction: column;
       gap: 28px;
     }
-
-    /* Dedications box */
     #dedicationsBox {
       flex: 1;
       background: rgba(255 255 255 / 0.15);
       backdrop-filter: blur(10px);
       border-radius: 20px;
-      padding: 20px 22px;
+      padding: 20px;
       box-shadow: 0 8px 25px rgb(0 0 0 / 0.05);
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
     #dedicationsBox h2 {
-      margin: 0 0 16px 0;
+      margin: 0;
       font-size: 1.6rem;
       font-weight: 600;
       color: #065f46;
@@ -197,8 +185,8 @@
     #dedicationsList {
       list-style: none;
       padding: 0;
-      margin: 0;
-      flex-grow: 1;
+      margin: 16px 0 0 0;
+      flex: 1;
       overflow-y: auto;
       display: flex;
       flex-direction: column;
@@ -213,7 +201,6 @@
       font-weight: 500;
       opacity: 0;
       animation: fadeIn 1s forwards;
-      user-select: none;
       box-shadow: 0 2px 10px rgb(5 150 105 / 0.08);
     }
     #dedicationsList li span.user {
@@ -222,45 +209,44 @@
       margin-right: 8px;
       user-select: text;
     }
-
     @keyframes fadeIn {
-      to {
-        opacity: 1;
-      }
+      to { opacity: 1; }
     }
-
   </style>
 </head>
 <body>
   <main>
     <h1>TEKA Trees</h1>
+    <section id="globalGoal">
+      <div id="globalGoalLabel">
+        <span>🌍 Global Goal Progress</span>
+        <span id="goalText">0 / 100,000,000 trees</span>
+      </div>
+      <div id="progressBar" role="progressbar" aria-valuemin="0" aria-valuemax="100000000" aria-valuenow="0">
+        <div id="progressFill"></div>
+      </div>
+    </section>
     <div id="counter">0</div>
     <div id="facts"></div>
-
-    <form id="plantForm" autocomplete="off">
-      <input type="text" id="nameInput" placeholder="Enter your name" autocomplete="off" />
+    <form id="plantForm">
+      <input type="text" id="nameInput" placeholder="Enter your name" />
       <div id="nameError">Please enter your name before planting.</div>
-      <input type="text" id="dedicationInput" placeholder="Dedication (optional)" autocomplete="off" />
+      <input type="text" id="dedicationInput" placeholder="Dedication (optional)" />
       <button type="submit" id="plantBtn">🌱 Plant Tree</button>
     </form>
-
     <div id="treeEmoji">🌳</div>
-
     <h2>Leaderboard</h2>
     <ul id="leaderboard"></ul>
   </main>
-
   <section id="rightPanel">
     <div id="dedicationsBox">
       <h2>Recent Dedications</h2>
       <ul id="dedicationsList"></ul>
     </div>
   </section>
-
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
   <script>
-    // Firebase config and init
     const firebaseConfig = {
       apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
       authDomain: "save1tree-f116f.firebaseapp.com",
@@ -273,49 +259,45 @@
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
-    // Elements
+    const GLOBAL_GOAL = 100_000_000;
+    const nameInput = document.getElementById("nameInput");
+    const nameError = document.getElementById("nameError");
+    const dedicationInput = document.getElementById("dedicationInput");
     const counterEl = document.getElementById("counter");
     const treeEmoji = document.getElementById("treeEmoji");
     const leaderboardEl = document.getElementById("leaderboard");
     const dedicationsList = document.getElementById("dedicationsList");
-    const nameInput = document.getElementById("nameInput");
-    const dedicationInput = document.getElementById("dedicationInput");
-    const plantBtn = document.getElementById("plantBtn");
-    const nameError = document.getElementById("nameError");
+    const goalText = document.getElementById("goalText");
+    const progressFill = document.getElementById("progressFill");
+    const progressBar = document.getElementById("progressBar");
 
-    // Cooldown tracker per user
-    const userCooldowns = {};
-
-    // Facts to rotate
+    let factIndex = 0;
     const facts = [
       "Trees absorb harmful gases and give us clean oxygen.",
-      "One tree can remove up to 48 pounds of CO2 per year.",
-      "Urban forests can reduce city temperatures by up to 10°F.",
-      "Trees are home to more than 80% of land-based species.",
-      "Planting trees can reduce stress and improve mood."
+      "One tree can remove up to 48 pounds of CO₂ annually.",
+      "Urban forests can cool cities by up to 10°F.",
+      "Trees host over 80% of land species.",
+      "Planting trees boosts mood & reduces stress."
     ];
-    let factIndex = 0;
 
-    // Animate tree bounce
+    const userCooldowns = {};
+
     function animateTree() {
       treeEmoji.classList.add("tree-bounce");
       setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 500);
     }
 
-    // Show next fact every 7 seconds
     function rotateFacts() {
-      document.getElementById("facts").textContent = facts[factIndex];
-      factIndex = (factIndex + 1) % facts.length;
+      document.getElementById("facts").textContent = facts[factIndex++];
+      if (factIndex >= facts.length) factIndex = 0;
     }
     rotateFacts();
     setInterval(rotateFacts, 7000);
 
-    // Get date key YYYY-MM-DD
     function getTodayKey() {
       return new Date().toISOString().split("T")[0];
     }
 
-    // Validate name input
     function validateName() {
       if (nameInput.value.trim() === "") {
         nameInput.classList.add("error");
@@ -328,61 +310,56 @@
       }
     }
 
-    // Update leaderboard display with medals for top 3
     function updateLeaderboard(users) {
       leaderboardEl.innerHTML = "";
       const today = getTodayKey();
-      const entries = Object.entries(users).map(([user, days]) => [user, days[today] || 0]);
-      entries.sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([user, count], i) => {
-        if (count === 0) return;
+      const arr = Object.entries(users).map(([u, dates]) => [u, dates[today] || 0]);
+      arr.sort((a, b) => b[1] - a[1]).slice(0,10).forEach((item, i) => {
+        const [u, c] = item;
+        if (c === 0) return;
         const li = document.createElement("li");
-        const medal = ["🥇", "🥈", "🥉"][i] || "";
-        li.innerHTML = `<span class="medal">${medal}</span> ${user}: ${count} tree${count !== 1 ? 's' : ''}`;
+        const medals = ["🥇","🥈","🥉"];
+        const m = medals[i] || "";
+        li.innerHTML = `<span class="medal">${m}</span>${u}: ${c} tree${c>1?'s':''}`;
         leaderboardEl.appendChild(li);
       });
     }
 
-    // Update dedications display, show only last 5, fade in
-    function updateDedications(dedications) {
+    function updateDedications(arr) {
       dedicationsList.innerHTML = "";
-      const lastFive = dedications.slice(-5);
-      lastFive.forEach(({ user, message }) => {
+      const last = arr.slice(-5);
+      last.forEach(item => {
         const li = document.createElement("li");
-        li.innerHTML = `<span class="user">${escapeHTML(user)}:</span> ${escapeHTML(message)}`;
+        li.innerHTML = `<span class="user">${escapeHTML(item.user)}:</span>${escapeHTML(item.message)}`;
         dedicationsList.appendChild(li);
       });
     }
 
-    // Escape HTML for security
-    function escapeHTML(str) {
-      return str.replace(/[&<>"']/g, function (m) {
-        return ({
-          '&': '&amp;',
-          '<': '&lt;',
-          '>': '&gt;',
-          '"': '&quot;',
-          "'": '&#39;'
-        })[m];
+    function escapeHTML(s) {
+      return s.replace(/[&<>"']/g, m => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[m]);
+    }
+
+    function updateGlobalProgress(total) {
+      const pct = Math.min(total / GLOBAL_GOAL * 100, 100).toFixed(3);
+      progressFill.style.width = pct + '%';
+      goalText.textContent = `${total.toLocaleString()} / ${GLOBAL_GOAL.toLocaleString()} trees`;
+      progressBar.setAttribute("aria-valuenow", total);
+    }
+
+    function fetchGlobalTotal() {
+      db.ref("treeCount").once("value", snap => {
+        const data = snap.val() || {};
+        let sum = Object.values(data).reduce((s,n) => s + (n || 0), 0);
+        updateGlobalProgress(sum);
       });
     }
 
-    // Animate tree bounce on planting
-    function plantTreeAnimation() {
-      animateTree();
-    }
-
-    // On form submit
     document.getElementById("plantForm").addEventListener("submit", e => {
       e.preventDefault();
-
-      if (!validateName()) {
-        nameInput.focus();
-        return;
-      }
+      if (!validateName()) return;
 
       const name = nameInput.value.trim();
-      const dedication = dedicationInput.value.trim();
-
+      const msg = dedicationInput.value.trim();
       const now = Date.now();
       if (userCooldowns[name] && now - userCooldowns[name] < 5000) {
         alert("Please wait 5 seconds before planting again.");
@@ -390,46 +367,26 @@
       }
       userCooldowns[name] = now;
 
-      const today = getTodayKey();
+      const day = getTodayKey();
+      db.ref("treeCount/" + day).transaction(n => (n||0)+1);
+      db.ref("users/" + name + "/" + day).transaction(n => (n||0)+1);
+      if (msg) db.ref(`dedications/${day}`).push({ user: name, message: msg });
 
-      // Increment global count
-      db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
-
-      // Increment user count
-      db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
-
-      // Add dedication if any
-      if (dedication) {
-        db.ref(`dedications/${today}`).push({ user: name, message: dedication });
-      }
-
-      plantTreeAnimation();
-
-      // Clear dedication input only, keep name input
+      animateTree();
       dedicationInput.value = "";
+
+      fetchGlobalTotal();
     });
 
-    // Listen for users data changes for leaderboard
-    db.ref("users").on("value", snap => {
-      updateLeaderboard(snap.val() || {});
-    });
-
-    // Listen for total trees count today
-    db.ref(`treeCount/${getTodayKey()}`).on("value", snap => {
-      counterEl.textContent = snap.val() || 0;
-    });
-
-    // Listen for dedications today, update live
+    db.ref("users").on("value", snap => updateLeaderboard(snap.val() || {}));
+    db.ref(`treeCount/${getTodayKey()}`).on("value", snap => counterEl.textContent = snap.val() || 0);
     db.ref(`dedications/${getTodayKey()}`).on("value", snap => {
-      const val = snap.val();
-      if (!val) {
-        updateDedications([]);
-        return;
-      }
-      // convert object to array of {user, message}
-      const dedicationsArr = Object.values(val);
-      updateDedications(dedicationsArr);
+      const v = snap.val() || {};
+      const arr = Object.values(v);
+      updateDedications(arr);
     });
+
+    fetchGlobalTotal();
   </script>
 </body>
 </html>
