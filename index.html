@@ -2,29 +2,18 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TEKA Trees - Old Style</title>
-  <style>
-    body {
-      font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-      background: #e0f7fa;
-      color: #004d40;
-      margin: 0;<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>TEKA Trees</title>
   <style>
     body {
       margin: 0;
+      padding: 30px;
       font-family: 'Segoe UI', sans-serif;
-      background: #f0fdf4;
+      background-color: #f0fdf4;
       color: #065f46;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 30px;
     }
     h1 {
       font-size: 2.5rem;
@@ -37,31 +26,30 @@
     #facts {
       margin: 20px 0;
       font-style: italic;
-      text-align: center;
       max-width: 500px;
+      text-align: center;
     }
-    #plantForm {
+    form {
       display: flex;
       flex-direction: column;
       gap: 10px;
       width: 100%;
       max-width: 400px;
-      margin: 20px 0;
     }
-    #nameInput, #dedicationInput, #plantBtn {
+    input, button {
       padding: 10px;
-      border-radius: 8px;
       border: 1px solid #a7f3d0;
+      border-radius: 8px;
       font-size: 1rem;
     }
-    #plantBtn {
+    button {
       background: #10b981;
       color: white;
       font-weight: bold;
       cursor: pointer;
-      transition: background 0.3s ease;
+      transition: background 0.3s;
     }
-    #plantBtn:hover {
+    button:hover {
       background: #059669;
     }
     #treeEmoji {
@@ -75,13 +63,13 @@
       0%, 100% { transform: translateY(0); }
       50% { transform: translateY(-15px); }
     }
-    #leaderboard {
+    ul {
       list-style: none;
       padding: 0;
       max-width: 400px;
       width: 100%;
     }
-    #leaderboard li {
+    li {
       background: #d1fae5;
       padding: 10px;
       border-radius: 10px;
@@ -93,12 +81,15 @@
   <h1>TEKA Trees</h1>
   <div id="counter">0</div>
   <div id="facts"></div>
+
   <form id="plantForm">
-    <input type="text" id="nameInput" placeholder="Enter your name" required />
+    <input type="text" id="nameInput" placeholder="Your name" required />
     <input type="text" id="dedicationInput" placeholder="Dedication (optional)" />
-    <button type="submit" id="plantBtn">🌱 Plant Tree</button>
+    <button type="submit">🌱 Plant Tree</button>
   </form>
+
   <div id="treeEmoji">🌳</div>
+
   <h2>Leaderboard</h2>
   <ul id="leaderboard"></ul>
 
@@ -114,12 +105,13 @@
       messagingSenderId: "823144374779",
       appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
     };
+
     firebase.initializeApp(firebaseConfig);
     const db = firebase.database();
 
     const counterEl = document.getElementById("counter");
-    const treeEmoji = document.getElementById("treeEmoji");
     const leaderboardEl = document.getElementById("leaderboard");
+    const treeEmoji = document.getElementById("treeEmoji");
 
     function getTodayKey() {
       return new Date().toISOString().split("T")[0];
@@ -133,8 +125,9 @@
     function updateLeaderboard(users) {
       leaderboardEl.innerHTML = "";
       const today = getTodayKey();
-      const entries = Object.entries(users).map(([user, days]) => [user, days[today] || 0]);
-      entries.sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([user, count]) => {
+      const entries = Object.entries(users).map(([user, records]) => [user, records[today] || 0]);
+      entries.sort((a, b) => b[1] - a[1]);
+      entries.forEach(([user, count]) => {
         const li = document.createElement("li");
         li.textContent = `${user}: ${count} tree${count !== 1 ? 's' : ''}`;
         leaderboardEl.appendChild(li);
@@ -146,21 +139,23 @@
       const name = document.getElementById("nameInput").value.trim();
       const dedication = document.getElementById("dedicationInput").value.trim();
       if (!name) return alert("Please enter your name.");
+
       const today = getTodayKey();
       db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
       db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
       if (dedication) {
         db.ref(`dedications/${today}`).push({ user: name, message: dedication });
       }
-      animateTree();
-    });
 
-    db.ref("users").on("value", snap => {
-      updateLeaderboard(snap.val() || {});
+      animateTree();
     });
 
     db.ref(`treeCount/${getTodayKey()}`).on("value", snap => {
       counterEl.textContent = snap.val() || 0;
+    });
+
+    db.ref("users").on("value", snap => {
+      updateLeaderboard(snap.val() || {});
     });
 
     const facts = [
@@ -170,6 +165,7 @@
       "Trees are home to more than 80% of land-based species.",
       "Planting trees can reduce stress and improve mood."
     ];
+
     let factIndex = 0;
     function rotateFacts() {
       document.getElementById("facts").textContent = facts[factIndex];
@@ -178,131 +174,5 @@
     rotateFacts();
     setInterval(rotateFacts, 7000);
   </script>
-</body>
-</html>
-
-      padding: 20px;
-      text-align: center;
-    }
-    h1, h2 {
-      font-weight: 700;
-      color: #004d40;
-    }
-    #counter {
-      font-size: 4rem;
-      font-weight: 900;
-      margin: 0.2em 0 0.5em;
-    }
-    #progressBar {
-      height: 22px;
-      background: linear-gradient(90deg, #00bfa5, #004d40);
-      border-radius: 15px;
-      width: 0%;
-      margin: 0 auto 25px;
-      max-width: 400px;
-      box-shadow: 0 0 8px #00796b;
-      transition: width 0.5s ease;
-    }
-    #dailyProgressBar {
-      height: 22px;
-      background: linear-gradient(90deg, #004d40, #00bfa5);
-      border-radius: 15px;
-      width: 0%;
-      margin: 0 auto 10px;
-      max-width: 400px;
-      box-shadow: 0 0 8px #004d40;
-      transition: width 0.5s ease;
-    }
-    form {
-      margin: 15px auto 30px;
-      max-width: 400px;
-      display: flex;
-      gap: 10px;
-      flex-direction: column;
-      align-items: center;
-    }
-    input[type="text"] {
-      width: 100%;
-      padding: 10px;
-      font-size: 1rem;
-      border: 2px solid #004d40;
-      border-radius: 8px;
-      color: #004d40;
-    }
-    button {
-      background: #00796b;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      padding: 10px 20px;
-      font-weight: bold;
-      cursor: pointer;
-      user-select: none;
-      transition: background 0.3s ease;
-    }
-    button:hover:not(:disabled) {
-      background: #004d40;
-    }
-    button:disabled {
-      background: #a5d6a7;
-      cursor: not-allowed;
-    }
-    #leaderboard {
-      list-style: none;
-      padding: 0;
-      max-width: 400px;
-      margin: 0 auto 40px;
-      color: #004d40;
-      font-weight: 600;
-    }
-    #leaderboard li {
-      background: #b2dfdb;
-      padding: 8px 12px;
-      border-radius: 10px;
-      margin-bottom: 6px;
-      box-shadow: inset 0 0 4px #004d40aa;
-    }
-    #myStats {
-      margin-bottom: 20px;
-      font-weight: bold;
-      color: #00796b;
-    }
-    #challengeCountdown {
-      font-weight: bold;
-      color: #00796b;
-      margin-bottom: 20px;
-    }
-    #tree {
-      font-size: 4rem;
-      margin: 0 auto 20px;
-      display: none;
-      transition: transform 1s ease, opacity 1s ease;
-    }
-  </style>
-</head>
-<body>
-
-  <h1>TEKA Trees</h1>
-
-  <div id="myStats">You have planted 0 trees.</div>
-
-  <div id="counter">0</div>
-  <div id="progressBar"></div>
-
-  <form id="plantForm">
-    <input type="text" id="usernameInput" placeholder="Enter your name" maxlength="50" required />
-    <input type="text" id="dedicationInput" placeholder="Dedicate this tree (optional, max 50 chars)" maxlength="50" autocomplete="off" />
-    <button type="submit" id="plantBtn">Plant Tree 🌳</button>
-  </form>
-
-  <h2>Daily Challenge Progress</h2>
-  <div id="dailyProgressBar"></div>
-  <div>Time left: <span id="challengeCountdown">00:00:00</span></div>
-
-  <h2>Leaderboard</h2>
-  <ul id="leaderboard"></ul>
-
-  <div id="tree" aria-hidden="true">🌳</div>
-
 </body>
 </html>
