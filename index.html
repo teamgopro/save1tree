@@ -9,7 +9,178 @@
       font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
       background: #e0f7fa;
       color: #004d40;
+      margin: 0;<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TEKA Trees</title>
+  <style>
+    body {
       margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0fdf4;
+      color: #065f46;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px;
+    }
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+    }
+    #counter {
+      font-size: 3rem;
+      font-weight: bold;
+    }
+    #facts {
+      margin: 20px 0;
+      font-style: italic;
+      text-align: center;
+      max-width: 500px;
+    }
+    #plantForm {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      width: 100%;
+      max-width: 400px;
+      margin: 20px 0;
+    }
+    #nameInput, #dedicationInput, #plantBtn {
+      padding: 10px;
+      border-radius: 8px;
+      border: 1px solid #a7f3d0;
+      font-size: 1rem;
+    }
+    #plantBtn {
+      background: #10b981;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+    #plantBtn:hover {
+      background: #059669;
+    }
+    #treeEmoji {
+      font-size: 3rem;
+      margin: 20px;
+    }
+    .tree-bounce {
+      animation: bounce 0.5s ease;
+    }
+    @keyframes bounce {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-15px); }
+    }
+    #leaderboard {
+      list-style: none;
+      padding: 0;
+      max-width: 400px;
+      width: 100%;
+    }
+    #leaderboard li {
+      background: #d1fae5;
+      padding: 10px;
+      border-radius: 10px;
+      margin-bottom: 5px;
+    }
+  </style>
+</head>
+<body>
+  <h1>TEKA Trees</h1>
+  <div id="counter">0</div>
+  <div id="facts"></div>
+  <form id="plantForm">
+    <input type="text" id="nameInput" placeholder="Enter your name" required />
+    <input type="text" id="dedicationInput" placeholder="Dedication (optional)" />
+    <button type="submit" id="plantBtn">🌱 Plant Tree</button>
+  </form>
+  <div id="treeEmoji">🌳</div>
+  <h2>Leaderboard</h2>
+  <ul id="leaderboard"></ul>
+
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
+      authDomain: "save1tree-f116f.firebaseapp.com",
+      databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
+      projectId: "save1tree-f116f",
+      storageBucket: "save1tree-f116f.appspot.com",
+      messagingSenderId: "823144374779",
+      appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const db = firebase.database();
+
+    const counterEl = document.getElementById("counter");
+    const treeEmoji = document.getElementById("treeEmoji");
+    const leaderboardEl = document.getElementById("leaderboard");
+
+    function getTodayKey() {
+      return new Date().toISOString().split("T")[0];
+    }
+
+    function animateTree() {
+      treeEmoji.classList.add("tree-bounce");
+      setTimeout(() => treeEmoji.classList.remove("tree-bounce"), 500);
+    }
+
+    function updateLeaderboard(users) {
+      leaderboardEl.innerHTML = "";
+      const today = getTodayKey();
+      const entries = Object.entries(users).map(([user, days]) => [user, days[today] || 0]);
+      entries.sort((a, b) => b[1] - a[1]).slice(0, 10).forEach(([user, count]) => {
+        const li = document.createElement("li");
+        li.textContent = `${user}: ${count} tree${count !== 1 ? 's' : ''}`;
+        leaderboardEl.appendChild(li);
+      });
+    }
+
+    document.getElementById("plantForm").addEventListener("submit", e => {
+      e.preventDefault();
+      const name = document.getElementById("nameInput").value.trim();
+      const dedication = document.getElementById("dedicationInput").value.trim();
+      if (!name) return alert("Please enter your name.");
+      const today = getTodayKey();
+      db.ref(`treeCount/${today}`).transaction(n => (n || 0) + 1);
+      db.ref(`users/${name}/${today}`).transaction(n => (n || 0) + 1);
+      if (dedication) {
+        db.ref(`dedications/${today}`).push({ user: name, message: dedication });
+      }
+      animateTree();
+    });
+
+    db.ref("users").on("value", snap => {
+      updateLeaderboard(snap.val() || {});
+    });
+
+    db.ref(`treeCount/${getTodayKey()}`).on("value", snap => {
+      counterEl.textContent = snap.val() || 0;
+    });
+
+    const facts = [
+      "Trees absorb harmful gases and give us clean oxygen.",
+      "One tree can remove up to 48 pounds of CO2 per year.",
+      "Urban forests can reduce city temperatures by up to 10°F.",
+      "Trees are home to more than 80% of land-based species.",
+      "Planting trees can reduce stress and improve mood."
+    ];
+    let factIndex = 0;
+    function rotateFacts() {
+      document.getElementById("facts").textContent = facts[factIndex];
+      factIndex = (factIndex + 1) % facts.length;
+    }
+    rotateFacts();
+    setInterval(rotateFacts, 7000);
+  </script>
+</body>
+</html>
+
       padding: 20px;
       text-align: center;
     }
