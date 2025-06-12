@@ -3,199 +3,178 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TEKA - Under Construction</title>
+  <title>TEKA | Under Construction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
-    html, body {
+    * {
       margin: 0;
       padding: 0;
-      height: 100%;
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
+    }
+
+    body {
+      height: 100vh;
       overflow: hidden;
+      background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+      background-size: 600% 600%;
+      animation: gradient 15s ease infinite;
       color: white;
-      background: black;
-    }
-
-    canvas {
-      position: absolute;
-      top: 0;
-      left: 0;
-      z-index: -1;
-    }
-
-    .center-content {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
       text-align: center;
+    }
+
+    @keyframes gradient {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .countdown {
+      font-size: 1.5rem;
+      margin: 20px 0;
+      background-color: rgba(255,255,255,0.1);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+
+    .admin-panel {
+      display: none;
+      margin-top: 30px;
+      padding: 20px;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      background-color: rgba(0,0,0,0.5);
+      width: 300px;
+    }
+
+    .admin-panel input[type="color"],
+    .admin-panel button {
+      margin-top: 10px;
+      padding: 5px;
+      border-radius: 5px;
+      border: none;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 0.9rem;
+      color: #ccc;
     }
 
     .logo {
       font-size: 2.5rem;
-      font-weight: bold;
-      color: #00ffcc;
-      animation: glow 2s infinite alternate;
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s infinite alternate, scaleIn 2s ease-in-out infinite;
     }
 
     @keyframes glow {
-      from { text-shadow: 0 0 10px #00ffcc; }
-      to { text-shadow: 0 0 20px #00ffff, 0 0 30px #00ccff; }
+      from {
+        text-shadow: 0 0 10px #4facfe;
+      }
+      to {
+        text-shadow: 0 0 20px #00f2fe;
+      }
     }
 
-    .countdown {
-      margin-top: 1em;
-      font-size: 1.5rem;
-    }
-
-    .footer {
-      position: absolute;
-      bottom: 10px;
-      width: 100%;
-      text-align: center;
-      color: #aaa;
-      font-size: 0.9rem;
-    }
-
-    #adminPanel {
-      display: none;
-      position: absolute;
-      top: 10%;
-      right: 10px;
-      background: rgba(0,0,0,0.9);
-      padding: 20px;
-      border: 2px solid #00ffcc;
-      border-radius: 8px;
-      z-index: 10;
-    }
-
-    #adminPanel input,
-    #adminPanel button {
-      margin-top: 10px;
-      width: 100%;
-    }
-
-    #adminPanel h3 {
-      margin-top: 0;
+    @keyframes scaleIn {
+      0%, 100% {
+        transform: scale(1);
+      }
+      50% {
+        transform: scale(1.05);
+      }
     }
   </style>
 </head>
 <body>
-
-<canvas id="bgCanvas"></canvas>
-
-<div class="center-content">
-  <div class="logo">🌱 TEKA</div>
-  <h2>Website Under Construction</h2>
+  <div class="logo">TEKA</div>
+  <h1>Website Under Construction</h1>
+  <p>Please await something amazing</p>
   <div class="countdown" id="countdown">Loading countdown...</div>
-</div>
 
-<div id="adminPanel">
-  <h3>🌿 Admin Panel</h3>
-  <button onclick="changeBgStyle()">Change Background Style</button>
-  <button onclick="resetCountdown()">Reset Countdown</button>
-</div>
+  <div class="admin-panel" id="adminPanel">
+    <h2>Admin Panel</h2>
+    <label>Change Background Color:</label><br>
+    <input type="color" id="bgColorPicker"/><br>
+    <button onclick="resetBackground()">Reset Background</button>
+  </div>
 
-<div class="footer">© 2025 TEKA. All Rights Reserved.</div>
+  <footer>© 2025 TEKA. All rights reserved.</footer>
 
-<script>
-  // Animate background using canvas
-  const canvas = document.getElementById('bgCanvas');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
+  <script>
+    // Persistent Countdown Timer
+    const countdownEl = document.getElementById("countdown");
+    let endTime = localStorage.getItem("tekaCountdownEndTime");
+    if (!endTime) {
+      endTime = new Date().getTime() + 10 * 60 * 60 * 1000;
+      localStorage.setItem("tekaCountdownEndTime", endTime);
+    } else {
+      endTime = parseInt(endTime);
+    }
 
-  let stars = [];
-  for (let i = 0; i < 100; i++) {
-    stars.push({
-      x: Math.random() * canvas.width,
-      y: Math.random() * canvas.height,
-      r: Math.random() * 2,
-      d: Math.random() * 1
-    });
-  }
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = endTime - now;
 
-  function drawStars() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = '#00ffcc';
-    ctx.shadowBlur = 5;
-    ctx.shadowColor = '#00ffcc';
-    stars.forEach(star => {
-      ctx.beginPath();
-      ctx.arc(star.x, star.y, star.r, 0, Math.PI * 2);
-      ctx.fill();
-    });
-    updateStars();
-    requestAnimationFrame(drawStars);
-  }
+      if (distance < 0) {
+        countdownEl.innerText = "Countdown Finished!";
+        return;
+      }
 
-  function updateStars() {
-    stars.forEach(star => {
-      star.y += star.d;
-      if (star.y > canvas.height) {
-        star.y = 0;
-        star.x = Math.random() * canvas.width;
+      const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((distance / (1000 * 60)) % 60);
+      const seconds = Math.floor((distance / 1000) % 60);
+
+      countdownEl.innerText = `${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Admin Panel Trigger
+    let typedWord = "";
+    const secretWord = "ilovetrees";
+    const adminPanel = document.getElementById("adminPanel");
+
+    document.addEventListener("keydown", function(e) {
+      typedWord += e.key.toLowerCase();
+      if (typedWord.includes(secretWord)) {
+        adminPanel.style.display = "block";
+        typedWord = ""; // reset after triggering
+      }
+      if (typedWord.length > 20) {
+        typedWord = typedWord.slice(-secretWord.length);
       }
     });
-  }
 
-  drawStars();
+    // Admin Features
+    const bgColorPicker = document.getElementById("bgColorPicker");
+    bgColorPicker.addEventListener("input", function() {
+      document.body.style.background = bgColorPicker.value;
+    });
 
-  // GLOBAL countdown
-  const endTime = new Date('2025-06-13T01:50:04Z').getTime();
-
-  function updateCountdown() {
-    const now = new Date().getTime();
-    const diff = endTime - now;
-
-    if (diff <= 0) {
-      document.getElementById('countdown').innerHTML = "Launching soon!";
-      return;
+    function resetBackground() {
+      document.body.style.background = "linear-gradient(270deg, #0f2027, #203a43, #2c5364)";
     }
-
-    const hours = Math.floor(diff / (1000 * 60 * 60));
-    const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-    const secs = Math.floor((diff % (1000 * 60)) / 1000);
-
-    document.getElementById('countdown').innerHTML = `${hours}h ${mins}m ${secs}s`;
-    requestAnimationFrame(updateCountdown);
-  }
-
-  updateCountdown();
-
-  // Secret Admin Panel Activation
-  let typed = '';
-  document.addEventListener('keydown', (e) => {
-    typed += e.key.toLowerCase();
-    if (typed.includes('ilovetrees')) {
-      document.getElementById('adminPanel').style.display = 'block';
-      typed = '';
-    }
-    if (typed.length > 20) typed = typed.slice(-20);
-  });
-
-  // Admin Features
-  let bgStyle = 0;
-  function changeBgStyle() {
-    bgStyle = (bgStyle + 1) % 2;
-    if (bgStyle === 1) {
-      ctx.shadowColor = '#ff00cc';
-      ctx.fillStyle = '#ff00cc';
-    } else {
-      ctx.shadowColor = '#00ffcc';
-      ctx.fillStyle = '#00ffcc';
-    }
-  }
-
-  function resetCountdown() {
-    alert("Countdown is global and cannot be reset client-side.");
-  }
-
-  // Responsive canvas
-  window.addEventListener('resize', () => {
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-  });
-</script>
-
+  </script>
 </body>
 </html>
