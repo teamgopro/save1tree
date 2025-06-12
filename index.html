@@ -2,66 +2,144 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>TEKA Trees – Under Construction</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TEKA | Under Construction</title>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
   <style>
-    :root {
-      --bg: #f9fafb;
-      --text: #111827;
-      --accent: #10b981;
-    }
-
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #0f172a;
-        --text: #f1f5f9;
-      }
-    }
-
     * {
       margin: 0;
       padding: 0;
       box-sizing: border-box;
+      font-family: 'Orbitron', sans-serif;
     }
 
     body {
-      background-color: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', sans-serif;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
+      background-size: 600% 600%;
+      animation: gradient 15s ease infinite;
+      color: white;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      height: 100vh;
       text-align: center;
-      padding: 1rem;
     }
 
-    .container {
-      max-width: 600px;
-      animation: fadeIn 1s ease forwards;
+    @keyframes gradient {
+      0% {background-position: 0% 50%;}
+      50% {background-position: 100% 50%;}
+      100% {background-position: 0% 50%;}
     }
 
     h1 {
+      font-size: 3rem;
+      margin-bottom: 10px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    .countdown {
+      font-size: 1.5rem;
+      margin: 20px 0;
+      background-color: rgba(255,255,255,0.1);
+      padding: 10px 20px;
+      border-radius: 10px;
+    }
+
+    .admin-panel {
+      display: none;
+      margin-top: 30px;
+      padding: 20px;
+      border: 2px solid #fff;
+      border-radius: 10px;
+      background-color: rgba(0,0,0,0.5);
+      width: 300px;
+    }
+
+    footer {
+      position: absolute;
+      bottom: 20px;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
+
+    .logo {
       font-size: 2.5rem;
-      margin-bottom: 1rem;
-      color: var(--accent);
+      letter-spacing: 4px;
+      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: glow 2s infinite alternate;
     }
 
-    p {
-      font-size: 1.2rem;
-      opacity: 0.8;
-    }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(10px); }
-      to { opacity: 1; transform: translateY(0); }
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #4facfe;
+      }
+      to {
+        text-shadow: 0 0 20px #00f2fe;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>🚧 TEKA Trees</h1>
-    <p>Our website is currently under construction. <br>Please check back soon!</p>
+  <div class="logo">TEKA</div>
+  <h1>Website Under Construction</h1>
+  <p>Please await something amazing</p>
+  <div class="countdown" id="countdown">Loading countdown...</div>
+
+  <div class="admin-panel" id="adminPanel">
+    <h2>Admin Panel</h2>
+    <p>Welcome, Admin. Site tools coming soon.</p>
   </div>
+
+  <footer>© 2025 TEKA. All rights reserved.</footer>
+
+  <script>
+    // Countdown timer for 10 hours from now
+    const countdownEl = document.getElementById("countdown");
+    const endTime = new Date().getTime() + 10 * 60 * 60 * 1000;
+
+    function updateCountdown() {
+      const now = new Date().getTime();
+      const distance = endTime - now;
+
+      if (distance < 0) {
+        countdownEl.innerText = "Countdown Finished!";
+        return;
+      }
+
+      const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
+      const minutes = Math.floor((distance / (1000 * 60)) % 60);
+      const seconds = Math.floor((distance / 1000) % 60);
+
+      countdownEl.innerText = `${hours}h ${minutes}m ${seconds}s`;
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Admin Panel Trigger
+    let typedWord = "";
+    const secretWord = "ilovetrees";
+    const adminPanel = document.getElementById("adminPanel");
+
+    document.addEventListener("keydown", function(e) {
+      typedWord += e.key.toLowerCase();
+      if (typedWord.includes(secretWord)) {
+        adminPanel.style.display = "block";
+        typedWord = ""; // reset after triggering
+      }
+      if (typedWord.length > 20) {
+        typedWord = typedWord.slice(-secretWord.length);
+      }
+    });
+  </script>
 </body>
 </html>
