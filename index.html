@@ -1,180 +1,540 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>TEKA | Under Construction</title>
-  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&display=swap" rel="stylesheet">
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>TEKA Supercars — TEKA Holdings</title>
+  <meta name="description" content="TEKA Supercars — handcrafted supercars by TEKA Holdings. Explore models, configure your car, and contact TEKA." />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%23000'/><text x='50' y='58' font-size='48' text-anchor='middle' fill='%23fff' font-family='Verdana'>T</text></svg>">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-      font-family: 'Orbitron', sans-serif;
-    }
+    /* ---------- Modern design tokens ---------- */
+    :root{ --bg:#0b1020; --card:#0f1724; --muted:#9aa4b2; --accent:#ff3b3b; --glass: rgba(255,255,255,0.04); --glass-2: rgba(255,255,255,0.02); --success:#10b981; }
+    [data-theme="light"]{ --bg:#f6f8fb; --card:#ffffff; --muted:#4a5568; --accent:#ff3b3b; --glass: rgba(0,0,0,0.04);}    
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',Arial;background:var(--bg);color:var(--muted);-webkit-font-smoothing:antialiased}
+    a{color:inherit;text-decoration:none}
+    .container{max-width:1200px;margin:0 auto;padding:28px}
 
-    body {
-      height: 100vh;
-      overflow: hidden;
-      background: linear-gradient(270deg, #0f2027, #203a43, #2c5364);
-      background-size: 600% 600%;
-      animation: gradient 15s ease infinite;
-      color: white;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      text-align: center;
-    }
+    /* ---------- Header ---------- */
+    header{position:sticky;top:12px;z-index:60}
+    .nav{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px;border-radius:14px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent);backdrop-filter: blur(8px);}
+    .brand{display:flex;align-items:center;gap:12px}
+    .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,#111827,#020617);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:800;font-size:22px;box-shadow:0 6px 18px rgba(2,6,23,0.6)}
+    nav a{margin:0 12px;color:var(--muted);font-weight:700}
+    .nav-actions{display:flex;gap:10px;align-items:center}
+    .btn{background:var(--accent);padding:10px 14px;border-radius:10px;color:white;font-weight:800;cursor:pointer;border:0;box-shadow:0 8px 20px rgba(255,59,59,0.12)}
+    .ghost{background:transparent;padding:8px 12px;border-radius:10px;border:1px solid rgba(255,255,255,0.04);color:var(--muted);cursor:pointer}
 
-    @keyframes gradient {
-      0% {background-position: 0% 50%;}
-      50% {background-position: 100% 50%;}
-      100% {background-position: 0% 50%;}
-    }
+    /* ---------- Hero ---------- */
+    .hero{display:grid;grid-template-columns:1fr 520px;gap:28px;align-items:center;padding:44px 0}
+    .hero-card{padding:28px;border-radius:18px;background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));box-shadow:0 12px 40px rgba(2,6,23,0.6)}
+    .eyebrow{display:inline-block;padding:6px 12px;border-radius:999px;background:var(--glass);color:var(--accent);font-weight:800}
+    h1{color:white;margin:12px 0 10px;font-size:44px;line-height:1.02}
+    p.lead{color:var(--muted);margin:0 0 18px}
 
-    h1 {
-      font-size: 3rem;
-      margin-bottom: 10px;
-      animation: float 3s ease-in-out infinite;
-    }
+    /* ---------- Models ---------- */
+    .models{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px;margin-top:22px}
+    .card{background:var(--card);padding:14px;border-radius:14px;color:white;transition:transform .28s,box-shadow .28s}
+    .card:hover{transform:translateY(-8px);box-shadow:0 30px 50px rgba(2,6,23,0.6)}
+    .model-img{height:180px;border-radius:10px;display:flex;align-items:center;justify-content:center;background:linear-gradient(90deg,#0b1220,#0f1724);overflow:hidden}
 
-    @keyframes float {
-      0%, 100% { transform: translateY(0); }
-      50% { transform: translateY(-10px); }
-    }
+    /* ---------- Configurator ---------- */
+    .config{display:flex;gap:16px;align-items:flex-start}
+    .preview{width:480px;height:300px;border-radius:16px;background:linear-gradient(180deg,#05060a,#091018);display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden}
+    .car-wrap{width:100%;height:100%;display:flex;align-items:center;justify-content:center;transition:transform .5s cubic-bezier(.2,.9,.2,1)}
+    .controls{flex:1}
+    .colors{display:flex;gap:8px;flex-wrap:wrap}
+    .sw{width:44px;height:30px;border-radius:8px;cursor:pointer;border:2px solid rgba(255,255,255,0.03);box-shadow:0 6px 18px rgba(2,6,23,0.4)}
+    .option{padding:8px 10px;border-radius:8px;background:var(--glass-2);display:inline-block;margin-right:8px}
 
-    .countdown {
-      font-size: 1.5rem;
-      margin: 20px 0;
-      background-color: rgba(255,255,255,0.1);
-      padding: 10px 20px;
-      border-radius: 10px;
-    }
+    /* ---------- small screens ---------- */
+    @media (max-width:980px){.hero{grid-template-columns:1fr;}.preview{width:100%;height:260px}.car-wrap{transform:scale(.98)}.models{grid-template-columns:repeat(2,1fr)}}
+    @media (max-width:560px){.models{grid-template-columns:1fr}}
 
-    .admin-panel {
-      display: none;
-      margin-top: 30px;
-      padding: 20px;
-      border: 2px solid #fff;
-      border-radius: 10px;
-      background-color: rgba(0,0,0,0.5);
-      width: 300px;
-    }
+    /* ---------- animations ---------- */
+    .fade-up{opacity:0;transform:translateY(8px);animation:fu .6s forwards}
+    @keyframes fu{to{opacity:1;transform:none}}
 
-    .admin-panel input[type="color"],
-    .admin-panel button {
-      margin-top: 10px;
-      padding: 5px;
-      border-radius: 5px;
-      border: none;
-    }
+    /* ---------- footer ---------- */
+    footer{margin-top:40px;padding:28px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.02), transparent)}
+    .grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:18px}
+    input,textarea,select{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:var(--muted)}
 
-    footer {
-      position: absolute;
-      bottom: 20px;
-      font-size: 0.9rem;
-      color: #ccc;
-    }
-
-    .logo {
-      font-size: 2.5rem;
-      letter-spacing: 4px;
-      background: linear-gradient(90deg, #4facfe 0%, #00f2fe 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      animation: glow 2s infinite alternate, scaleIn 2s ease-in-out infinite;
-    }
-
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #4facfe;
-      }
-      to {
-        text-shadow: 0 0 20px #00f2fe;
-      }
-    }
-
-    @keyframes scaleIn {
-      0%, 100% {
-        transform: scale(1);
-      }
-      50% {
-        transform: scale(1.05);
-      }
-    }
+    /* ---------- tiny helpers ---------- */
+    .muted{color:var(--muted)}
+    .pill{padding:6px 10px;border-radius:999px;background:var(--glass);font-weight:700}
+    .admin-badge{padding:6px 8px;border-radius:8px;background:#111827;color:#fff;font-weight:700}
   </style>
+  <!-- Firebase SDKs (compat) - these are optional; uncomment if you plan to use Firebase hosting and DB -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
 </head>
-<body>
-  <div class="logo">TEKA</div>
-  <h1>Website Under Construction</h1>
-  <p>Please await something amazing</p>
-  <div class="countdown" id="countdown">Loading countdown...</div>
+<body data-theme="dark">
+  <header class="container">
+    <div class="nav">
+      <div class="brand">
+        <div class="logo">T</div>
+        <div>
+          <div style="font-weight:800;color:white">TEKA Supercars</div>
+          <div style="font-size:12px;color:var(--muted)">Engineered by TEKA Holdings</div>
+        </div>
+      </div>
+      <nav style="display:flex;gap:8px;align-items:center">
+        <a href="#models">Models</a>
+        <a href="#config">Configurator</a>
+        <a href="#about">About</a>
+        <a href="#contact">Contact</a>
+      </nav>
+      <div class="nav-actions">
+        <button class="ghost" id="themeToggle">Toggle</button>
+        <button class="btn" id="bookBtn">Book Test Drive</button>
+      </div>
+    </div>
+  </header>
 
-  <div class="admin-panel" id="adminPanel">
-    <h2>Admin Panel</h2>
-    <label>Change Background Color:</label><br>
-    <input type="color" id="bgColorPicker"/><br>
-    <button onclick="resetBackground()">Reset Background</button>
+  <main class="container">
+    <section class="hero">
+      <div class="hero-card fade-up">
+        <span class="eyebrow">2025 Collection</span>
+        <h1>TEKA — The next generation of handcrafted supercars</h1>
+        <p class="lead">Ultra-light carbon chassis. Twin-turbo hybrid powertrains. Bespoke interiors. Limited-production hypercars designed for track and road.</p>
+        <div style="display:flex;gap:10px;align-items:center">
+          <button class="btn" onclick="document.getElementById('models').scrollIntoView({behavior:'smooth'})">Explore Models</button>
+          <button class="ghost" onclick="openModal(preloadedModels[0])">View Signature Car</button>
+        </div>
+
+        <div style="margin-top:18px">
+          <div class="models" id="models">
+            <!-- model cards injected -->
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="hero-card" id="config">
+          <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+            <div>
+              <div style="font-size:13px;color:var(--muted)">Production</div>
+              <div style="color:white;font-weight:800;font-size:22px">Limited to 25 units</div>
+            </div>
+            <div class="admin-badge">Prototype</div>
+          </div>
+
+          <div style="margin-top:14px">
+            <div class="config">
+              <div class="preview" id="preview">
+                <div class="car-wrap" id="carWrap">
+                  <!-- SVG car acts as base for export and colorization -->
+                  <svg id="carSvg" viewBox="0 0 800 400" width="88%" height="88%" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                      <filter id="shadow"><feDropShadow dx="0" dy="12" stdDeviation="20" flood-color="#000" flood-opacity="0.7"/></filter>
+                    </defs>
+                    <g id="car" filter="url(#shadow)">
+                      <rect x="50" y="160" rx="30" ry="30" width="700" height="130" fill="#222" />
+                      <ellipse cx="200" cy="310" rx="48" ry="48" fill="#111" />
+                      <ellipse cx="600" cy="310" rx="48" ry="48" fill="#111" />
+                      <path id="carBody" d="M80 160 C130 90 670 90 720 160 L680 190 C640 120 180 120 140 190 Z" fill="#333"/>
+                      <!-- windows -->
+                      <path id="carGlass" d="M150 140 C220 110 580 110 650 140 L620 170 C560 140 240 140 190 170 Z" fill="#0a1320" opacity="0.9" />
+                    </g>
+                  </svg>
+                </div>
+
+                <!-- rotate hint -->
+                <div style="position:absolute;left:10px;top:10px;font-size:12px;color:var(--muted)">Drag to rotate • Export PNG</div>
+              </div>
+
+              <div class="controls">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+                  <div style="font-weight:800;color:white">Configurator</div>
+                  <div class="muted" style="font-size:13px">Customise like Tesla or Lamborghini</div>
+                </div>
+
+                <div style="margin-bottom:10px">
+                  <div style="font-weight:700;color:white;margin-bottom:8px">Exterior Color</div>
+                  <div class="colors" id="colors"></div>
+                </div>
+
+                <div style="margin-bottom:10px">
+                  <div style="font-weight:700;color:white;margin-bottom:8px">Wheels</div>
+                  <div style="display:flex;gap:8px;margin-bottom:10px">
+                    <button class="option" data-wheel="standard">Standard</button>
+                    <button class="option" data-wheel="sport">Sport 5-spoke</button>
+                    <button class="option" data-wheel="super">Superlight</button>
+                  </div>
+                </div>
+
+                <div style="margin-bottom:10px;display:flex;gap:8px;align-items:center">
+                  <div>
+                    <div style="font-weight:700;color:white;margin-bottom:6px">Interior</div>
+                    <select id="interior">
+                      <option value="black">Black Alcantara</option>
+                      <option value="cream">Cream Leather</option>
+                      <option value="carbon">Carbon Weave</option>
+                    </select>
+                  </div>
+                  <div>
+                    <div style="font-weight:700;color:white;margin-bottom:6px">Drive Mode</div>
+                    <select id="driveMode">
+                      <option value="comfort">Comfort</option>
+                      <option value="sport">Sport</option>
+                      <option value="track">Track</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div style="display:flex;gap:8px;margin-top:10px">
+                  <button class="btn" id="saveConfig">Save Config</button>
+                  <button class="ghost" id="exportPNG">Export PNG</button>
+                  <button class="ghost" id="shareConfig">Copy Share Link</button>
+                </div>
+
+                <div id="configSaved" class="muted" style="font-size:13px;margin-top:8px;display:none">Configuration saved locally — open Admin → Submissions to view it.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:10px">
+          <div class="card" style="flex:1">
+            <div style="font-weight:700;color:white">Performance</div>
+            <div class="muted">0-100 km/h in 2.6s · Top speed 370 km/h · 1200 hp combined</div>
+          </div>
+          <div class="card" style="width:220px">
+            <div style="font-weight:700;color:white">Price</div>
+            <div class="muted">Starting at $1,250,000</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="about" style="margin-top:30px">
+      <div class="hero-card">
+        <h2 style="color:white">About TEKA</h2>
+        <p class="muted">TEKA is a boutique carmaker under TEKA Holdings crafting limited-production supercars with obsessive attention to detail — from hand-laid carbon to bespoke software tuning.</p>
+        <div class="gallery" aria-hidden="false">
+          <img src="https://images.unsplash.com/photo-1542367597-7d9b1a7f4a63?q=80&w=1000&auto=format&fit=crop" alt="car1">
+          <img src="https://images.unsplash.com/photo-1502877338535-766e1452684a?q=80&w=1000&auto=format&fit=crop" alt="car2">
+          <img src="https://images.unsplash.com/photo-1511919884226-e9d5c9a3b7f6?q=80&w=1000&auto=format&fit=crop" alt="car3">
+        </div>
+      </div>
+    </section>
+
+    <section id="contact" style="margin-top:30px">
+      <div class="hero-card">
+        <h2 style="color:white">Contact & Test Drive</h2>
+        <form id="contactForm">
+          <div class="grid-3">
+            <div>
+              <label for="name">Full name</label>
+              <input id="name" required placeholder="Jane Doe">
+            </div>
+            <div>
+              <label for="email">Email</label>
+              <input id="email" type="email" required placeholder="name@example.com">
+            </div>
+            <div>
+              <label for="phone">Phone</label>
+              <input id="phone" placeholder="+1 555 555 5555">
+            </div>
+          </div>
+          <div style="margin-top:12px">
+            <label for="message">Message</label>
+            <textarea id="message" rows="4" placeholder="I'd like to book a test drive at..." ></textarea>
+          </div>
+          <div style="margin-top:10px;display:flex;gap:8px;align-items:center">
+            <button class="btn" type="submit">Send Request</button>
+            <button class="ghost" type="button" onclick="fillDemo()">Autofill Demo</button>
+            <div id="formStatus" class="muted" style="font-size:13px"></div>
+          </div>
+        </form>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container" style="padding:0">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+          <div>
+            <div style="font-weight:800;color:white">TEKA Holdings</div>
+            <div class="muted" style="font-size:13px">© TEKA Holdings 2025 · All rights reserved</div>
+          </div>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div class="muted" style="font-size:13px">Admin</div>
+            <button class="ghost" onclick="openAdmin()">Open Admin</button>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Modal -->
+  <div id="modal" class="modal" role="dialog" aria-hidden="true" style="position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:linear-gradient(180deg,rgba(2,6,23,0.6),rgba(2,6,23,0.85));z-index:200">
+    <div style="width:min(920px,95%);background:var(--card);padding:18px;border-radius:12px;color:white;display:grid;grid-template-columns:1fr 380px;gap:18px">
+      <div id="modalLeft"></div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div style="font-weight:800;color:white" id="modalTitle">Model</div>
+          <button class="ghost" onclick="closeModal()">Close</button>
+        </div>
+        <div style="font-size:13px;color:var(--muted)" id="modalCopy"></div>
+        <div style="display:flex;gap:8px;margin-top:auto">
+          <button class="btn" id="modalBook">Book Test Drive</button>
+          <button class="ghost" id="modalConfig">Use in Configurator</button>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <footer>© 2025 TEKA. All rights reserved.</footer>
+<script>
+// ---------- Preloaded models ----------
+const preloadedModels = [
+  {id:'tekax', name:'TEKA X', tag:'Signature', price:'$1,250,000', img:'https://images.unsplash.com/photo-1541446654331-3b97f8a2ed2b?q=80&w=1400&auto=format&fit=crop', desc:'A low-slung hypercar built for speed and control. Carbon monocoque and hybrid V8.'},
+  {id:'tekas', name:'TEKA S', tag:'Track', price:'$980,000', img:'https://images.unsplash.com/photo-1503376780353-7e6692767b70?q=80&w=1400&auto=format&fit=crop', desc:'Focused track weapon: race-spec suspension, aero package, rollcage option.'},
+  {id:'tekac', name:'TEKA C', tag:'GT', price:'$650,000', img:'https://images.unsplash.com/photo-1503736334956-4c8f8e92946d?q=80&w=1400&auto=format&fit=crop', desc:'Grand tourer with plush interior and long-range hybrid efficiency.'}
+];
 
-  <script>
-    // Persistent Countdown Timer
-    const countdownEl = document.getElementById("countdown");
-    let endTime = localStorage.getItem("tekaCountdownEndTime");
-    if (!endTime) {
-      endTime = new Date().getTime() + 10 * 60 * 60 * 1000;
-      localStorage.setItem("tekaCountdownEndTime", endTime);
-    } else {
-      endTime = parseInt(endTime);
-    }
+// inject model cards
+const modelsRoot = document.getElementById('models');
+preloadedModels.forEach(m=>{
+  const el = document.createElement('div'); el.className='card fade-up';
+  el.innerHTML = `
+    <div class="model-img"><img src="${m.img}" alt="${m.name}" style="width:100%;height:100%;object-fit:cover"></div>
+    <div style="margin-top:10px;display:flex;justify-content:space-between;align-items:center">
+      <div>
+        <div style="font-weight:800;color:white">${m.name}</div>
+        <div class="muted" style="font-size:13px">${m.tag} · ${m.price}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <button class="ghost" onclick='openModal(${JSON.stringify(m)})'>Details</button>
+        <button class="btn" onclick='useInConfig(${JSON.stringify(m)})'>Configure</button>
+      </div>
+    </div>
+  `;
+  modelsRoot.appendChild(el);
+});
 
-    function updateCountdown() {
-      const now = new Date().getTime();
-      const distance = endTime - now;
+// ---------- Modal logic ----------
+const modal = document.getElementById('modal');
+function openModal(model){
+  document.getElementById('modalTitle').innerText = model.name;
+  // use explicit newline escapes to avoid accidental line breaks in the JS source
+  document.getElementById('modalCopy').innerText = model.desc + '
 
-      if (distance < 0) {
-        countdownEl.innerText = "Countdown Finished!";
-        return;
-      }
+Price: ' + model.price;
+  document.getElementById('modalLeft').innerHTML = `
+    <div style="height:100%;display:flex;flex-direction:column;gap:10px">
+      <img src="${model.img}" style="width:100%;border-radius:8px;object-fit:cover;">
+      <div style="display:flex;gap:8px;justify-content:space-between">
+        <div class="pill">${model.tag}</div>
+        <div style="font-weight:800;color:white">${model.price}</div>
+      </div>
+    </div>
+  `;
+  modal.style.display='flex'; modal.setAttribute('aria-hidden','false');
+  document.getElementById('modalBook').onclick = ()=>{document.getElementById('contact').scrollIntoView({behavior:'smooth'}); closeModal();}
+  document.getElementById('modalConfig').onclick = ()=>{useInConfig(model); closeModal();}
+}
+function closeModal(){modal.style.display='none'; modal.setAttribute('aria-hidden','true');}
 
-      const hours = Math.floor((distance / (1000 * 60 * 60)) % 24);
-      const minutes = Math.floor((distance / (1000 * 60)) % 60);
-      const seconds = Math.floor((distance / 1000) % 60);
+function useInConfig(m){
+  localStorage.setItem('teka_selected_model', JSON.stringify(m));
+  document.getElementById('preview').scrollIntoView({behavior:'smooth'});
+}
 
-      countdownEl.innerText = `${hours}h ${minutes}m ${seconds}s`;
-    }
+// close modal on outside click
+modal.addEventListener('click', (e)=>{ if(e.target===modal) closeModal(); });
 
-    setInterval(updateCountdown, 1000);
-    updateCountdown();
+// ---------- Color swatches and options ----------
+const colors = [
+  {name:'Teka Red', hex:'#ff3b3b'},
+  {name:'Obsidian', hex:'#0b0b0b'},
+  {name:'Arctic White', hex:'#ffffff'},
+  {name:'Azure', hex:'#0ea5ff'},
+  {name:'Sage', hex:'#0ea5a4'},
+  {name:'Solar Gold', hex:'#ffd166'}
+];
+const colorsRoot = document.getElementById('colors');
+const carBody = document.getElementById('carBody');
+colors.forEach(c=>{
+  const sw = document.createElement('div'); sw.className='sw'; sw.style.background=c.hex; sw.title=c.name;
+  sw.onclick = ()=>{ applyColor(c.hex); selectedConfig.color = c; }; colorsRoot.appendChild(sw);
+});
+function applyColor(hex){
+  if(carBody) { carBody.setAttribute('fill', hex); carBody.style.transition='fill .36s ease'; }
+}
 
-    // Admin Panel Trigger
-    let typedWord = "";
-    const secretWord = "ilovetrees";
-    const adminPanel = document.getElementById("adminPanel");
+// ---------- wheel and option handlers ----------
+document.querySelectorAll('[data-wheel]').forEach(b=>{ b.addEventListener('click', (e)=>{ document.querySelectorAll('[data-wheel]').forEach(x=>x.style.opacity=0.6); b.style.opacity=1; selectedConfig.wheels = b.getAttribute('data-wheel'); flashPreview(); }); });
 
-    document.addEventListener("keydown", function(e) {
-      typedWord += e.key.toLowerCase();
-      if (typedWord.includes(secretWord)) {
-        adminPanel.style.display = "block";
-        typedWord = ""; // reset after triggering
-      }
-      if (typedWord.length > 20) {
-        typedWord = typedWord.slice(-secretWord.length);
-      }
+document.getElementById('interior').addEventListener('change', (e)=>{ selectedConfig.interior = e.target.value; showTinyToast('Interior set to '+e.target.value); });
+document.getElementById('driveMode').addEventListener('change', (e)=>{ selectedConfig.driveMode = e.target.value; showTinyToast('Drive mode: '+e.target.value); });
+
+function flashPreview(){ const wrap = document.getElementById('carWrap'); wrap.style.transform='scale(1.02) rotateY(0deg)'; setTimeout(()=>wrap.style.transform='none',260); }
+
+// ---------- drag rotate on preview (simple) ----------
+let rotX = 0, dragging=false, lastX=0;
+const carWrap = document.getElementById('carWrap');
+carWrap.addEventListener('pointerdown', (e)=>{ dragging=true; lastX=e.clientX; carWrap.setPointerCapture(e.pointerId); });
+window.addEventListener('pointermove',(e)=>{ if(!dragging) return; const dx = e.clientX - lastX; lastX = e.clientX; rotX += dx*0.3; carWrap.style.transform = "rotateY("+rotX+"deg)"; });
+window.addEventListener('pointerup',(e)=>{ dragging=false; });
+
+// ---------- save / export / share ----------
+const selectedConfig = { model: preloadedModels[0], color: colors[0], wheels:'standard', interior:'black', driveMode:'comfort', savedAt:null };
+
+// Firestore placeholders — configure below. If you don't want Firebase, leave firebaseConfig = null
+let firebaseApp = null; let db = null; let firebaseConfigured = false;
+
+// Paste your Firebase config here (replace the placeholders). After you paste, the site will automatically use Firestore to store submissions.
+const firebaseConfig = null;
+/*
+Example structure — replace with your actual config object from Firebase Console:
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "YOUR_AUTH_DOMAIN",
+  projectId: "YOUR_PROJECT_ID",
+  storageBucket: "YOUR_STORAGE_BUCKET",
+  messagingSenderId: "...",
+  appId: "..."
+};
+*/
+
+if(firebaseConfig){
+  try{
+    firebase.initializeApp(firebaseConfig);
+    db = firebase.firestore();
+    firebaseApp = firebase.app();
+    firebaseConfigured = true;
+    console.log('Firebase initialized');
+  }catch(e){ console.warn('Firebase init failed', e); }
+}
+
+function pushToFirestore(doc){
+  if(!firebaseConfigured) return Promise.reject('Firebase not configured');
+  // add a server timestamp for easy ordering
+  const payload = Object.assign({}, doc, {timestamp: firebase.firestore.FieldValue.serverTimestamp()});
+  return db.collection('teka_submissions').add(payload);
+}
+
+// save config locally and optionally to Firebase (if configured)
+document.getElementById('saveConfig').addEventListener('click', ()=>{
+  selectedConfig.savedAt = new Date().toISOString();
+  const arr = JSON.parse(localStorage.getItem('teka_submissions')||'[]'); arr.push({type:'config',payload:selectedConfig}); localStorage.setItem('teka_submissions', JSON.stringify(arr));
+  document.getElementById('configSaved').style.display='block'; setTimeout(()=>document.getElementById('configSaved').style.display='none',2800);
+  showTinyToast('Configuration saved locally');
+  if(firebaseConfigured){ pushToFirestore({type:'config',payload:selectedConfig}).then(()=>showTinyToast('Saved to cloud')).catch(err=>console.warn(err)); }
+});
+
+// export car preview (SVG -> PNG)
+document.getElementById('exportPNG').addEventListener('click', async ()=>{
+  const svg = document.getElementById('carSvg');
+  const serializer = new XMLSerializer();
+  const svgStr = serializer.serializeToString(svg);
+  const blob = new Blob([svgStr], {type: 'image/svg+xml;charset=utf-8'});
+  const url = URL.createObjectURL(blob);
+  const img = new Image(); img.onload = ()=>{
+    const canvas = document.createElement('canvas'); canvas.width = img.width; canvas.height = img.height; const ctx = canvas.getContext('2d'); ctx.fillStyle = getComputedStyle(document.body).getPropertyValue('--bg') || '#0b1020'; ctx.fillRect(0,0,canvas.width,canvas.height); ctx.drawImage(img,0,0);
+    URL.revokeObjectURL(url);
+    canvas.toBlob((b)=>{
+      const a = document.createElement('a'); a.download = ((selectedConfig.model && selectedConfig.model.id) ? selectedConfig.model.id : 'teka') + '-config.png'; a.href = URL.createObjectURL(b); a.click(); URL.revokeObjectURL(a.href);
+      showTinyToast('PNG exported');
     });
+  };
+  img.src = url;
+});
 
-    // Admin Features
-    const bgColorPicker = document.getElementById("bgColorPicker");
-    bgColorPicker.addEventListener("input", function() {
-      document.body.style.background = bgColorPicker.value;
-    });
+// share config via URL (encode minimal state)
+document.getElementById('shareConfig').addEventListener('click', ()=>{
+  const payload = {m:selectedConfig.model.id,c:selectedConfig.color.hex||selectedConfig.color, w:selectedConfig.wheels, i:selectedConfig.interior, d:selectedConfig.driveMode};
+  const s = encodeURIComponent(btoa(JSON.stringify(payload)));
+  const link = location.href.split('#')[0] + '#cfg=' + s;
+  navigator.clipboard.writeText(link).then(()=>{ showTinyToast('Share link copied'); });
+});
 
-    function resetBackground() {
-      document.body.style.background = "linear-gradient(270deg, #0f2027, #203a43, #2c5364)";
-    }
-  </script>
+// on load, parse share link
+(function parseShare(){ try{ if(location.hash.startsWith('#cfg=')){ const s = location.hash.replace('#cfg=',''); const bytes = atob(decodeURIComponent(s)); const p = JSON.parse(bytes); const model = preloadedModels.find(x=>x.id===p.m); if(model) selectedConfig.model = model; if(p.c) applyColor(p.c); if(p.w) selectedConfig.wheels = p.w; if(p.i) selectedConfig.interior = p.i; if(p.d) selectedConfig.driveMode = p.d; showTinyToast('Loaded shared config'); } }catch(e){} })();
+
+// ---------- contact form handling (local + optional cloud) ----------
+const form = document.getElementById('contactForm');
+form.addEventListener('submit', (e)=>{ e.preventDefault(); const data = {name:form.name.value,email:form.email.value,phone:form.phone.value,message:form.message.value,at:new Date().toISOString()};
+  const arr = JSON.parse(localStorage.getItem('teka_submissions')||'[]'); arr.push({type:'contact',payload:data}); localStorage.setItem('teka_submissions', JSON.stringify(arr));
+  form.reset(); document.getElementById('formStatus').innerText='Request saved locally — Admin → Submissions.'; setTimeout(()=>document.getElementById('formStatus').innerText='',3000);
+  if(firebaseConfigured){ pushToFirestore({type:'contact',payload:data}).then(()=>showTinyToast('Contact saved to cloud')).catch(err=>console.warn(err)); }
+});
+function fillDemo(){ form.name.value='Abishai Silva'; form.email.value='abishai@example.com'; form.phone.value='+94 77 123 4567'; form.message.value='I would like to book a test drive in Colombo next week.' }
+
+// ---------- Admin panel (local + cloud view) ----------
+async function openAdmin(){
+  const pwd = prompt('Enter admin password to open admin (local demo)');
+  if(!pwd) return; if(pwd!=='tekaadmin'){ alert('Incorrect password'); return; }
+
+  const subsLocal = JSON.parse(localStorage.getItem('teka_submissions')||'[]');
+  const w = window.open('','TEKA Admin','width=1000,height=700');
+  w.document.write('<html><head><title>TEKA Admin</title><meta charset="utf-8"><style>body{font-family:Inter,Arial;padding:18px;background:#0f1724;color:#fff}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid rgba(255,255,255,0.04)}.muted{color:#9aa4b2}pre{white-space:pre-wrap}button{padding:8px 10px;border-radius:8px}</style></head><body>');
+  w.document.write('<h2>TEKA Admin Dashboard</h2>');
+  w.document.write('<button onclick="localStorage.removeItem(\'teka_submissions\'); location.reload();">Clear Local Submissions</button>');
+  w.document.write('<div style="height:8px"></div>');
+
+  if(subsLocal.length===0) w.document.write('<p class="muted">No local submissions yet.</p>');
+  else{
+    w.document.write('<h3>Local Submissions</h3><table><thead><tr><th>#</th><th>Type</th><th>Data</th><th>Time</th></tr></thead><tbody>');
+    subsLocal.forEach((s,i)=>{ w.document.write('<tr><td>'+(i+1)+'</td><td>'+s.type+'</td><td><pre>'+JSON.stringify(s.payload,null,2)+'</pre></td><td>'+(s.payload.savedAt||s.payload.at||'')+'</td></tr>'); });
+    w.document.write('</tbody></table>');
+  }
+
+  if(firebaseConfigured){
+    // show a simple notice in the admin window; actual cloud fetch will be opened in a separate window below
+    w.document.write('<div style="height:18px"></div><h3>Cloud Submissions</h3><p class="muted">Cloud submissions (opened in a separate window)</p>');
+  }
+
+  w.document.write('</body></html>');
+  w.document.close();
+
+  // If firebase configured, also fetch cloud submissions in parent and open details window
+  if(firebaseConfigured){
+    try{
+      const snapshot = await db.collection('teka_submissions').limit(200).get();
+      const items = snapshot.docs.map(d=>({id:d.id,data:d.data()}));
+      const win2 = window.open('','TEKA Cloud Submissions','width=1000,height=700');
+      win2.document.write('<html><head><title>Cloud Submissions</title><meta charset="utf-8"><style>body{font-family:Inter,Arial;padding:18px;background:#0f1724;color:#fff}table{width:100%;border-collapse:collapse}td,th{padding:8px;border-bottom:1px solid rgba(255,255,255,0.04)}pre{white-space:pre-wrap}</style></head><body>');
+      win2.document.write('<h2>Submissions from Firestore (latest 200)</h2>');
+      if(items.length===0) win2.document.write('<p class="muted">No cloud submissions yet.</p>');
+      else{
+        win2.document.write('<table><thead><tr><th>#</th><th>Type</th><th>Data</th><th>ID</th></tr></thead><tbody>');
+        items.forEach((it,i)=>{ win2.document.write('<tr><td>'+(i+1)+'</td><td>'+(it.data.type||'')+'</td><td><pre>'+JSON.stringify(it.data.payload,null,2)+'</pre></td><td>'+it.id+'</td></tr>'); });
+        win2.document.write('</tbody></table>');
+      }
+      win2.document.write('</body></html>'); win2.document.close();
+    }catch(err){ console.warn('Fetch cloud failed', err); }
+  }
+}
+
+// ---------- tiny UI helpers ----------
+function showTinyToast(msg){ const el = document.createElement('div'); el.innerText = msg; el.style.position='fixed'; el.style.right='18px'; el.style.bottom='18px'; el.style.padding='10px 14px'; el.style.background='rgba(17,24,39,0.95)'; el.style.color='white'; el.style.borderRadius='8px'; el.style.boxShadow='0 8px 30px rgba(2,6,23,0.6)'; document.body.appendChild(el); setTimeout(()=>{ el.style.transition='opacity .5s'; el.style.opacity='0'; setTimeout(()=>el.remove(),500); },1800); }
+
+// ---------- theme toggle ----------
+const themeToggle = document.getElementById('themeToggle'); themeToggle.onclick = ()=>{ const b = document.body; const isDark = b.getAttribute('data-theme')==='dark'; b.setAttribute('data-theme', isDark? 'light':'dark'); showTinyToast('Theme switched'); }
+
+document.getElementById('bookBtn').addEventListener('click', ()=>{ document.getElementById('contact').scrollIntoView({behavior:'smooth'}); document.getElementById('name').focus(); });
+
+// ---------- init ----------
+applyColor(colors[0].hex);
+
+/*
+  Hosting + Firebase quick guide (short):
+  1) To use Firebase cloud saves: Create a Firebase project -> Add Web App -> copy config -> paste into firebaseConfig variable in this file.
+  2) Enable Firestore in the Firebase Console. This script writes documents to collection `teka_submissions`.
+  3) To host the site: use Netlify/Vercel/GitHub Pages (Netlify drag & drop is fastest). If using Firebase Hosting, run `firebase init hosting` and deploy.
+  4) For production: set Firestore security rules, add Firebase Auth for admin, and restrict access to admin dashboard.
+
+  If you want, I can now:
+  - Add step-by-step Firebase setup text inside the canvas (I will include exact clicks and copy-paste steps).
+  - Deploy this to Netlify for you (give me the greenlight and I'll provide exactly what to paste into Netlify or the commands for CLI).
+*/
+
+// accessibility: escape closes modal
+window.addEventListener('keydown',(e)=>{ if(e.key==='Escape') closeModal(); });
+
+</script>
 </body>
 </html>
