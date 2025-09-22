@@ -1,116 +1,172 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TEKA — 3D Supercar Configurator</title>
-  <meta name="description" content="TEKA Supercars — interactive 3D configurator with Firebase cloud saves." />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%230b1020'/><text x='50' y='58' font-size='48' text-anchor='middle' fill='%23fff' font-family='Verdana'>T</text></svg>">
-  <style>
-    /* ... (CSS remains the same as previous version) ... */
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TEKA Supercars 3D Configurator</title>
+<style>
+body { margin:0; font-family: Arial, sans-serif; background: linear-gradient(180deg, #06101a, #041022); color: #fff; }
+.container { max-width: 1200px; margin:auto; padding:20px; }
+header { display:flex; justify-content: space-between; align-items:center; margin-bottom: 20px; }
+.logo { font-weight:bold; font-size: 24px; }
+.btn { padding:10px 14px; background: #ff4b4b; border:none; border-radius:8px; cursor:pointer; font-weight:bold; color:#fff; }
+.ghost { padding:8px 12px; border:1px solid rgba(255,255,255,0.3); border-radius:6px; background:transparent; color:#fff; cursor:pointer; }
+main { display:grid; grid-template-columns: 2fr 1fr; gap:20px; }
+.card { background: rgba(10,14,20,0.9); padding:15px; border-radius:12px; margin-bottom: 15px; }
+.viewer-wrap { width:100%; height:500px; border-radius:12px; overflow:hidden; background:#0b1622; }
+.colors { display:flex; gap:8px; margin-bottom:8px; }
+.sw { width:30px; height:30px; border-radius:6px; cursor:pointer; border:2px solid rgba(255,255,255,0.2); }
+footer { margin-top:20px; text-align:center; color:#9aa4b2; font-size:14px; }
+.toast { position:fixed; right:20px; bottom:20px; background:rgba(10,14,20,0.95); color:white; padding:10px 14px; border-radius:8px; }
+@media(max-width:900px){main{grid-template-columns:1fr}}
+</style>
 </head>
 <body>
-  <div class="container">
-    <!-- ... (HTML remains the same as previous version) ... -->
-  </div>
+<div class="container">
+<header>
+<div class="logo">TEKA Supercars</div>
+<div>
+<button class="ghost" id="saveLocal">Save Local</button>
+<button class="btn" id="saveCloud">Save Cloud</button>
+</div>
+</header>
+<main>
+<section>
+<div class="card">
+<h2>3D Car Configurator</h2>
+<div class="viewer-wrap" id="viewerWrap">
+<canvas id="threeCanvas"></canvas>
+</div>
+<div style="margin-top:10px; display:flex; gap:10px;">
+<button class="ghost" id="resetView">Reset View</button>
+<button class="ghost" id="exportPNG">Export PNG</button>
+<button class="ghost" id="shareConfig">Share Link</button>
+</div>
+</div>
+<div class="card">
+<h3>Models</h3>
+<div id="models" style="display:flex; gap:10px;"></div>
+</div>
+</section>
+<aside>
+<div class="card">
+<h3>Customize</h3>
+<div class="colors" id="colors"></div>
+<div style="margin-bottom:10px;">
+<label>Interior: <select id="interior"><option value="black">Black</option><option value="cream">Cream</option><option value="carbon">Carbon</option></select></label>
+</div>
+<div style="margin-bottom:10px;">
+<label>Drive Mode: <select id="driveMode"><option value="comfort">Comfort</option><option value="sport">Sport</option><option value="track">Track</option></select></label>
+</div>
+<div style="display:flex; gap:10px;"><button class="btn" id="randomize">Randomize</button><button class="ghost" id="saveBuild">Save Build</button></div>
+</div>
+<div class="card">
+<h4>Admin</h4>
+<button class="ghost" id="openAdmin">Open Admin</button>
+</div>
+</aside>
+</main>
+<footer>© TEKA 2025 — Drag & drop index.html to Netlify</footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+<script>
+// Firebase initialization
+const firebaseConfig = {
+  apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
+  authDomain: "save1tree-f116f.firebaseapp.com",
+  databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
+  projectId: "save1tree-f116f",
+  storageBucket: "save1tree-f116f.firebasestorage.app",
+  messagingSenderId: "823144374779",
+  appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
+};
+firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
 
-  <!-- Three.js from CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/controls/OrbitControls.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+// 3D Scene
+const canvas=document.getElementById('threeCanvas');
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true});
+renderer.setPixelRatio(window.devicePixelRatio);
+renderer.setSize(canvas.clientWidth,canvas.clientHeight,false);
+const scene=new THREE.Scene();
+scene.background=new THREE.Color(0x071022);
+const camera=new THREE.PerspectiveCamera(45,canvas.clientWidth/canvas.clientHeight,0.1,2000);
+camera.position.set(0,2.4,6);
+const controls=new THREE.OrbitControls(camera,renderer.domElement);
+controls.enableDamping=true; controls.dampingFactor=0.12;
+window.addEventListener('resize',()=>{const w=canvas.clientWidth,h=canvas.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix();});
+const hemi=new THREE.HemisphereLight(0xffffff,0x080820,0.6); scene.add(hemi);
+const dir=new THREE.DirectionalLight(0xffffff,0.8); dir.position.set(5,10,7); scene.add(dir);
+const ground=new THREE.Mesh(new THREE.PlaneGeometry(40,40), new THREE.MeshStandardMaterial({color:0x06080a,metalness:0.2,roughness:0.7})); ground.rotation.x=-Math.PI/2; ground.position.y=-0.7; scene.add(ground);
 
-  <script>
-    // ----------------- Firebase Config -----------------
-    const firebaseConfig = {
-      apiKey: "AIzaSyAP9sPhuV5aczilZipv6FQJ9aMoBOBhXXQ",
-      authDomain: "save1tree-f116f.firebaseapp.com",
-      databaseURL: "https://save1tree-f116f-default-rtdb.firebaseio.com",
-      projectId: "save1tree-f116f",
-      storageBucket: "save1tree-f116f.firebasestorage.app",
-      messagingSenderId: "823144374779",
-      appId: "1:823144374779:web:54a54f23cef8638dea6b5e"
-    };
+// Load GLTF Car Model
+let car;
+const loader=new THREE.GLTFLoader();
+loader.load('https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/master/2.0/Lamborghini_Aventador/glTF/Lamborghini_Aventador.gltf', function(gltf){
+  car=gltf.scene; car.scale.set(1.2,1.2,1.2); scene.add(car);
+}, undefined, function(error){ console.error(error); });
 
-    // Initialize Firebase
-    firebase.initializeApp(firebaseConfig);
-    const db = firebase.firestore();
-    let firebaseConfigured = true;
+function animate(){ requestAnimationFrame(animate); controls.update(); renderer.render(scene,camera); }
+animate();
 
-    // ----------------- 3D scene code -----------------
-    const canvas = document.getElementById('threeCanvas');
-    const renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:true});
-    renderer.setPixelRatio(window.devicePixelRatio);
-    renderer.setSize(canvas.clientWidth, canvas.clientHeight, false);
-    renderer.outputEncoding = THREE.sRGBEncoding;
+// UI State
+const selected={color:'#ff4b4b',interior:'black',mode:'comfort'};
+function toast(msg){ const el=document.createElement('div'); el.className='toast'; el.innerText=msg; document.body.appendChild(el); setTimeout(()=>{el.style.transition='opacity .4s'; el.style.opacity='0'; setTimeout(()=>el.remove(),400);},1400); }
 
-    const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x071022);
+// Colors
+const colors=['#ff4b4b','#0b0b0b','#ffffff','#0ea5ff','#0ea5a4','#ffd166'];
+const colorsRoot=document.getElementById('colors');
+colors.forEach(c=>{ const sw=document.createElement('div'); sw.className='sw'; sw.style.background=c; sw.onclick=()=>{ selected.color=c; if(car) car.traverse(child=>{ if(child.isMesh) child.material.color.set(c); }); toast('Color set'); }; colorsRoot.appendChild(sw); });
 
-    const camera = new THREE.PerspectiveCamera(45, canvas.clientWidth / canvas.clientHeight, 0.1, 2000);
-    camera.position.set(0, 2.4, 6);
+// Randomize
+document.getElementById('randomize').onclick=()=>{
+  selected.color=colors[Math.floor(Math.random()*colors.length)];
+  selected.interior=['black','cream','carbon'][Math.floor(Math.random()*3)];
+  selected.mode=['comfort','sport','track'][Math.floor(Math.random()*3)];
+  if(car) car.traverse(child=>{ if(child.isMesh) child.material.color.set(selected.color); });
+  document.getElementById('interior').value=selected.interior;
+  document.getElementById('driveMode').value=selected.mode;
+  toast('Randomized!');
+};
 
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; controls.dampingFactor = 0.12; controls.minDistance = 2; controls.maxDistance = 20; controls.maxPolarAngle = Math.PI/2.1;
+// Export PNG
+document.getElementById('exportPNG').onclick=()=>{
+  renderer.render(scene,camera);
+  const link=document.createElement('a'); link.download='teka_car.png'; link.href=renderer.domElement.toDataURL(); link.click();
+  toast('PNG Exported');
+};
 
-    window.addEventListener('resize', ()=>{ const w=canvas.clientWidth,h=canvas.clientHeight; renderer.setSize(w,h,false); camera.aspect=w/h; camera.updateProjectionMatrix(); });
+// Share Config
+document.getElementById('shareConfig').onclick=()=>{
+  const url=window.location.href.split('?')[0]+'?config='+encodeURIComponent(JSON.stringify(selected));
+  navigator.clipboard.writeText(url).then(()=>toast('Link copied!'));
+};
 
-    // lights
-    const hemi = new THREE.HemisphereLight(0xffffff, 0x080820, 0.6); scene.add(hemi);
-    const dir = new THREE.DirectionalLight(0xffffff, 0.8); dir.position.set(5,10,7); scene.add(dir);
+// Save Cloud
+document.getElementById('saveCloud').onclick=()=>{
+  if(!car) return toast('Car not loaded');
+  db.collection('teka_submissions').add({config:selected,timestamp:firebase.firestore.FieldValue.serverTimestamp()})
+    .then(()=>toast('Saved to Cloud!')).catch(()=>toast('Save failed'));
+};
 
-    // ground
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(40,40), new THREE.MeshStandardMaterial({color:0x06080a,metalness:0.2,roughness:0.7})); ground.rotation.x = -Math.PI/2; ground.position.y = -0.7; scene.add(ground);
+// Save Local
+document.getElementById('saveLocal').onclick=()=>{
+  localStorage.setItem('teka_config',JSON.stringify(selected)); toast('Saved locally!');
+};
 
-    // stylized car (body, roof, wheels)
-    const car = new THREE.Group();
-    const body = new THREE.Mesh(new THREE.BoxGeometry(3.6,0.6,1.6), new THREE.MeshStandardMaterial({color:0xff4b4b, metalness:0.3, roughness:0.2})); body.position.y=0.3; car.add(body);
-    const roof = new THREE.Mesh(new THREE.BoxGeometry(2.2,0.45,1.4), new THREE.MeshStandardMaterial({color:0x09131a})); roof.position.y=0.85; car.add(roof);
-    const wheels = new THREE.Group();
-    const wheelGeom = new THREE.CylinderGeometry(0.34,0.34,0.4,32); wheelGeom.rotateZ(Math.PI/2);
-    [[-1.2,-0.3,0.95],[1.2,-0.3,0.95],[-1.2,-0.3,-0.95],[1.2,-0.3,-0.95]].forEach(p=>{ const w=new THREE.Mesh(wheelGeom,new THREE.MeshStandardMaterial({color:0x0b0b0b})); w.position.set(p[0],p[1],p[2]); wheels.add(w); }); car.add(wheels);
-    scene.add(car);
-
-    // animation loop
-    function animate(t){ requestAnimationFrame(animate); controls.update(); renderer.render(scene,camera); } requestAnimationFrame(animate);
-
-    // ----------------- UI state -----------------
-    const selected = { color:'#ff4b4b', wheels:'std', interior:'black', mode:'comfort', model:{id:'tekax'} };
-
-    // ----------------- Toast helper -----------------
-    function toast(msg){ const el=document.createElement('div'); el.className='toast'; el.innerText=msg; document.body.appendChild(el); setTimeout(()=>{el.style.transition='opacity .4s'; el.style.opacity='0'; setTimeout(()=>el.remove(),400);},1400); }
-
-    // ----------------- Color options -----------------
-    const colors=['#ff4b4b','#0b0b0b','#ffffff','#0ea5ff','#0ea5a4','#ffd166'];
-    const colorsRoot = document.getElementById('colors');
-    colors.forEach(c=>{ const el=document.createElement('div'); el.className='sw'; el.style.background=c; el.onclick=()=>{ car.children[0].material.color.set(c); selected.color=c; toast('Color set'); }; colorsRoot.appendChild(el); });
-
-    // ----------------- Wheels options -----------------
-    document.querySelectorAll('[data-wheel]').forEach(btn=>{ btn.addEventListener('click',()=>{ const w=btn.getAttribute('data-wheel'); selected.wheels=w; toast('Wheels: '+w); }); });
-
-    // ----------------- Admin Panel -----------------
-    document.getElementById('openAdmin').addEventListener('click', async ()=>{
-      const pwd=prompt('Admin password'); if(pwd!=='tekaadmin') return alert('Wrong password');
-      try{
-        const snapshot = await db.collection('teka_submissions').get();
-        const w = window.open('','_blank','width=900,height=700');
-        w.document.write('<html><head><title>Admin</title><meta charset="utf-8"></head><body>');
-        w.document.write('<h2>Cloud Submissions</h2>');
-        snapshot.forEach(doc=>{ w.document.write('<pre>'+JSON.stringify(doc.data(),null,2)+'</pre>'); });
-        w.document.write('</body></html>'); w.document.close();
-      } catch(e){ console.error(e); toast('Failed to load submissions'); }
-    });
-
-    // ----------------- Save to Cloud -----------------
-    document.getElementById('saveCloud').addEventListener('click', async ()=>{
-      try{
-        await db.collection('teka_submissions').add({type:'config',payload:selected,timestamp:firebase.firestore.FieldValue.serverTimestamp()});
-        toast('Saved to Cloud!');
-      } catch(e){ console.error(e); toast('Cloud save failed'); }
-    });
-
-    // ----------------- Other UI events like reset, export, share (same as previous) -----------------
-  </script>
+// Admin Panel
+document.getElementById('openAdmin').onclick=async()=>{
+  const pwd=prompt('Admin password'); if(pwd!=='tekaadmin') return alert('Wrong password');
+  const snapshot=await db.collection('teka_submissions').get();
+  const w=window.open('','_blank','width=900,height=700');
+  w.document.write('<html><head><title>Admin</title></head><body>');
+  snapshot.forEach(doc=>w.document.write('<pre>'+JSON.stringify(doc.data(),null,2)+'</pre>'));
+  w.document.write('</body></html>'); w.document.close();
+};
+</script>
 </body>
 </html>
