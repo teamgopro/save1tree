@@ -109,6 +109,7 @@
                         <li><a href="#home" class="hover:text-primary transition-colors" onclick="showPage('home-page')">Home</a></li>
                         <li><a href="#models" class="hover:text-primary transition-colors" onclick="showPage('models-page')">Models</a></li>
                         <li><a href="#configurator" class="hover:text-primary transition-colors" onclick="showPage('configurator-page')">Configurator</a></li>
+                        <li><a href="#gallery" class="hover:text-primary transition-colors" onclick="showPage('gallery-page')">Gallery</a></li>
                         <li><a href="#booking" class="hover:text-primary transition-colors" onclick="showPage('booking-page')">Test Drive</a></li>
                         <li><a href="#about" class="hover:text-primary transition-colors" onclick="showPage('about-page')">About</a></li>
                         <li><a href="#admin" class="hover:text-primary transition-colors" onclick="showPage('admin-page')">Admin</a></li>
@@ -179,6 +180,17 @@
                     <!-- 3D Preview Canvas -->
                     <div class="lg:w-2/3 h-[500px] lg:h-auto lg:min-h-[700px] flex items-center justify-center bg-gray-800 dark:bg-gray-100 rounded-2xl shadow-xl overflow-hidden animate-scaleIn">
                         <canvas id="configurator-canvas" class="w-full h-full"></canvas>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Public Gallery Page -->
+            <section id="gallery-page" class="page-section py-20 px-4">
+                <div class="container mx-auto max-w-5xl text-center animate-fadeInUp">
+                    <h2 class="text-5xl font-bold mb-12">Public Gallery</h2>
+                    <p class="text-gray-400 dark:text-gray-600 mb-8">See configurations saved by other users. Click on a card to load the design in the configurator!</p>
+                    <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <!-- Gallery items will be dynamically inserted here -->
                     </div>
                 </div>
             </section>
@@ -302,10 +314,9 @@
 
         let currentConfig = {
             carModel: 'teka-x',
-            color: '#3498db',
-            wheels: '#1a1a1a',
-            interior: '#bdc3c7',
-            trims: '#ffffff',
+            color: 'Deep Blue',
+            wheels: 'Standard',
+            interior: 'Black Leather',
             price: 0
         };
 
@@ -366,6 +377,7 @@
         const pages = document.querySelectorAll('.page-section');
         const adminData = document.getElementById('admin-data');
         const adminLoginMessage = document.getElementById('admin-login-message');
+        const galleryGrid = document.getElementById('gallery-grid');
 
         function showPage(pageId) {
             pages.forEach(page => {
@@ -385,7 +397,7 @@
 
         function showModal(title, body) {
             document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-body').innerText = body;
+            document.getElementById('modal-body').innerHTML = body;
             document.getElementById('message-modal').classList.add('active');
         }
 
@@ -409,9 +421,8 @@
                             console.log("User signed out, using anonymous ID:", userId);
                         }
                         isAuthReady = true;
-                        if (auth.currentUser) {
-                            fetchAdminData();
-                        }
+                        fetchAdminData();
+                        fetchGalleryData();
                     });
 
                     if (__initial_auth_token) {
@@ -454,7 +465,7 @@
                 button.className = 'px-4 py-2 rounded-full border-2 transition-all duration-200';
                 if (type === 'colors' || type === 'wheels') {
                     button.style.backgroundColor = option.hex;
-                    button.style.borderColor = (currentConfig.color === key) ? 'white' : 'transparent';
+                    button.style.borderColor = (currentConfig[type] === key) ? 'white' : 'transparent';
                     if (currentConfig[type] === key) {
                         button.className += ' ring-2 ring-primary ring-offset-2 ring-offset-gray-900 dark:ring-offset-light';
                     }
@@ -465,7 +476,7 @@
                 button.onclick = () => {
                     currentConfig[type] = key;
                     updateConfiguratorUI();
-                    update3DModel();
+                    update3DMaterials();
                     updatePrice();
                 };
                 optionsDiv.appendChild(button);
@@ -482,13 +493,19 @@
             configOptionsDiv.appendChild(createOptionButtons('colors', selectedModelOptions.colors));
             configOptionsDiv.appendChild(createOptionButtons('wheels', selectedModelOptions.wheels));
             configOptionsDiv.appendChild(createOptionButtons('interiors', selectedModelOptions.interiors));
-
+            document.getElementById('config-model-select').value = currentConfig.carModel;
             updatePrice();
         }
 
         // Configurator logic
         document.getElementById('config-model-select').addEventListener('change', (e) => {
             currentConfig.carModel = e.target.value;
+            // Reset to default options for the new model
+            const newModelDefaults = configOptions[currentConfig.carModel];
+            currentConfig.color = Object.keys(newModelDefaults.colors)[0];
+            currentConfig.wheels = Object.keys(newModelDefaults.wheels)[0];
+            currentConfig.interior = Object.keys(newModelDefaults.interiors)[0];
+
             updateConfiguratorUI();
             update3DModel();
         });
@@ -500,13 +517,13 @@
                 return;
             }
             try {
-                const userId = getUserId();
                 const configToSave = {
                     ...currentConfig,
+                    userId: getUserId(),
                     createdAt: new Date().toISOString()
                 };
-                const docRef = await addDoc(collection(db, `artifacts/${appId}/users/${userId}/configs`), configToSave);
-                const shareUrl = `${window.location.origin}/?configId=${docRef.id}&userId=${userId}`;
+                const docRef = await addDoc(collection(db, `artifacts/${appId}/public/data/configs`), configToSave);
+                const shareUrl = `${window.location.origin}/?configId=${docRef.id}`;
                 showModal('Configuration Saved!', `Your unique shareable URL: <br><a href="${shareUrl}" class="text-primary break-all">${shareUrl}</a>`);
                 console.log("Configuration saved with ID:", docRef.id);
             } catch (e) {
@@ -526,13 +543,17 @@
             const email = document.getElementById('booking-email').value;
             const phone = document.getElementById('booking-phone').value;
             const date = document.getElementById('booking-date').value;
-            const config = document.getElementById('booking-config').value;
-            const configObj = JSON.parse(config);
+            let config;
+            try {
+                config = JSON.parse(document.getElementById('booking-config').value);
+            } catch (error) {
+                config = { message: "Configuration not loaded" };
+            }
 
             const bookingData = {
                 name, email, phone, date,
-                carModel: configObj.carModel,
-                config: configObj,
+                carModel: config.carModel || 'N/A',
+                config: config,
                 userId: getUserId(),
                 createdAt: new Date().toISOString()
             };
@@ -581,7 +602,7 @@
                     });
                 });
 
-                // Listen for changes in configurations
+                // Listen for changes in private configurations (now an admin feature)
                 const configsRef = collection(db, `artifacts/${appId}/users/${getUserId()}/configs`);
                 onSnapshot(configsRef, (snapshot) => {
                     const configsList = document.getElementById('admin-configs-list');
@@ -606,6 +627,34 @@
             }
         };
 
+        // Gallery logic
+        const fetchGalleryData = () => {
+             const configsRef = collection(db, `artifacts/${appId}/public/data/configs`);
+             onSnapshot(configsRef, (snapshot) => {
+                galleryGrid.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const config = doc.data();
+                    const configId = doc.id;
+                    const card = document.createElement('div');
+                    card.className = 'p-6 rounded-2xl bg-gray-800 dark:bg-gray-100 shadow-lg text-left transform transition-all duration-300 hover:scale-105 cursor-pointer';
+                    card.innerHTML = `
+                        <h3 class="text-2xl font-bold mb-2">${config.carModel.toUpperCase()}</h3>
+                        <p class="text-gray-400 dark:text-gray-600 mb-1">Color: <span class="font-medium">${config.color}</span></p>
+                        <p class="text-gray-400 dark:text-gray-600 mb-1">Wheels: <span class="font-medium">${config.wheels}</span></p>
+                        <p class="text-xl font-bold text-primary mt-4">$${config.price.toLocaleString()}</p>
+                    `;
+                    card.onclick = () => {
+                        currentConfig = config;
+                        showPage('configurator-page');
+                        updateConfiguratorUI();
+                        update3DModel();
+                    };
+                    galleryGrid.appendChild(card);
+                });
+             });
+        };
+
+
         // Dark/Light mode toggle
         const themeToggleBtn = document.getElementById('theme-toggle');
         const sunIcon = document.getElementById('sun-icon');
@@ -619,48 +668,74 @@
         // 3D Rendering (Three.js)
         const THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
         let scene, camera, renderer, modelGroup;
-        const configuratorCanvas = document.getElementById('configurator-canvas');
+        let heroScene, heroCamera, heroRenderer;
         
         function create3DCar(carModel) {
             const group = new THREE.Group();
-            let bodyColor = new THREE.Color(configOptions[carModel].colors[Object.keys(configOptions[carModel].colors)[0]].hex);
-            let wheelColor = new THREE.Color(configOptions[carModel].wheels[Object.keys(configOptions[carModel].wheels)[0]].hex);
+            let bodyColor = new THREE.Color(configOptions[carModel].colors[currentConfig.color]?.hex);
+            let wheelColor = new THREE.Color(configOptions[carModel].wheels[currentConfig.wheels]?.hex);
+            let interiorColor = new THREE.Color(configOptions[carModel].interiors[currentConfig.interior]?.hex);
 
-            // Car Body
-            const body = new THREE.Mesh(
-                new THREE.BoxGeometry(2, 0.8, 1),
-                new THREE.MeshLambertMaterial({ color: bodyColor })
-            );
-            body.position.set(0, 0.4, 0);
+            // Main Body
+            const bodyGeometry = new THREE.BoxGeometry(2.5, 0.7, 1.2);
+            const bodyMaterial = new THREE.MeshLambertMaterial({ color: bodyColor });
+            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
+            body.position.set(0, 0.5, 0);
             group.add(body);
 
-            // Car Cabin
-            const cabin = new THREE.Mesh(
-                new THREE.BoxGeometry(1, 0.5, 0.8),
-                new THREE.MeshLambertMaterial({ color: 0x95a5a6 }) // Cabin color
-            );
-            cabin.position.set(0, 1.1, 0);
+            // Cabin
+            const cabinGeometry = new THREE.BoxGeometry(1.4, 0.5, 1);
+            const cabinMaterial = new THREE.MeshLambertMaterial({ color: 0x95a5a6 });
+            const cabin = new THREE.Mesh(cabinGeometry, cabinMaterial);
+            cabin.position.set(0.1, 1.05, 0);
             group.add(cabin);
+
+            // Front Bumper
+            const bumperGeometry = new THREE.BoxGeometry(0.2, 0.4, 1.2);
+            const bumperMaterial = new THREE.MeshLambertMaterial({ color: '#2c3e50' });
+            const bumper = new THREE.Mesh(bumperGeometry, bumperMaterial);
+            bumper.position.set(1.2, 0.3, 0);
+            group.add(bumper);
+
+            // Rear Spoiler (simple box for now)
+            const spoilerGeometry = new THREE.BoxGeometry(0.1, 0.2, 1.1);
+            const spoilerMaterial = new THREE.MeshLambertMaterial({ color: '#1a1a1a' });
+            const spoiler = new THREE.Mesh(spoilerGeometry, spoilerMaterial);
+            spoiler.position.set(-1.3, 0.9, 0);
+            group.add(spoiler);
 
             // Wheels
             const wheelGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 16);
             const wheelMaterial = new THREE.MeshLambertMaterial({ color: wheelColor });
             const wheel1 = new THREE.Mesh(wheelGeometry, wheelMaterial);
             wheel1.rotation.z = Math.PI / 2;
-            wheel1.position.set(0.8, 0.2, 0.6);
+            wheel1.position.set(1, 0.2, 0.7);
             group.add(wheel1);
             const wheel2 = new THREE.Mesh(wheelGeometry, wheelMaterial);
             wheel2.rotation.z = Math.PI / 2;
-            wheel2.position.set(-0.8, 0.2, 0.6);
+            wheel2.position.set(-1, 0.2, 0.7);
             group.add(wheel2);
             const wheel3 = new THREE.Mesh(wheelGeometry, wheelMaterial);
             wheel3.rotation.z = Math.PI / 2;
-            wheel3.position.set(0.8, 0.2, -0.6);
+            wheel3.position.set(1, 0.2, -0.7);
             group.add(wheel3);
             const wheel4 = new THREE.Mesh(wheelGeometry, wheelMaterial);
             wheel4.rotation.z = Math.PI / 2;
-            wheel4.position.set(-0.8, 0.2, -0.6);
+            wheel4.position.set(-1, 0.2, -0.7);
             group.add(wheel4);
+            
+            // Re-apply correct colors to parts after initial creation
+            group.traverse(obj => {
+                if (obj.isMesh) {
+                    if (obj === body) {
+                        obj.material.color.set(bodyColor);
+                    } else if (obj === cabin) {
+                        obj.material.color.set(interiorColor);
+                    } else if (obj.geometry instanceof THREE.CylinderGeometry) {
+                        obj.material.color.set(wheelColor);
+                    }
+                }
+            });
 
             return group;
         }
@@ -692,7 +767,6 @@
                 previousMousePosition = { x: e.clientX, y: e.clientY };
             });
 
-            // Initial model
             update3DModel();
             
             camera.position.z = 3;
@@ -707,6 +781,47 @@
                 renderer.setSize(newWidth, newHeight);
             });
         }
+
+        function initHeroCanvas() {
+            const canvas = document.getElementById('hero-canvas');
+            heroScene = new THREE.Scene();
+            heroCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
+            heroRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
+            heroRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
+            
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
+            heroScene.add(ambientLight);
+
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 500;
+            const positions = new Float32Array(particlesCount * 3);
+            for (let i = 0; i < particlesCount * 3; i++) {
+                positions[i] = (Math.random() - 0.5) * 20;
+            }
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+            const particlesMaterial = new THREE.PointsMaterial({ color: 0x666666, size: 0.05 });
+            const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+            heroScene.add(particles);
+
+            heroCamera.position.z = 5;
+
+            function heroAnimate() {
+                requestAnimationFrame(heroAnimate);
+                particles.rotation.y += 0.0005;
+                heroRenderer.render(heroScene, heroCamera);
+            }
+
+            heroAnimate();
+
+            window.addEventListener('resize', () => {
+                const newWidth = canvas.clientWidth;
+                const newHeight = canvas.clientHeight;
+                heroCamera.aspect = newWidth / newHeight;
+                heroCamera.updateProjectionMatrix();
+                heroRenderer.setSize(newWidth, newHeight);
+            });
+        }
+
 
         function update3DModel() {
             if (modelGroup) {
@@ -732,10 +847,10 @@
 
             modelGroup.traverse(obj => {
                 if (obj.isMesh) {
-                    if (obj.geometry instanceof THREE.BoxGeometry && obj.position.y > 0.5) { // Main body
-                        obj.material.color.set(bodyColor);
-                    } else if (obj.geometry instanceof THREE.BoxGeometry && obj.position.y <= 0.5) { // Cabin/trim
-                        obj.material.color.set(interiorColor);
+                    if (obj.geometry instanceof THREE.BoxGeometry && obj.position.y > 0.5 && obj.position.y < 1) {
+                         obj.material.color.set(bodyColor);
+                    } else if (obj.position.y === 1.05) { // Cabin
+                         obj.material.color.set(interiorColor);
                     } else if (obj.geometry instanceof THREE.CylinderGeometry) { // Wheels
                         obj.material.color.set(wheelColor);
                     }
@@ -791,7 +906,7 @@
                 card.className = 'car-card p-6 rounded-2xl bg-gray-800 dark:bg-gray-100 shadow-lg text-center transform transition-all duration-300 hover:scale-105 animate-fadeInUp';
                 card.innerHTML = `
                     <h3 class="text-3xl font-bold mb-2">${model.toUpperCase()}</h3>
-                    <p class="text-gray-400 dark:text-gray-600 mb-4">${configOptions[model].basePrice.toLocaleString()}+</p>
+                    <p class="text-gray-400 dark:text-gray-600 mb-4">$${configOptions[model].basePrice.toLocaleString()}+</p>
                     <a href="#configurator" class="inline-block px-6 py-2 rounded-full text-white font-semibold bg-primary hover:bg-red-600 transition-colors" onclick="currentConfig.carModel='${model}'; showPage('configurator-page');">Configure</a>
                 `;
                 grid.appendChild(card);
@@ -802,9 +917,8 @@
         async function loadConfigFromUrl() {
             const urlParams = new URLSearchParams(window.location.search);
             const configId = urlParams.get('configId');
-            const configUserId = urlParams.get('userId');
 
-            if (configId && configUserId) {
+            if (configId) {
                 showModal('Loading Configuration', 'Please wait while we load your saved configuration.');
                 await new Promise(resolve => {
                     const checkInterval = setInterval(() => {
@@ -816,7 +930,7 @@
                 });
                 
                 try {
-                    const docRef = doc(db, `artifacts/${appId}/users/${configUserId}/configs`, configId);
+                    const docRef = doc(db, `artifacts/${appId}/public/data/configs`, configId);
                     const docSnap = await getDoc(docRef);
 
                     if (docSnap.exists()) {
@@ -840,20 +954,12 @@
         // Initial setup
         window.onload = async () => {
             initFirebase();
-            await new Promise(resolve => {
-                const checkInterval = setInterval(() => {
-                    if (isAuthReady) {
-                        clearInterval(checkInterval);
-                        resolve();
-                    }
-                }, 100);
-            });
-            await loadConfigFromUrl();
-            init3D('hero-canvas');
+            initHeroCanvas();
             init3D('configurator-canvas');
             updateConfiguratorUI();
             generateModelCards();
             initScrollReveal();
+            loadConfigFromUrl();
         };
     </script>
     <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
