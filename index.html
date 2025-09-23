@@ -12,6 +12,7 @@
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
 
     <style>
         /* 1. THEME & ROOT VARIABLES */
@@ -20,6 +21,8 @@
             --neon-glow: 0 0 15px rgba(226, 0, 26, 0.7), 0 0 30px rgba(226, 0, 26, 0.5);
             --suv-primary: #2A5C8A;
             --suv-gradient: linear-gradient(90deg, #2A5C8A, #1E3A5F);
+            --map-primary: #1E88E5;
+            --map-gradient: linear-gradient(90deg, #1E88E5, #1565C0);
         }
 
         [data-theme="dark"] {
@@ -123,8 +126,14 @@
             box-shadow: 0 10px 30px -10px rgba(42, 92, 138, 0.7);
         }
         
-        .btn-suv::before {
-            background: var(--suv-gradient);
+        .btn-map {
+            background: var(--map-gradient);
+            color: white;
+            box-shadow: 0 10px 30px -10px rgba(30, 136, 229, 0.7);
+        }
+        
+        .btn-map::before {
+            background: var(--map-gradient);
         }
         
         .btn:hover { 
@@ -134,6 +143,10 @@
         
         .btn-suv:hover {
             box-shadow: 0 20px 40px -10px rgba(42, 92, 138, 0.8);
+        }
+        
+        .btn-map:hover {
+            box-shadow: 0 20px 40px -10px rgba(30, 136, 229, 0.8);
         }
         
         .btn-secondary:hover::before {
@@ -171,6 +184,11 @@
         .cursor.suv-mode {
             background-color: rgba(42, 92, 138, 0.2);
             border-color: var(--suv-primary);
+        }
+        
+        .cursor.map-mode {
+            background-color: rgba(30, 136, 229, 0.2);
+            border-color: var(--map-primary);
         }
         
         /* 4. ANIMATIONS */
@@ -1763,6 +1781,14 @@
             transition-delay: 0.3s;
         }
         
+        .fab-container.active .fab:nth-child(4) {
+            transition-delay: 0.4s;
+        }
+        
+        .fab-container.active .fab:nth-child(5) {
+            transition-delay: 0.5s;
+        }
+        
         .fab:hover {
             transform: scale(1.1) rotate(15deg);
         }
@@ -2437,6 +2463,395 @@
             color: var(--text-muted);
             font-size: 0.9rem;
         }
+        
+        /* Supercharger Map Section */
+        #supercharger-map {
+            background-color: var(--bg-secondary);
+            position: relative;
+        }
+        
+        #supercharger-map::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 5px;
+            background: var(--map-gradient);
+        }
+        
+        .map-hero {
+            position: relative;
+            height: 50vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            overflow: hidden;
+            border-radius: 20px;
+            margin-bottom: 50px;
+        }
+        
+        .map-hero-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(rgba(30, 136, 229, 0.8), rgba(21, 101, 192, 0.8)), url('https://images.unsplash.com/photo-1503376780353-7b66b6721f5c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80') no-repeat center center/cover;
+            z-index: -1;
+        }
+        
+        .map-hero-content {
+            position: relative;
+            z-index: 1;
+            padding: 0 20px;
+        }
+        
+        .map-hero-content h2 {
+            font-size: clamp(3rem, 6vw, 5rem);
+            margin-bottom: 20px;
+            color: white;
+            text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+        }
+        
+        .map-hero-content p {
+            font-size: 1.5rem;
+            max-width: 800px;
+            margin: 0 auto 30px;
+            color: rgba(255, 255, 255, 0.9);
+        }
+        
+        .map-container {
+            position: relative;
+            height: 600px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            margin-bottom: 50px;
+        }
+        
+        #map {
+            width: 100%;
+            height: 100%;
+        }
+        
+        .map-controls {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 15px;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        .map-control-btn {
+            width: 40px;
+            height: 40px;
+            background: var(--map-gradient);
+            border: none;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: white;
+        }
+        
+        .map-control-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .map-legend {
+            position: absolute;
+            bottom: 20px;
+            left: 20px;
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 15px;
+            z-index: 1000;
+        }
+        
+        .legend-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--map-primary);
+        }
+        
+        .legend-items {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        
+        .legend-label {
+            font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        
+        .supercharger-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .stat-card {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+        
+        .stat-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 10px 20px -5px rgba(30, 136, 229, 0.3);
+        }
+        
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            background: var(--map-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+        }
+        
+        .stat-icon i {
+            color: white;
+            font-size: 1.5rem;
+        }
+        
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: var(--map-primary);
+        }
+        
+        .stat-label {
+            color: var(--text-muted);
+        }
+        
+        .charging-plans {
+            background: var(--bg-color);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 50px;
+        }
+        
+        .charging-plans h3 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            color: var(--map-primary);
+            text-align: center;
+        }
+        
+        .plan-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+        
+        .plan-card {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: var(--map-gradient);
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+        
+        .plan-card:hover::before {
+            transform: scaleX(1);
+        }
+        
+        .plan-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 15px 30px -10px rgba(30, 136, 229, 0.3);
+        }
+        
+        .plan-name {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            color: var(--map-primary);
+        }
+        
+        .plan-price {
+            font-size: 2.5rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            color: var(--text-color);
+        }
+        
+        .plan-price span {
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-muted);
+        }
+        
+        .plan-features {
+            margin: 20px 0;
+            text-align: left;
+        }
+        
+        .plan-feature {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+            color: var(--text-muted);
+        }
+        
+        .plan-feature i {
+            color: var(--map-primary);
+            margin-right: 10px;
+        }
+        
+        .plan-cta {
+            margin-top: 20px;
+        }
+        
+        .custom-popup .leaflet-popup-content-wrapper {
+            background: var(--bg-secondary);
+            color: var(--text-color);
+            border-radius: 15px;
+            box-shadow: var(--card-shadow);
+            border: 1px solid var(--border-color);
+        }
+        
+        .custom-popup .leaflet-popup-tip {
+            background: var(--bg-secondary);
+        }
+        
+        .popup-content {
+            padding: 15px;
+            min-width: 250px;
+        }
+        
+        .popup-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--map-primary);
+        }
+        
+        .popup-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .popup-info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .popup-info-item i {
+            color: var(--map-primary);
+            width: 20px;
+            text-align: center;
+        }
+        
+        .popup-status {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+        
+        .status-available {
+            background: rgba(76, 175, 80, 0.2);
+            color: #4CAF50;
+        }
+        
+        .status-busy {
+            background: rgba(255, 152, 0, 0.2);
+            color: #FF9800;
+        }
+        
+        .status-offline {
+            background: rgba(244, 67, 54, 0.2);
+            color: #F44336;
+        }
+        
+        .popup-cta {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+        
+        .popup-btn {
+            flex: 1;
+            padding: 8px 15px;
+            border-radius: 20px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 0.9rem;
+        }
+        
+        .popup-btn-primary {
+            background: var(--map-gradient);
+            color: white;
+        }
+        
+        .popup-btn-secondary {
+            background: transparent;
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .popup-btn:hover {
+            transform: translateY(-2px);
+        }
     </style>
 </head>
 <body data-theme="dark">
@@ -2720,6 +3135,9 @@
         <div class="fab" id="fab-cargo" title="Cargo Space">
             <i class="fas fa-box-open"></i>
         </div>
+        <div class="fab" id="fab-map" title="Supercharger Map">
+            <i class="fas fa-map-marked-alt"></i>
+        </div>
     </div>
 
     <div class="cursor"></div>
@@ -2733,6 +3151,7 @@
                     <li><a href="#suvs" class="interactive">SUVs</a></li>
                     <li><a href="#tech" class="interactive">Technology</a></li>
                     <li><a href="#configurator" class="interactive">Configure</a></li>
+                    <li><a href="#supercharger-map" class="interactive">Superchargers</a></li>
                     <li><a href="#gallery" class="interactive">Gallery</a></li>
                     <li><a href="#compare" class="interactive">Compare</a></li>
                 </ul>
@@ -2897,6 +3316,153 @@
                         </div>
                         <div class="family-feature-title">Connectivity</div>
                         <div class="family-feature-description">Built-in WiFi with 10 device support</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <section id="supercharger-map" class="container">
+            <div class="map-hero animate-in">
+                <div class="map-hero-bg"></div>
+                <div class="map-hero-content">
+                    <h2>Global Supercharger Network</h2>
+                    <p>Power your journey with our worldwide network of ultra-fast charging stations. Wherever you go, we've got you covered.</p>
+                    <div class="suv-buttons">
+                        <a href="#" class="btn btn-map interactive" id="plan-route-btn">Plan Route</a>
+                        <a href="#" class="btn btn-secondary interactive" id="find-nearby-btn">Find Nearby</a>
+                    </div>
+                </div>
+            </div>
+            
+            <h2 class="animate-in">Interactive Supercharger Map</h2>
+            <div class="map-container animate-in" style="transition-delay: 200ms;">
+                <div id="map"></div>
+                <div class="map-controls">
+                    <button class="map-control-btn" id="map-zoom-in" title="Zoom In">
+                        <i class="fas fa-plus"></i>
+                    </button>
+                    <button class="map-control-btn" id="map-zoom-out" title="Zoom Out">
+                        <i class="fas fa-minus"></i>
+                    </button>
+                    <button class="map-control-btn" id="map-locate" title="Locate Me">
+                        <i class="fas fa-location-arrow"></i>
+                    </button>
+                </div>
+                <div class="map-legend">
+                    <div class="legend-title">Charger Types</div>
+                    <div class="legend-items">
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #4CAF50;"></div>
+                            <div class="legend-label">V4 Supercharger (350kW)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #2196F3;"></div>
+                            <div class="legend-label">V3 Supercharger (250kW)</div>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color" style="background-color: #FF9800;"></div>
+                            <div class="legend-label">Destination Charger (150kW)</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="supercharger-stats animate-in" style="transition-delay: 300ms;">
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-charging-station"></i>
+                    </div>
+                    <div class="stat-value">45,000+</div>
+                    <div class="stat-label">Superchargers Worldwide</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-globe"></i>
+                    </div>
+                    <div class="stat-value">100+</div>
+                    <div class="stat-label">Countries Covered</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-bolt"></i>
+                    </div>
+                    <div class="stat-value">350kW</div>
+                    <div class="stat-label">Max Charging Speed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-value">15 min</div>
+                    <div class="stat-label">80% Charge Time</div>
+                </div>
+            </div>
+            
+            <div class="charging-plans animate-in" style="transition-delay: 400ms;">
+                <h3>Charging Plans</h3>
+                <div class="plan-grid">
+                    <div class="plan-card">
+                        <div class="plan-name">Basic Plan</div>
+                        <div class="plan-price">$0<span>/month</span></div>
+                        <div class="plan-features">
+                            <div class="plan-feature">
+                                <i class="fas fa-check"></i>
+                                <span>Pay-per-use charging</span>
+                            </div>
+                            <div class="plan-feature">
+                                <i class="fas fa-check"></i>
+                                <span>Access to all Superchargers</span>
+                            </div>
+                            <div class="plan-feature">
+                                <i class="fas fa-check"></i>
+                                <span>Mobile app integration</span>
+                            </div>
+                        </div>
+                        <div class="plan-cta">
+                            <button class="btn btn-secondary interactive">Select Plan</button>
+                        </div>
+                    </div>
+                    <div class="plan-card">
+                        <div class="plan-name">Premium Plan</div>
+                        <div class="plan-price">$25<span>/month</span></div>
+                        <div class="plan-features">
+                            <div class="plan-feature">
+                                <i class="fas fa-check"></i>
+                                <span>Free charging at Superchargers</span>
+                            </div>
+                            <div class="plan-feature">
+                                <i class="fas fa-check"></i>
+                                <span>Priority access</span>
+                            </div>
+                            <div class="plan-feature">
+                                <i class="fas fa-check"></i>
+                                <span>24/7 support</span>
+                            </div>
+                        </div>
+                        <div class="plan-cta">
+                            <button class="btn btn-map interactive">Select Plan</button>
+                        </div>
+                    </div>
+                    <div class="plan-card">
+                        <div class="plan-name">Ultimate Plan</div>
+                        <div class="plan-price">$50<span>/month</span></div>
+                        <div class="plan-features">
+                            <div class="plan-feature">
+                                <i class="fas fa-check"></i>
+                                <span>Free charging at all stations</span>
+                            </div>
+                            <div class="plan-feature">
+                                <i class="fas fa-check"></i>
+                                <span>VIP lounge access</span>
+                            </div>
+                            <div class="plan-feature">
+                                <i class="fas fa-check"></i>
+                                <span>Concierge service</span>
+                            </div>
+                        </div>
+                        <div class="plan-cta">
+                            <button class="btn btn-map interactive">Select Plan</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -3175,6 +3741,7 @@
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const viewerPanel = document.getElementById('viewer-panel');
@@ -3851,6 +4418,211 @@
                 
                 el.addEventListener('mouseleave', () => {
                     cursor.classList.remove('suv-mode');
+                });
+            });
+            
+            // 25. CURSOR MAP MODE
+            const mapElements = document.querySelectorAll('.btn-map, #fab-map, #supercharger-map');
+            
+            mapElements.forEach(el => {
+                el.addEventListener('mouseenter', () => {
+                    cursor.classList.add('map-mode');
+                });
+                
+                el.addEventListener('mouseleave', () => {
+                    cursor.classList.remove('map-mode');
+                });
+            });
+            
+            // 26. SUPERCHARGER MAP
+            const fabMap = document.getElementById('fab-map');
+            const planRouteBtn = document.getElementById('plan-route-btn');
+            const findNearbyBtn = document.getElementById('find-nearby-btn');
+            
+            fabMap.addEventListener('click', () => {
+                document.getElementById('supercharger-map').scrollIntoView({ behavior: 'smooth' });
+            });
+            
+            planRouteBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                showNotification('Route planning feature coming soon!');
+            });
+            
+            findNearbyBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        position => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            map.setView([lat, lng], 13);
+                            showNotification('Found your location!');
+                            
+                            // Add a marker for user's location
+                            L.marker([lat, lng], {
+                                icon: L.divIcon({
+                                    html: '<i class="fas fa-location-arrow" style="color: var(--primary-color); font-size: 24px;"></i>',
+                                    iconSize: [30, 30],
+                                    className: 'user-location-marker'
+                                })
+                            }).addTo(map).bindPopup('Your Location').openPopup();
+                        },
+                        error => {
+                            showNotification('Unable to get your location.');
+                        }
+                    );
+                } else {
+                    showNotification('Geolocation is not supported by your browser.');
+                }
+            });
+            
+            // Initialize the map
+            const map = L.map('map').setView([40.7128, -74.0060], 5);
+            
+            // Add tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+            
+            // Map controls
+            document.getElementById('map-zoom-in').addEventListener('click', () => {
+                map.zoomIn();
+            });
+            
+            document.getElementById('map-zoom-out').addEventListener('click', () => {
+                map.zoomOut();
+            });
+            
+            document.getElementById('map-locate').addEventListener('click', () => {
+                if (navigator.geolocation) {
+                    navigator.geolocation.getCurrentPosition(
+                        position => {
+                            const lat = position.coords.latitude;
+                            const lng = position.coords.longitude;
+                            map.setView([lat, lng], 13);
+                        },
+                        error => {
+                            showNotification('Unable to get your location.');
+                        }
+                    );
+                } else {
+                    showNotification('Geolocation is not supported by your browser.');
+                }
+            });
+            
+            // Supercharger data
+            const superchargers = [
+                { id: 1, name: "TEKA Supercharger - New York", lat: 40.7128, lng: -74.0060, type: "v4", status: "available", power: "350kW", address: "123 Tesla Ave, New York, NY" },
+                { id: 2, name: "TEKA Supercharger - Los Angeles", lat: 34.0522, lng: -118.2437, type: "v4", status: "available", power: "350kW", address: "456 Innovation Blvd, Los Angeles, CA" },
+                { id: 3, name: "TEKA Supercharger - London", lat: 51.5074, lng: -0.1278, type: "v3", status: "busy", power: "250kW", address: "789 Electric Lane, London, UK" },
+                { id: 4, name: "TEKA Supercharger - Tokyo", lat: 35.6762, lng: 139.6503, type: "v4", status: "available", power: "350kW", address: "321 Tech Street, Tokyo, Japan" },
+                { id: 5, name: "TEKA Supercharger - Paris", lat: 48.8566, lng: 2.3522, type: "v3", status: "available", power: "250kW", address: "654 Innovation Ave, Paris, France" },
+                { id: 6, name: "TEKA Supercharger - Berlin", lat: 52.5200, lng: 13.4050, type: "v3", status: "offline", power: "250kW", address: "987 Electric Way, Berlin, Germany" },
+                { id: 7, name: "TEKA Supercharger - Sydney", lat: -33.8688, lng: 151.2093, type: "v4", status: "available", power: "350kW", address: "147 Future Drive, Sydney, Australia" },
+                { id: 8, name: "TEKA Supercharger - Toronto", lat: 43.6532, lng: -79.3832, type: "v3", status: "available", power: "250kW", address: "258 Power Rd, Toronto, Canada" },
+                { id: 9, name: "TEKA Supercharger - Shanghai", lat: 31.2304, lng: 121.4737, type: "v4", status: "busy", power: "350kW", address: "369 Innovation Blvd, Shanghai, China" },
+                { id: 10, name: "TEKA Supercharger - Dubai", lat: 25.2048, lng: 55.2708, type: "v4", status: "available", power: "350kW", address: "741 Electric Ave, Dubai, UAE" },
+                { id: 11, name: "TEKA Supercharger - Singapore", lat: 1.3521, lng: 103.8198, type: "v3", status: "available", power: "250kW", address: "852 Tech Street, Singapore" },
+                { id: 12, name: "TEKA Supercharger - Mumbai", lat: 19.0760, lng: 72.8777, type: "v3", status: "busy", power: "250kW", address: "963 Power Rd, Mumbai, India" },
+                { id: 13, name: "TEKA Supercharger - São Paulo", lat: -23.5505, lng: -46.6333, type: "v4", status: "available", power: "350kW", address: "147 Electric Ave, São Paulo, Brazil" },
+                { id: 14, name: "TEKA Supercharger - Moscow", lat: 55.7558, lng: 37.6173, type: "v3", status: "available", power: "250kW", address: "258 Innovation Way, Moscow, Russia" },
+                { id: 15, name: "TEKA Supercharger - Seoul", lat: 37.5665, lng: 126.9780, type: "v4", status: "available", power: "350kW", address: "369 Tech Street, Seoul, South Korea" }
+            ];
+            
+            // Add supercharger markers to the map
+            superchargers.forEach(supercharger => {
+                let iconColor;
+                switch (supercharger.type) {
+                    case 'v4':
+                        iconColor = '#4CAF50';
+                        break;
+                    case 'v3':
+                        iconColor = '#2196F3';
+                        break;
+                    default:
+                        iconColor = '#FF9800';
+                }
+                
+                const marker = L.marker([supercharger.lat, supercharger.lng], {
+                    icon: L.divIcon({
+                        html: `<div style="background-color: ${iconColor}; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 0 10px rgba(0,0,0,0.3);"></div>`,
+                        iconSize: [20, 20],
+                        className: 'supercharger-marker'
+                    })
+                }).addTo(map);
+                
+                // Create popup content
+                const popupContent = document.createElement('div');
+                popupContent.className = 'popup-content';
+                
+                const popupTitle = document.createElement('div');
+                popupTitle.className = 'popup-title';
+                popupTitle.textContent = supercharger.name;
+                
+                const popupInfo = document.createElement('div');
+                popupInfo.className = 'popup-info';
+                
+                const addressItem = document.createElement('div');
+                addressItem.className = 'popup-info-item';
+                addressItem.innerHTML = `<i class="fas fa-map-marker-alt"></i><span>${supercharger.address}</span>`;
+                
+                const powerItem = document.createElement('div');
+                powerItem.className = 'popup-info-item';
+                powerItem.innerHTML = `<i class="fas fa-bolt"></i><span>${supercharger.power}</span>`;
+                
+                const typeItem = document.createElement('div');
+                typeItem.className = 'popup-info-item';
+                typeItem.innerHTML = `<i class="fas fa-charging-station"></i><span>${supercharger.type.toUpperCase()}</span>`;
+                
+                popupInfo.appendChild(addressItem);
+                popupInfo.appendChild(powerItem);
+                popupInfo.appendChild(typeItem);
+                
+                const statusClass = `status-${supercharger.status}`;
+                const statusText = supercharger.status.charAt(0).toUpperCase() + supercharger.status.slice(1);
+                
+                const status = document.createElement('div');
+                status.className = `popup-status ${statusClass}`;
+                status.textContent = statusText;
+                
+                const popupCta = document.createElement('div');
+                popupCta.className = 'popup-cta';
+                
+                const navigateBtn = document.createElement('button');
+                navigateBtn.className = 'popup-btn popup-btn-primary';
+                navigateBtn.textContent = 'Navigate';
+                navigateBtn.addEventListener('click', () => {
+                    showNotification(`Navigating to ${supercharger.name}...`);
+                });
+                
+                const detailsBtn = document.createElement('button');
+                detailsBtn.className = 'popup-btn popup-btn-secondary';
+                detailsBtn.textContent = 'Details';
+                detailsBtn.addEventListener('click', () => {
+                    showNotification(`Details for ${supercharger.name} coming soon!`);
+                });
+                
+                popupCta.appendChild(navigateBtn);
+                popupCta.appendChild(detailsBtn);
+                
+                popupContent.appendChild(popupTitle);
+                popupContent.appendChild(popupInfo);
+                popupContent.appendChild(status);
+                popupContent.appendChild(popupCta);
+                
+                marker.bindPopup(popupContent, {
+                    className: 'custom-popup',
+                    maxWidth: 300
+                });
+            });
+            
+            // 27. PLAN SELECTION
+            const planButtons = document.querySelectorAll('.plan-cta .btn');
+            
+            planButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const planName = btn.closest('.plan-card').querySelector('.plan-name').textContent;
+                    showNotification(`You've selected the ${planName}. Redirecting to payment...`);
                 });
             });
         });
