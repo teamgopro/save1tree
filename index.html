@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>TEKA Motors - Engineering Emotion</title>
-    
+    <title>TEKA Motors - Hypercar Engineering</title>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@400;700&family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
     
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
@@ -20,23 +20,25 @@
         }
 
         [data-theme="dark"] {
-            --bg-color: #0A0A0A;
-            --bg-secondary: #121212;
-            --text-color: #F0F0F0;
-            --text-muted: #888888;
-            --primary-color: #0077FF;
-            --primary-gradient: linear-gradient(45deg, #0077FF, #0058BE);
-            --border-color: #222222;
+            --bg-color: #050505;
+            --bg-secondary: #0E0E0E;
+            --text-color: #F8F8F8;
+            --text-muted: #B0B0B0;
+            --primary-color: #E2001A;
+            --primary-gradient: linear-gradient(90deg, #E2001A, #A60013);
+            --border-color: #1A1A1A;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
         }
 
         [data-theme="light"] {
-            --bg-color: #FFFFFF;
-            --bg-secondary: #F7F7F7;
+            --bg-color: #F8F8F8;
+            --bg-secondary: #FFFFFF;
             --text-color: #111111;
-            --text-muted: #666666;
-            --primary-color: #0077FF;
-            --primary-gradient: linear-gradient(45deg, #0077FF, #0058BE);
+            --text-muted: #555555;
+            --primary-color: #E2001A;
+            --primary-gradient: linear-gradient(90deg, #E2001A, #A60013);
             --border-color: #EAEAEA;
+            --card-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         /* 2. GENERAL & RESET */
@@ -48,73 +50,76 @@
 
         html {
             scroll-behavior: smooth;
-            cursor: none; /* Hide default cursor */
+            cursor: none;
         }
 
         body {
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Roboto Condensed', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
-        h1 { font-size: clamp(2.8rem, 5vw, 5rem); }
-        h2 { font-size: clamp(2.2rem, 4vw, 3.2rem); margin-bottom: 2rem; }
-        p { color: var(--text-muted); line-height: 1.7; }
+        h1, h2, h3 { font-family: 'Montserrat', sans-serif; font-weight: 700; letter-spacing: -0.05em; }
+        h1 { font-size: clamp(3rem, 6vw, 6.5rem); text-transform: uppercase; }
+        h2 { font-size: clamp(2.5rem, 4.5vw, 4rem); text-transform: uppercase; margin-bottom: 2.5rem; }
+        p { color: var(--text-muted); line-height: 1.8; }
         
-        .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
-        section { padding: 120px 0; overflow: hidden; }
+        .container { max-width: 1300px; margin: 0 auto; padding: 0 25px; }
+        section { padding: 140px 0; overflow: hidden; }
 
         .btn {
             display: inline-block;
-            padding: 14px 28px;
-            border-radius: 10px;
+            padding: 16px 32px;
+            border-radius: 5px;
             text-decoration: none;
             font-weight: 600;
             transition: transform 0.3s var(--ease-out-quart), box-shadow 0.3s var(--ease-out-quart);
             border: none;
+            text-transform: uppercase;
+            letter-spacing: 1px;
         }
 
         .btn-primary {
             background: var(--primary-gradient);
             color: white;
-            box-shadow: 0 10px 20px -10px var(--primary-color);
+            box-shadow: 0 10px 25px -10px rgba(226, 0, 26, 0.6);
         }
         
         .btn-secondary {
             background-color: transparent;
             color: var(--text-color);
-            border: 1px solid var(--border-color);
+            border: 2px solid var(--border-color);
         }
         
-        .btn:hover { transform: translateY(-5px); }
+        .btn:hover { transform: translateY(-7px); box-shadow: 0 15px 35px -10px rgba(226, 0, 26, 0.8); }
         
-        /* 3. NEW: CUSTOM CURSOR */
+        /* 3. CUSTOM CURSOR */
         .cursor {
             position: fixed;
-            width: 30px;
-            height: 30px;
-            border: 1px solid var(--text-color);
+            width: 35px;
+            height: 35px;
+            border: 2px solid var(--text-color);
             border-radius: 50%;
             left: 0;
             top: 0;
             pointer-events: none;
             transform: translate(-50%, -50%);
-            transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+            transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
             z-index: 9999;
         }
 
         .cursor.grow {
-            width: 50px;
-            height: 50px;
-            background-color: rgba(255, 255, 255, 0.1);
+            width: 55px;
+            height: 55px;
+            background-color: rgba(226, 0, 26, 0.2);
+            border-color: var(--primary-color);
         }
         
         /* 4. ANIMATIONS */
         .animate-in {
             opacity: 0;
-            transform: translateY(40px);
+            transform: translateY(60px);
             transition: opacity 1s var(--ease-out-quart), transform 1s var(--ease-out-quart);
         }
         .animate-in.visible { opacity: 1; transform: translateY(0); }
@@ -127,16 +132,16 @@
             width: 100%;
             padding: 25px 0;
             z-index: 1000;
-            background: rgba(10, 10, 10, 0.5); /* Darker for better contrast */
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            background: rgba(5, 5, 5, 0.6);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
         }
         
         header .container { display: flex; justify-content: space-between; align-items: center; }
-        .logo { font-size: 1.8rem; font-weight: 800; text-decoration: none; color: var(--text-color); }
+        .logo { font-size: 2.2rem; font-weight: 800; text-decoration: none; color: var(--text-color); letter-spacing: -2px; }
         nav ul { display: flex; list-style: none; gap: 40px; }
-        nav a { text-decoration: none; color: var(--text-muted); font-weight: 500; transition: color 0.2s ease; }
+        nav a { text-decoration: none; color: var(--text-muted); font-weight: 600; transition: color 0.2s ease; text-transform: uppercase; letter-spacing: 1px; }
         nav a:hover { color: var(--text-color); }
         #theme-toggle { background: none; border: none; color: var(--text-color); font-size: 1.5rem; }
         
@@ -148,74 +153,84 @@
             justify-content: center;
             text-align: center;
             position: relative;
+            background: url('https://via.placeholder.com/1920x1080/0A0A0A/111111?text=Dynamic+Car+Shot') no-repeat center center/cover;
+            border-bottom: 4px solid var(--primary-color);
         }
-        .hero-content { z-index: 2; }
-        .hero-content p { font-size: 1.25rem; max-width: 650px; margin: 1.5rem auto 2.5rem; }
-        .hero-buttons { display: flex; gap: 1rem; justify-content: center; }
-        .hero-3d-placeholder {
+        #home::before {
+            content: '';
             position: absolute;
-            top: 50%; left: 50%; transform: translate(-50%, -50%);
-            width: 90%; max-width: 1000px; height: 50%;
-            background: radial-gradient(ellipse at center, rgba(100,100,150,0.05) 0%, rgba(0,0,0,0) 70%);
-            display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 1.5rem;
-            border: 2px dashed var(--border-color); border-radius: 20px; z-index: 1;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.7);
+            z-index: 1;
         }
+        .hero-content { z-index: 2; position: relative; }
+        .hero-content h1 span { color: var(--primary-color); }
+        .hero-content p { font-family: 'Montserrat', sans-serif; font-size: 1.35rem; max-width: 800px; margin: 1.5rem auto 3rem; font-weight: 400; color: #E0E0E0;}
+        .hero-buttons { display: flex; gap: 1.5rem; justify-content: center; }
 
         /* 7. MODELS & CONFIGURATOR SECTIONS */
         .models-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 3rem;
         }
         .model-card {
-            background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 20px;
-            padding: 1.5rem; text-align: center; transition: transform 0.4s var(--ease-out-quart), box-shadow 0.4s var(--ease-out-quart);
+            background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 15px;
+            padding: 2rem; text-align: center; transition: transform 0.4s var(--ease-out-quart), box-shadow 0.4s var(--ease-out-quart);
+            box-shadow: var(--card-shadow);
         }
-        .model-card:hover { transform: translateY(-15px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
-        .model-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 1.5rem; background-color: var(--border-color); }
-        .model-card h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
-        .model-card p { font-size: 1.1rem; margin-bottom: 1.5rem; }
+        .model-card:hover { transform: translateY(-10px) scale(1.02); }
+        .model-card img { width: 100%; height: auto; object-fit: contain; border-radius: 12px; margin-bottom: 1.5rem; filter: grayscale(10%); transition: filter 0.3s ease; }
+        .model-card:hover img { filter: grayscale(0%); }
+        .model-card h3 { font-size: 2rem; margin-bottom: 0.5rem; text-transform: uppercase; }
+        .model-card p { font-size: 1.2rem; font-weight: 600; color: var(--primary-color); }
 
         #configurator { background-color: var(--bg-secondary); }
-        .configurator-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; min-height: 80vh; }
+        .configurator-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 3rem; min-height: 80vh; }
         .viewer-panel {
             background-color: var(--bg-color); border-radius: 20px; display: flex; align-items: center;
             justify-content: center; font-size: 2rem; color: var(--text-muted); border: 2px dashed var(--border-color);
         }
-        .options-panel { display: flex; flex-direction: column; gap: 1.5rem; }
-        .price-display { background-color: var(--bg-color); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); }
-        .price-display p { margin: 0; color: var(--text-color); font-weight: 500;}
-        .price-display #total-price { font-size: 2.2rem; font-weight: 700; }
-        .option-group details { border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
-        .option-group summary { font-size: 1.2rem; font-weight: 600; list-style: none; /* Hide default arrow */ padding: 1.5rem 0; position: relative; }
+        .options-panel { display: flex; flex-direction: column; gap: 2rem; }
+        .price-display { background-color: var(--bg-color); padding: 2rem; border-radius: 12px; border: 1px solid var(--border-color); }
+        .price-display p { margin: 0; color: var(--text-color); font-weight: 600;}
+        .price-display #total-price { font-family: 'Montserrat', sans-serif; font-size: 2.8rem; font-weight: 800; color: var(--primary-color);}
+        .option-group details { border-bottom: 1px solid var(--border-color); padding-bottom: 1.5rem; }
+        .option-group summary { font-size: 1.3rem; font-weight: 700; list-style: none; padding: 1.5rem 0; position: relative; cursor: pointer; }
         .option-group summary::-webkit-details-marker { display: none; }
-        .option-group summary::after { content: '+'; position: absolute; right: 0; font-size: 1.5rem; transition: transform 0.3s ease; }
+        .option-group summary::after { content: '+'; position: absolute; right: 0; font-size: 1.8rem; font-weight: 400; transition: transform 0.3s ease; }
         .option-group details[open] summary::after { transform: rotate(45deg); }
-        .option-choices { display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 1rem; }
-        .color-swatch { width: 40px; height: 40px; border-radius: 50%; border: 3px solid transparent; transition: border-color 0.2s ease; }
-        .color-swatch:hover, .color-swatch.active { border-color: var(--primary-color); }
-        .wheel-option { width: 80px; height: 80px; border-radius: 12px; border: 3px solid var(--border-color); transition: border-color 0.2s ease; background-color: var(--bg-color); }
-        .wheel-option:hover, .wheel-option.active { border-color: var(--primary-color); }
+        .option-choices { display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 1.5rem; }
+        .option-choice { cursor: pointer; transition: transform 0.2s ease, border-color 0.2s ease; }
+        .color-swatch { width: 50px; height: 50px; border-radius: 50%; border: 3px solid transparent; }
+        .color-swatch.active { border-color: var(--primary-color); box-shadow: 0 0 10px var(--primary-color); }
+        .wheel-option { width: 100px; height: 100px; border-radius: 12px; border: 3px solid var(--border-color); background-color: var(--bg-color); }
+        .wheel-option.active { border-color: var(--primary-color); }
         .config-actions { margin-top: auto; display: flex; flex-direction: column; gap: 1rem; }
 
         /* 8. NEW: TECH SPECS SECTION */
         #tech { text-align: center; }
         .tech-showcase {
             position: relative;
-            max-width: 900px;
-            margin: 3rem auto 0;
+            max-width: 1000px;
+            margin: 4rem auto 0;
         }
         .tech-showcase img {
             width: 100%;
             height: auto;
-            border-radius: 16px;
+            border-radius: 20px;
+            box-shadow: var(--card-shadow);
         }
         .hotspot {
             position: absolute;
-            width: 20px;
-            height: 20px;
+            width: 25px;
+            height: 25px;
             background: var(--primary-color);
             border-radius: 50%;
-            border: 3px solid white;
+            border: 4px solid var(--bg-color);
             box-shadow: 0 0 20px var(--primary-color);
+            cursor: pointer;
         }
         .hotspot .tooltip {
             position: absolute;
@@ -224,50 +239,58 @@
             transform: translateX(-50%);
             background: var(--bg-secondary);
             color: var(--text-color);
-            padding: 10px 15px;
+            padding: 12px 18px;
             border-radius: 8px;
             border: 1px solid var(--border-color);
-            width: 200px;
+            width: 250px;
             text-align: left;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.3s ease, visibility 0.3s ease;
+            white-space: nowrap;
         }
         .hotspot:hover .tooltip { opacity: 1; visibility: visible; }
-        .hotspot-1 { top: 40%; left: 25%; }
-        .hotspot-2 { top: 60%; left: 50%; }
-        .hotspot-3 { top: 30%; left: 75%; }
+        .hotspot-1 { top: 45%; left: 20%; }
+        .hotspot-2 { top: 55%; left: 50%; }
+        .hotspot-3 { top: 35%; left: 80%; }
         
-        /* 9. NEW: AI CONCIERGE */
+        /* 9. AI CONCIERGE */
         #concierge-fab {
             position: fixed;
             bottom: 30px;
             right: 30px;
-            width: 60px;
-            height: 60px;
+            width: 70px;
+            height: 70px;
             background: var(--primary-gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
+            font-size: 2.5rem;
             color: white;
-            box-shadow: 0 10px 20px -5px var(--primary-color);
+            box-shadow: 0 10px 20px -5px rgba(226, 0, 26, 0.6);
             z-index: 1001;
+            transition: transform 0.3s ease;
         }
+        #concierge-fab:hover { transform: scale(1.1); }
 
         /* 10. FOOTER */
-        footer { background-color: var(--bg-secondary); padding: 60px 0; text-align: center; border-top: 1px solid var(--border-color); }
-        .social-links a { font-size: 2.2rem; color: var(--text-muted); margin: 0 1.2rem; transition: color 0.2s ease, transform 0.2s ease; display: inline-block;}
-        .social-links a:hover { color: var(--text-color); transform: translateY(-3px); }
+        footer { background-color: var(--bg-secondary); padding: 80px 0; text-align: center; border-top: 1px solid var(--border-color); }
+        .social-links a { font-size: 2.5rem; color: var(--text-muted); margin: 0 1.5rem; transition: color 0.2s ease, transform 0.2s ease; display: inline-block;}
+        .social-links a:hover { color: var(--primary-color); transform: translateY(-5px); }
         
         /* 11. RESPONSIVENESS */
+        @media (max-width: 992px) {
+            .configurator-layout { grid-template-columns: 1fr; }
+            .viewer-panel { height: 60vh; }
+        }
+
         @media (max-width: 768px) {
             html { cursor: auto; }
             .cursor { display: none; }
             header nav { display: none; }
-            .configurator-layout { grid-template-columns: 1fr; }
-            .viewer-panel { height: 50vh; }
+            .hero-buttons { flex-direction: column; }
+            .btn { width: 100%; text-align: center; }
         }
     </style>
 </head>
@@ -293,12 +316,9 @@
 
     <main>
         <section id="home">
-            <div class="hero-3d-placeholder">
-                [ Interactive 3D Model of TEKA X ]
-            </div>
             <div class="hero-content container animate-in">
-                <h1>TEKA X</h1>
-                <p>A new dimension of performance. Silent, powerful, and unequivocally TEKA.</p>
+                <h1>The TEKA <span>Experience</span></h1>
+                <p>Engineered for the track, perfected for the road. The new TEKA hypercar line redefines performance and luxury.</p>
                 <div class="hero-buttons">
                     <a href="#models" class="btn btn-primary interactive">Explore Models</a>
                     <a href="#configurator" class="btn btn-secondary interactive">Configure Now</a>
@@ -307,64 +327,64 @@
         </section>
 
         <section id="models" class="container">
-            <h2 class="animate-in">The TEKA Lineup</h2>
+            <h2 class="animate-in">The Hypercar Lineup</h2>
             <div class="models-grid">
                 <div class="model-card animate-in interactive" style="transition-delay: 100ms;">
-                    <img src="placeholder.jpg" alt="TEKA X">
+                    <img src="https://via.placeholder.com/600x400/151515/F0F0F0?text=TEKA+X" alt="TEKA X Hypercar">
                     <h3>TEKA X</h3>
-                    <p>Starting at $210,000</p>
+                    <p>Starting at $2,100,000</p>
                     <a href="#configurator" class="btn btn-primary interactive">Configure</a>
                 </div>
                 <div class="model-card animate-in interactive" style="transition-delay: 200ms;">
-                    <img src="placeholder.jpg" alt="TEKA S">
+                    <img src="https://via.placeholder.com/600x400/151515/F0F0F0?text=TEKA+S" alt="TEKA S Hypercar">
                     <h3>TEKA S</h3>
-                    <p>Starting at $185,000</p>
+                    <p>Starting at $1,850,000</p>
                     <a href="#configurator" class="btn btn-primary interactive">Configure</a>
                 </div>
                 <div class="model-card animate-in interactive" style="transition-delay: 300ms;">
-                    <img src="placeholder.jpg" alt="TEKA R">
+                    <img src="https://via.placeholder.com/600x400/151515/F0F0F0?text=TEKA+R" alt="TEKA R Hypercar">
                     <h3>TEKA R</h3>
-                    <p>Starting at $255,000</p>
+                    <p>Starting at $2,550,000</p>
                     <a href="#configurator" class="btn btn-primary interactive">Configure</a>
                 </div>
             </div>
         </section>
         
         <section id="tech" class="container">
-            <h2 class="animate-in">Engineered From a Blank Slate</h2>
-            <p class="animate-in" style="max-width: 700px; margin: 0 auto 3rem auto;">Our bespoke carbon-fiber monocoque chassis integrates a structural battery pack, creating a platform with unparalleled rigidity and a low center of gravity.</p>
+            <h2 class="animate-in">Cutting-Edge Technology</h2>
+            <p class="animate-in" style="max-width: 800px; margin: 0 auto 4rem auto;">Every TEKA is a masterpiece of engineering, built on a foundation of lightweight materials and next-generation power systems. Explore what makes our cars unlike anything else.</p>
             <div class="tech-showcase animate-in" style="transition-delay: 200ms;">
-                <img src="https://via.placeholder.com/900x500/111111/888888?text=Chassis+Blueprint" alt="TEKA Chassis Blueprint">
+                <img src="https://via.placeholder.com/1000x550/111111/888888?text=Advanced+Chassis+Diagram" alt="TEKA Chassis Blueprint">
                 <div class="hotspot hotspot-1 interactive">
-                    <div class="tooltip"><strong>Skateboard Battery Pack</strong><br>120kWh solid-state battery for maximum density and safety.</div>
+                    <div class="tooltip"><strong>Structural Battery Pack</strong><br>A 120kWh solid-state battery seamlessly integrated into the chassis for optimal weight distribution and rigidity.</div>
                 </div>
                 <div class="hotspot hotspot-2 interactive">
-                    <div class="tooltip"><strong>Carbon Monocoque</strong><br>Single-piece carbon fiber tub for extreme lightness and strength.</div>
+                    <div class="tooltip"><strong>Carbon Monocoque Chassis</strong><br>A single, ultra-lightweight carbon fiber tub provides exceptional strength and safety.</div>
                 </div>
-                 <div class="hotspot hotspot-3 interactive">
-                    <div class="tooltip"><strong>Axial Flux Motors</strong><br>Dual high-performance motors delivering instant torque and precision control.</div>
+                   <div class="hotspot hotspot-3 interactive">
+                    <div class="tooltip"><strong>Dual-Axle Flux Motors</strong><br>Our bespoke motors deliver instant, exhilarating torque for unmatched acceleration.</div>
                 </div>
             </div>
         </section>
 
         <section id="configurator">
             <div class="container">
-                <h2 class="animate-in">Design Your TEKA</h2>
+                <h2 class="animate-in">Design Your Dream TEKA</h2>
                 <div class="configurator-layout animate-in" style="transition-delay: 200ms;">
                     <div class="viewer-panel">[ Live 3D Preview ]</div>
                     <div class="options-panel">
                         <div class="price-display">
                             <p>TEKA X</p>
-                            <span id="total-price">$210,000</span>
+                            <span id="total-price">$2,100,000</span>
                         </div>
                         <div class="option-group">
                             <details open>
                                 <summary class="interactive">Exterior Color</summary>
                                 <div class="option-choices" id="color-options">
-                                    <div class="color-swatch active interactive" style="background-color: #1a1a1a;" data-price="0" title="Quantum Black"></div>
-                                    <div class="color-swatch interactive" style="background-color: #e0e0e0;" data-price="1500" title="Starlight Silver"></div>
-                                    <div class="color-swatch interactive" style="background-color: #a80000;" data-price="2500" title="Inferno Red"></div>
-                                    <div class="color-swatch interactive" style="background-color: #0033a0;" data-price="2500" title="Abyss Blue"></div>
+                                    <div class="color-swatch option-choice active interactive" style="background-color: #1a1a1a;" data-price="0" title="Quantum Black"></div>
+                                    <div class="color-swatch option-choice interactive" style="background-color: #e2001a;" data-price="5000" title="Inferno Red"></div>
+                                    <div class="color-swatch option-choice interactive" style="background-color: #e0e0e0;" data-price="2500" title="Polar White"></div>
+                                    <div class="color-swatch option-choice interactive" style="background-color: #2a2c3a;" data-price="3500" title="Cerulean Grey"></div>
                                 </div>
                             </details>
                         </div>
@@ -372,15 +392,24 @@
                             <details>
                                 <summary class="interactive">Wheels</summary>
                                 <div class="option-choices" id="wheel-options">
-                                    <div class="wheel-option active interactive" data-price="0" title="20' Aero Standard"></div>
-                                    <div class="wheel-option interactive" data-price="3000" title="21' Sport Twin-Spoke"></div>
-                                    <div class="wheel-option interactive" data-price="5000" title="22' Carbon Performance"></div>
+                                    <div class="wheel-option option-choice active interactive" data-price="0" title="21' Forged Aero"></div>
+                                    <div class="wheel-option option-choice interactive" data-price="8000" title="22' Carbon Fiber"></div>
+                                    <div class="wheel-option option-choice interactive" data-price="12000" title="23' Monoblock Race"></div>
+                                </div>
+                            </details>
+                        </div>
+                        <div class="option-group">
+                            <details>
+                                <summary class="interactive">Performance Package</summary>
+                                <div class="option-choices" id="package-options">
+                                    <div class="btn btn-secondary option-choice active interactive" data-price="0">Standard</div>
+                                    <div class="btn btn-secondary option-choice interactive" data-price="50000">Track Pack</div>
                                 </div>
                             </details>
                         </div>
                         <div class="config-actions">
                             <a href="#" class="btn btn-secondary interactive">Book Test Drive</a>
-                            <a href="#" class="btn btn-primary interactive">Finalize & Purchase</a>
+                            <a href="#" class="btn btn-primary interactive">Finalize & Order</a>
                         </div>
                     </div>
                 </div>
@@ -390,7 +419,7 @@
     </main>
     
     <div id="concierge-fab" class="interactive" title="TEKA Concierge">
-         <i class='bx bx-bot'></i>
+        <i class='bx bx-chat'></i>
     </div>
 
     <footer>
@@ -400,7 +429,7 @@
                 <a href="#" class="interactive"><i class='bx bxl-twitter'></i></a>
                 <a href="#" class="interactive"><i class='bx bxl-youtube'></i></a>
             </div>
-            <p class="animate-in" style="margin-top: 2rem;">&copy; 2025 TEKA Motors. All Rights Reserved.</p>
+            <p class="animate-in" style="margin-top: 2.5rem;">&copy; 2025 TEKA Motors. All Rights Reserved.</p>
         </div>
     </footer>
 
@@ -420,7 +449,7 @@
                 themeToggle.innerHTML = newTheme === 'dark' ? "<i class='bx bxs-sun'></i>" : "<i class='bx bxs-moon'></i>";
             });
 
-            // 2. NEW: CUSTOM CURSOR
+            // 2. CUSTOM CURSOR
             const cursor = document.querySelector('.cursor');
             const interactiveElements = document.querySelectorAll('.interactive');
             window.addEventListener('mousemove', e => {
@@ -444,20 +473,21 @@
             animatedElements.forEach(el => observer.observe(el));
 
             // 4. SIMULATED CONFIGURATOR PRICE LOGIC
-            const basePrice = 210000;
-            let selectedOptions = { color: 0, wheels: 0 };
+            const basePrice = 2100000; // Updated to reflect hypercar prices
+            let selectedOptions = { color: 0, wheels: 0, package: 0 };
             const priceElement = document.getElementById('total-price');
             const colorOptions = document.getElementById('color-options');
             const wheelOptions = document.getElementById('wheel-options');
+            const packageOptions = document.getElementById('package-options');
 
             function updatePrice() {
-                const totalPrice = basePrice + selectedOptions.color + selectedOptions.wheels;
+                const totalPrice = basePrice + selectedOptions.color + selectedOptions.wheels + selectedOptions.package;
                 priceElement.textContent = `$${totalPrice.toLocaleString()}`;
             }
             
             function handleOptionClick(event, optionType, container) {
-                const target = event.target;
-                if (!target.hasAttribute('data-price')) return;
+                const target = event.target.closest('.option-choice');
+                if (!target) return;
                 container.querySelector('.active').classList.remove('active');
                 target.classList.add('active');
                 selectedOptions[optionType] = parseInt(target.getAttribute('data-price'));
@@ -466,12 +496,14 @@
 
             colorOptions.addEventListener('click', (e) => handleOptionClick(e, 'color', colorOptions));
             wheelOptions.addEventListener('click', (e) => handleOptionClick(e, 'wheels', wheelOptions));
+            packageOptions.addEventListener('click', (e) => handleOptionClick(e, 'package', packageOptions));
+            
             updatePrice();
             
-            // 5. NEW: AI CONCIERGE (SIMULATED)
+            // 5. AI CONCIERGE (SIMULATED)
             const conciergeFab = document.getElementById('concierge-fab');
             conciergeFab.addEventListener('click', () => {
-                alert("TEKA Concierge (AI Assistant)\n\nThis would open a chat window. How can I help you design your perfect TEKA today?");
+                alert("TEKA Concierge (AI Assistant)\n\nHello! I am your personal TEKA Concierge. I can help you with anything from configuring your vehicle to scheduling a VIP consultation. How can I help you today?");
             });
         });
     </script>
