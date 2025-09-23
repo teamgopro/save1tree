@@ -3,966 +3,546 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EVOLVE: Supercar Configurator</title>
+    <title>Aura Motors - Define Your Horizon</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Inter', 'sans-serif'],
-                    },
-                    colors: {
-                        primary: '#FF4136',
-                        secondary: '#FFDC00',
-                        accent: '#FF851B',
-                        dark: '#1A1A1A',
-                        light: '#F5F5F5'
-                    },
-                    keyframes: {
-                        fadeInUp: {
-                            '0%': { opacity: '0', transform: 'translateY(20px)' },
-                            '100%': { opacity: '1', transform: 'translateY(0)' },
-                        },
-                        scaleIn: {
-                            '0%': { transform: 'scale(0.95)', opacity: '0' },
-                            '100%': { transform: 'scale(1)', opacity: '1' },
-                        }
-                    },
-                    animation: {
-                        fadeInUp: 'fadeInUp 0.8s ease-out forwards',
-                        scaleIn: 'scaleIn 0.5s ease-out forwards',
-                    }
-                }
-            }
-        }
-    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
-            -moz-osx-font-smoothing: grayscale;
+        /* CSS STYLES */
+
+        /* 1. THEME & ROOT VARIABLES */
+        :root {
+            --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
         }
-        .page-section {
-            display: none;
-            opacity: 0;
-            transition: opacity 0.5s ease-in-out;
+
+        [data-theme="dark"] {
+            --bg-color: #0B0B0F;
+            --bg-secondary: #16161C;
+            --text-color: #EAEAEB;
+            --text-muted: #8A8A93;
+            --primary-color: #0075FF;
+            --border-color: #2A2A33;
         }
-        .page-section.active {
-            display: block;
-            opacity: 1;
+
+        [data-theme="light"] {
+            --bg-color: #F5F5F7;
+            --bg-secondary: #FFFFFF;
+            --text-color: #1D1D1F;
+            --text-muted: #6E6E73;
+            --primary-color: #0071E3;
+            --border-color: #D2D2D7;
         }
-        .modal {
-            display: none;
-            background-color: rgba(0, 0, 0, 0.75);
-            backdrop-filter: blur(8px);
+
+        /* 2. GENERAL & RESET */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
-        .modal.active {
-            display: flex;
-        }
-        .smooth-scroll {
+
+        html {
             scroll-behavior: smooth;
         }
-        .carousel-container {
-            overflow-x: hidden;
-            white-space: nowrap;
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
-        .carousel-item {
+
+        h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
+        h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); }
+        h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2rem; }
+        p { color: var(--text-muted); line-height: 1.6; }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        section {
+            padding: 100px 0;
+            overflow: hidden;
+        }
+
+        .btn {
             display: inline-block;
+            padding: 12px 24px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: transform 0.2s ease-out, background-color 0.2s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: var(--bg-secondary);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+        }
+        
+        /* 3. ANIMATIONS */
+        .fade-in {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.8s var(--ease-out-quart), transform 0.8s var(--ease-out-quart);
+        }
+        
+        .fade-in.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* 4. HEADER & NAVIGATION */
+        header {
+            position: fixed;
+            top: 0;
+            left: 0;
             width: 100%;
-            transition: transform 0.5s ease-in-out;
+            padding: 20px 0;
+            z-index: 1000;
+            background: rgba(0, 0, 0, 0.1);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
-        /* Custom scrollbar for better aesthetics */
-        ::-webkit-scrollbar {
-            width: 8px;
+        
+        header .container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        ::-webkit-scrollbar-track {
-            background: #1A1A1A;
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: 900;
+            text-decoration: none;
+            color: var(--text-color);
         }
-        ::-webkit-scrollbar-thumb {
-            background: #444;
-            border-radius: 4px;
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 30px;
         }
-        ::-webkit-scrollbar-thumb:hover {
-            background: #666;
+        
+        nav a {
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 500;
+            transition: color 0.2s ease;
         }
+
+        nav a:hover {
+            color: var(--text-color);
+        }
+
+        #theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-color);
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        /* 5. HERO SECTION */
+        #home {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            position: relative;
+        }
+        
+        .hero-content {
+            z-index: 2;
+        }
+        
+        .hero-content h1 {
+            text-shadow: 0 0 20px rgba(0,0,0,0.5);
+        }
+
+        .hero-content p {
+            font-size: 1.2rem;
+            max-width: 600px;
+            margin: 1rem auto 2rem;
+        }
+        
+        .hero-buttons { display: flex; gap: 1rem; justify-content: center; }
+
+        .hero-3d-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 80%;
+            max-width: 900px;
+            height: 50%;
+            background: radial-gradient(ellipse at center, rgba(100,100,150,0.1) 0%, rgba(0,0,0,0) 70%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            font-size: 1.5rem;
+            border: 2px dashed var(--border-color);
+            border-radius: 20px;
+            z-index: 1;
+        }
+
+        /* 6. MODELS & CONFIGURATOR SECTIONS */
+        .models-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .model-card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 16px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .model-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+        
+        .model-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-bottom: 1rem;
+            background-color: var(--border-color);
+        }
+
+        .model-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
+        .model-card p { font-size: 1rem; margin-bottom: 1.5rem; }
+
+        #configurator {
+            background-color: var(--bg-secondary);
+        }
+        
+        .configurator-layout {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 2rem;
+            min-height: 80vh;
+        }
+        
+        .viewer-panel {
+            background-color: var(--bg-color);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            color: var(--text-muted);
+            border: 2px dashed var(--border-color);
+        }
+        
+        .options-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .price-display {
+            background-color: var(--bg-color);
+            padding: 1rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+        
+        .price-display p { margin: 0; color: var(--text-color); }
+        .price-display #total-price { font-size: 2rem; font-weight: bold; }
+        
+        .option-group details {
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 1rem;
+        }
+        
+        .option-group summary {
+            font-size: 1.2rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 1rem 0;
+        }
+        
+        .option-choices {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            padding-top: 1rem;
+        }
+        
+        .color-swatch {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: border-color 0.2s ease;
+        }
+        
+        .color-swatch:hover, .color-swatch.active {
+            border-color: var(--primary-color);
+        }
+        
+        .wheel-option {
+            width: 80px;
+            height: 80px;
+            border-radius: 8px;
+            cursor: pointer;
+            border: 3px solid var(--border-color);
+            transition: border-color 0.2s ease;
+            background-color: var(--bg-color);
+        }
+
+        .wheel-option:hover, .wheel-option.active {
+            border-color: var(--primary-color);
+        }
+        
+        .config-actions { margin-top: auto; display: flex; flex-direction: column; gap: 1rem; }
+
+        /* 7. FOOTER */
+        footer {
+            background-color: var(--bg-secondary);
+            padding: 50px 0;
+            text-align: center;
+            border-top: 1px solid var(--border-color);
+        }
+        
+        .social-links a {
+            font-size: 2rem;
+            color: var(--text-muted);
+            margin: 0 1rem;
+            transition: color 0.2s ease;
+        }
+
+        .social-links a:hover { color: var(--text-color); }
+        
+        /* 8. RESPONSIVENESS */
+        @media (max-width: 768px) {
+            header nav { display: none; } /* Simplified for demo */
+            .hero-content h1 { font-size: 2rem; }
+            .hero-content p { font-size: 1rem; }
+
+            .configurator-layout {
+                grid-template-columns: 1fr;
+            }
+            .viewer-panel { height: 50vh; }
+        }
+
     </style>
 </head>
-<body class="bg-gray-900 text-gray-100 transition-colors duration-300 dark:bg-light dark:text-gray-800 smooth-scroll">
+<body data-theme="dark">
 
-    <!-- Hero Background Animation -->
-    <canvas id="hero-canvas" class="fixed inset-0 w-full h-full z-0 opacity-20"></canvas>
-
-    <!-- Main App Container -->
-    <div id="app-container" class="relative z-10 min-h-screen flex flex-col">
-
-        <!-- Header -->
-        <header class="sticky top-0 z-50 bg-gray-900/80 backdrop-blur-md dark:bg-light/80 transition-colors duration-300">
-            <nav class="container mx-auto px-4 py-4 flex justify-between items-center">
-                <a href="#home" class="text-2xl font-bold tracking-tight text-primary">EVOLVE</a>
-                <div class="flex items-center space-x-6">
-                    <ul class="flex space-x-6 font-medium text-gray-300 dark:text-gray-700">
-                        <li><a href="#home" class="hover:text-primary transition-colors" onclick="showPage('home-page')">Home</a></li>
-                        <li><a href="#models" class="hover:text-primary transition-colors" onclick="showPage('models-page')">Models</a></li>
-                        <li><a href="#configurator" class="hover:text-primary transition-colors" onclick="showPage('configurator-page')">Configurator</a></li>
-                        <li><a href="#gallery" class="hover:text-primary transition-colors" onclick="showPage('gallery-page')">Gallery</a></li>
-                        <li><a href="#booking" class="hover:text-primary transition-colors" onclick="showPage('booking-page')">Test Drive</a></li>
-                        <li><a href="#about" class="hover:text-primary transition-colors" onclick="showPage('about-page')">About</a></li>
-                        <li><a href="#admin" class="hover:text-primary transition-colors" onclick="showPage('admin-page')">Admin</a></li>
-                    </ul>
-                    <button id="theme-toggle" class="p-2 rounded-full hover:bg-gray-800 dark:hover:bg-gray-200 transition-colors">
-                        <svg id="sun-icon" class="w-6 h-6 text-gray-300 dark:text-gray-700" fill="currentColor" viewBox="0 0 20 20"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4.356 2.644a1 1 0 010 1.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 0zM16 10a1 1 0 011-1h1a1 1 0 110 2h-1a1 1 0 01-1-1zM12.071 14.356a1 1 0 01-1.414 0l-.707-.707a1 1 0 011.414-1.414l.707.707a1 1 0 010 1.414zM10 16a1 1 0 01-1 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zm-4.356-2.071a1 1 0 010 1.414l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 0zM2 10a1 1 0 011-1h1a1 1 0 110 2H3a1 1 0 01-1-1zm2.071-4.356a1 1 0 011.414 0l.707.707a1 1 0 01-1.414 1.414l-.707-.707a1 1 0 010-1.414zM10 3a7 7 0 100 14 7 7 0 000-14zM10 5a5 5 0 110 10 5 5 0 010-10z"></path></svg>
-                        <svg id="moon-icon" class="hidden w-6 h-6 text-gray-300 dark:text-gray-700" fill="currentColor" viewBox="0 0 20 20"><path d="M17.293 13.041a.997.997 0 01-.194.275c-.32.32-.71.558-1.127.671a7.001 7.001 0 01-3.66.027 5.001 5.001 0 01-3.155-2.043 5.001 5.001 0 01-1.043-4.148c.113-.417.351-.807.671-1.127a.997.997 0 01.275-.194 9.001 9.001 0 0011.751 10.999zM10 4a6 6 0 00-6 6c0 1.05.275 2.051.78 2.923A7.001 7.001 0 0110 4z"></path></svg>
-                    </button>
-                </div>
+    <header>
+        <div class="container">
+            <a href="#" class="logo">AURA</a>
+            <nav>
+                <ul>
+                    <li><a href="#models">Models</a></li>
+                    <li><a href="#configurator">Configure</a></li>
+                    <li><a href="#about">About</a></li>
+                </ul>
             </nav>
-        </header>
-
-        <!-- Main Content -->
-        <main class="flex-grow">
-
-            <!-- Home Page -->
-            <section id="home-page" class="page-section active h-screen flex flex-col justify-center items-center text-center px-4">
-                <div class="space-y-6 animate-fadeInUp delay-100">
-                    <h1 class="text-6xl md:text-8xl font-bold tracking-tighter text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary">EVOLVE: The Future of Motion</h1>
-                    <p class="text-xl md:text-2xl text-gray-400 dark:text-gray-600 max-w-2xl mx-auto">Experience a new era of performance and design. Configure your dream vehicle today.</p>
-                    <a href="#models" class="inline-block px-8 py-3 rounded-full text-white font-semibold bg-primary hover:bg-secondary hover:scale-105 transition-all duration-300" onclick="showPage('models-page')">Discover Models</a>
-                </div>
-            </section>
-
-            <!-- Models Page -->
-            <section id="models-page" class="page-section py-20 px-4">
-                <div class="container mx-auto max-w-5xl text-center animate-fadeInUp">
-                    <h2 class="text-5xl font-bold mb-12">Our Fleet</h2>
-                    <div id="models-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <!-- Model cards will be dynamically inserted here -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- Configurator Page -->
-            <section id="configurator-page" class="page-section py-20 px-4">
-                <div class="container mx-auto flex flex-col lg:flex-row gap-8">
-                    <!-- Configurator Panel -->
-                    <div class="lg:w-1/3 space-y-8 animate-fadeInUp">
-                        <div class="bg-gray-800 dark:bg-gray-100 p-6 rounded-2xl shadow-lg">
-                            <h3 class="text-3xl font-bold mb-4">Build Your EVOLVE</h3>
-                            <select id="config-model-select" class="w-full p-3 rounded-xl bg-gray-700 dark:bg-gray-200 border border-gray-600 dark:border-gray-300 text-gray-100 dark:text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary">
-                                <option value="teka-x">Teka X</option>
-                                <option value="teka-s">Teka S</option>
-                                <option value="teka-r">Teka R</option>
-                            </select>
-                        </div>
-
-                        <!-- Price & Actions -->
-                        <div class="bg-gray-800 dark:bg-gray-100 p-6 rounded-2xl shadow-lg">
-                            <div class="flex justify-between items-center mb-4">
-                                <span class="text-xl font-semibold">Total Price:</span>
-                                <span id="config-price" class="text-2xl font-bold text-primary">$0</span>
-                            </div>
-                            <div class="flex flex-col space-y-4">
-                                <button id="save-config-btn" class="w-full py-3 rounded-full text-white font-semibold bg-accent hover:bg-orange-500 transition-colors">Save & Share</button>
-                                <button id="export-png-btn" class="w-full py-3 rounded-full text-white font-semibold bg-gray-700 dark:bg-gray-300 hover:bg-gray-600 dark:hover:bg-gray-400 transition-colors">Export PNG</button>
-                                <button id="book-test-drive-config-btn" class="w-full py-3 rounded-full text-white font-semibold bg-primary hover:bg-red-600 transition-colors">Book a Test Drive</button>
-                            </div>
-                        </div>
-
-                        <!-- Config Options (Colors, Wheels, etc.) -->
-                        <div id="config-options" class="bg-gray-800 dark:bg-gray-100 p-6 rounded-2xl shadow-lg">
-                            <!-- Options will be dynamically created here -->
-                        </div>
-                    </div>
-
-                    <!-- 3D Preview Canvas -->
-                    <div class="lg:w-2/3 h-[500px] lg:h-auto lg:min-h-[700px] flex items-center justify-center bg-gray-800 dark:bg-gray-100 rounded-2xl shadow-xl overflow-hidden animate-scaleIn">
-                        <canvas id="configurator-canvas" class="w-full h-full"></canvas>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Public Gallery Page -->
-            <section id="gallery-page" class="page-section py-20 px-4">
-                <div class="container mx-auto max-w-5xl text-center animate-fadeInUp">
-                    <h2 class="text-5xl font-bold mb-12">Public Gallery</h2>
-                    <p class="text-gray-400 dark:text-gray-600 mb-8">See configurations saved by other users. Click on a card to load the design in the configurator!</p>
-                    <div id="gallery-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                        <!-- Gallery items will be dynamically inserted here -->
-                    </div>
-                </div>
-            </section>
-
-            <!-- Booking/Test Drive Form -->
-            <section id="booking-page" class="page-section py-20 px-4">
-                <div class="container mx-auto max-w-3xl animate-fadeInUp">
-                    <h2 class="text-5xl font-bold mb-8 text-center">Book Your Test Drive</h2>
-                    <form id="booking-form" class="bg-gray-800 dark:bg-gray-100 p-8 rounded-2xl shadow-lg space-y-6">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div>
-                                <label for="booking-name" class="block text-sm font-medium mb-1">Full Name</label>
-                                <input type="text" id="booking-name" class="w-full p-3 rounded-xl bg-gray-700 dark:bg-gray-200 border border-gray-600 dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary" required>
-                            </div>
-                            <div>
-                                <label for="booking-email" class="block text-sm font-medium mb-1">Email</label>
-                                <input type="email" id="booking-email" class="w-full p-3 rounded-xl bg-gray-700 dark:bg-gray-200 border border-gray-600 dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary" required>
-                            </div>
-                            <div>
-                                <label for="booking-phone" class="block text-sm font-medium mb-1">Phone</label>
-                                <input type="tel" id="booking-phone" class="w-full p-3 rounded-xl bg-gray-700 dark:bg-gray-200 border border-gray-600 dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary" required>
-                            </div>
-                            <div>
-                                <label for="booking-date" class="block text-sm font-medium mb-1">Preferred Date</label>
-                                <input type="date" id="booking-date" class="w-full p-3 rounded-xl bg-gray-700 dark:bg-gray-200 border border-gray-600 dark:border-gray-300 text-gray-100 dark:text-gray-800 focus:outline-none focus:ring-2 focus:ring-primary" required>
-                            </div>
-                        </div>
-                        <div>
-                            <label for="booking-config" class="block text-sm font-medium mb-1">Your Configuration</label>
-                            <input type="text" id="booking-config" class="w-full p-3 rounded-xl bg-gray-700 dark:bg-gray-200 border border-gray-600 dark:border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary" readonly>
-                        </div>
-                        <button type="submit" class="w-full py-3 rounded-full text-white font-semibold bg-primary hover:bg-red-600 transition-colors">Submit Booking</button>
-                    </form>
-                    <div id="booking-message" class="mt-4 p-4 rounded-xl text-center hidden"></div>
-                </div>
-            </section>
-
-            <!-- Admin Panel -->
-            <section id="admin-page" class="page-section py-20 px-4">
-                <div class="container mx-auto animate-fadeInUp">
-                    <h2 class="text-5xl font-bold mb-8 text-center">Admin Panel</h2>
-                    <div id="admin-content" class="bg-gray-800 dark:bg-gray-100 p-8 rounded-2xl shadow-lg min-h-[500px]">
-                        <p id="admin-login-message" class="text-center text-lg font-medium">This section is password-protected. (User ID check only for this demo)</p>
-                        <div id="admin-data" class="hidden">
-                            <h3 class="text-3xl font-bold mb-4">Bookings & Configurations</h3>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div id="admin-bookings-list" class="space-y-4">
-                                    <h4 class="text-xl font-semibold text-primary">Bookings</h4>
-                                    <!-- Bookings will be dynamically inserted here -->
-                                </div>
-                                <div id="admin-configs-list" class="space-y-4">
-                                    <h4 class="text-xl font-semibold text-primary">Saved Configurations</h4>
-                                    <!-- Configurations will be dynamically inserted here -->
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            <!-- About/Support Page -->
-            <section id="about-page" class="page-section py-20 px-4">
-                <div class="container mx-auto max-w-4xl text-center animate-fadeInUp">
-                    <h2 class="text-5xl font-bold mb-8">About EVOLVE</h2>
-                    <p class="text-lg text-gray-400 dark:text-gray-600 mb-8">We are a team of visionaries dedicated to crafting the future of automotive excellence. Our vehicles are a fusion of cutting-edge technology, sustainable power, and timeless design. Each model is engineered for an unparalleled driving experience, designed to push the boundaries of performance and sustainability.</p>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center mt-12">
-                        <div class="p-6 rounded-2xl bg-gray-800 dark:bg-gray-100 transition-transform hover:scale-105">
-                            <h3 class="text-2xl font-bold mb-2 text-primary">Vision</h3>
-                            <p class="text-sm text-gray-400 dark:text-gray-600">To create a world where high-performance vehicles and environmental responsibility coexist seamlessly.</p>
-                        </div>
-                        <div class="p-6 rounded-2xl bg-gray-800 dark:bg-gray-100 transition-transform hover:scale-105">
-                            <h3 class="text-2xl font-bold mb-2 text-primary">Innovation</h3>
-                            <p class="text-sm text-gray-400 dark:text-gray-600">We continuously innovate, using advanced materials and AI to optimize every aspect of our cars.</p>
-                        </div>
-                        <div class="p-6 rounded-2xl bg-gray-800 dark:bg-gray-100 transition-transform hover:scale-105">
-                            <h3 class="text-2xl font-bold mb-2 text-primary">Craftsmanship</h3>
-                            <p class="text-sm text-gray-400 dark:text-gray-600">Each EVOLVE vehicle is a testament to meticulous craftsmanship and attention to detail.</p>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-        </main>
-
-        <!-- Footer -->
-        <footer class="bg-gray-900/80 backdrop-blur-md dark:bg-light/80 py-8 mt-auto">
-            <div class="container mx-auto px-4 text-center text-gray-400 dark:text-gray-600">
-                <p>&copy; 2024 EVOLVE. All Rights Reserved.</p>
-                <div class="mt-4 flex justify-center space-x-6">
-                    <a href="#" class="hover:text-primary transition-colors">Twitter</a>
-                    <a href="#" class="hover:text-primary transition-colors">Instagram</a>
-                    <a href="#" class="hover:text-primary transition-colors">Facebook</a>
-                </div>
-            </div>
-        </footer>
-
-        <!-- Modal for messages -->
-        <div id="message-modal" class="modal fixed inset-0 z-[100] flex justify-center items-center p-4">
-            <div class="bg-gray-800 dark:bg-gray-100 p-8 rounded-2xl shadow-xl max-w-sm w-full text-center space-y-4">
-                <h4 id="modal-title" class="text-2xl font-bold"></h4>
-                <p id="modal-body" class="text-gray-300 dark:text-gray-700"></p>
-                <button onclick="closeModal()" class="w-full py-2 rounded-full text-white font-semibold bg-primary hover:bg-red-600 transition-colors">Close</button>
-            </div>
+            <button id="theme-toggle" title="Toggle Theme">
+                <i class='bx bxs-sun'></i>
+            </button>
         </div>
-    </div>
+    </header>
 
-    <!-- Firebase SDKs -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, getDoc, addDoc, setDoc, updateDoc, deleteDoc, onSnapshot, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        
-        let app, db, auth;
-        let userId = '';
-        let isAuthReady = false;
-        
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
-        const __initial_auth_token = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : undefined;
+    <main>
+        <section id="home">
+            <div class="hero-3d-placeholder">
+                [ Interactive 3D Model Here ]
+            </div>
+            <div class="hero-content container fade-in">
+                <h1>Aura Teka X</h1>
+                <p>Engineered for emotion. Designed for the future. Experience the pinnacle of electric performance.</p>
+                <div class="hero-buttons">
+                    <a href="#models" class="btn btn-primary">Explore Models</a>
+                    <a href="#configurator" class="btn btn-secondary">Configure Now</a>
+                </div>
+            </div>
+        </section>
 
-        let currentConfig = {
-            carModel: 'teka-x',
-            color: 'Deep Blue',
-            wheels: 'Standard',
-            interior: 'Black Leather',
-            price: 0
-        };
+        <section id="models" class="container">
+            <h2 class="fade-in">Our Collection</h2>
+            <div class="models-grid">
+                <div class="model-card fade-in" style="transition-delay: 100ms;">
+                    <img src="placeholder.jpg" alt="Aura Teka X">
+                    <h3>Aura Teka X</h3>
+                    <p>Starting at $210,000</p>
+                    <a href="#configurator" class="btn btn-primary">Configure</a>
+                </div>
+                <div class="model-card fade-in" style="transition-delay: 200ms;">
+                    <img src="placeholder.jpg" alt="Aura Teka S">
+                    <h3>Aura Teka S</h3>
+                    <p>Starting at $185,000</p>
+                    <a href="#configurator" class="btn btn-primary">Configure</a>
+                </div>
+                <div class="model-card fade-in" style="transition-delay: 300ms;">
+                    <img src="placeholder.jpg" alt="Aura Teka R">
+                    <h3>Aura Teka R</h3>
+                    <p>Starting at $255,000</p>
+                    <a href="#configurator" class="btn btn-primary">Configure</a>
+                </div>
+            </div>
+        </section>
 
-        const configOptions = {
-            'teka-x': {
-                basePrice: 250000,
-                colors: {
-                    'Deep Blue': { hex: '#3498db', price: 0 },
-                    'Crimson Red': { hex: '#c0392b', price: 2500 },
-                    'Storm Grey': { hex: '#7f8c8d', price: 1500 }
-                },
-                wheels: {
-                    'Standard': { hex: '#1a1a1a', price: 0 },
-                    'Aero': { hex: '#2c3e50', price: 4000 },
-                    'Sport': { hex: '#f39c12', price: 6000 }
-                },
-                interiors: {
-                    'Black Leather': { hex: '#34495e', price: 0 },
-                    'Cream Fabric': { hex: '#ecf0f1', price: 3000 }
-                }
-            },
-            'teka-s': {
-                basePrice: 180000,
-                colors: {
-                    'Pearl White': { hex: '#fdfcfc', price: 0 },
-                    'Jet Black': { hex: '#2c3e50', price: 2000 },
-                    'Emerald Green': { hex: '#16a085', price: 3000 }
-                },
-                wheels: {
-                    'Standard': { hex: '#34495e', price: 0 },
-                    'Aero': { hex: '#9b59b6', price: 3000 },
-                    'Sport': { hex: '#e74c3c', price: 5000 }
-                },
-                interiors: {
-                    'Black Leather': { hex: '#34495e', price: 0 },
-                    'Cream Fabric': { hex: '#ecf0f1', price: 3000 }
-                }
-            },
-            'teka-r': {
-                basePrice: 400000,
-                colors: {
-                    'Carbon Black': { hex: '#1d212a', price: 0 },
-                    'Liquid Silver': { hex: '#bdc3c7', price: 5000 },
-                    'Racing Yellow': { hex: '#f1c40f', price: 8000 }
-                },
-                wheels: {
-                    'Standard': { hex: '#1a1a1a', price: 0 },
-                    'Aero': { hex: '#2c3e50', price: 4000 },
-                    'Sport': { hex: '#f39c12', price: 6000 }
-                },
-                interiors: {
-                    'Black Leather': { hex: '#34495e', price: 0 },
-                    'Cream Fabric': { hex: '#ecf0f1', price: 3000 }
-                }
-            }
-        };
+        <section id="configurator">
+            <div class="container">
+                <h2 class="fade-in">Design Your Aura</h2>
+                <div class="configurator-layout fade-in" style="transition-delay: 200ms;">
+                    <div class="viewer-panel">
+                        [ Live 3D Preview ]
+                    </div>
 
-        const pages = document.querySelectorAll('.page-section');
-        const adminData = document.getElementById('admin-data');
-        const adminLoginMessage = document.getElementById('admin-login-message');
-        const galleryGrid = document.getElementById('gallery-grid');
+                    <div class="options-panel">
+                        <div class="price-display">
+                            <p>Aura Teka X</p>
+                            <span id="total-price">$210,000</span>
+                        </div>
 
-        function showPage(pageId) {
-            pages.forEach(page => {
-                page.classList.remove('active');
+                        <div class="option-group">
+                            <details open>
+                                <summary>Exterior Color</summary>
+                                <div class="option-choices" id="color-options">
+                                    <div class="color-swatch active" style="background-color: #1a1a1a;" data-price="0" title="Quantum Black"></div>
+                                    <div class="color-swatch" style="background-color: #e0e0e0;" data-price="1500" title="Starlight Silver"></div>
+                                    <div class="color-swatch" style="background-color: #a80000;" data-price="2500" title="Inferno Red"></div>
+                                    <div class="color-swatch" style="background-color: #0033a0;" data-price="2500" title="Abyss Blue"></div>
+                                </div>
+                            </details>
+                        </div>
+
+                        <div class="option-group">
+                            <details>
+                                <summary>Wheels</summary>
+                                <div class="option-choices" id="wheel-options">
+                                    <div class="wheel-option active" data-price="0" title="20' Aero Standard"></div>
+                                    <div class="wheel-option" data-price="3000" title="21' Sport Twin-Spoke"></div>
+                                    <div class="wheel-option" data-price="5000" title="22' Carbon Performance"></div>
+                                </div>
+                            </details>
+                        </div>
+                        
+                        <div class="config-actions">
+                            <a href="#" class="btn btn-secondary">Book Test Drive</a>
+                            <a href="#" class="btn btn-primary">Finalize & Purchase</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="about" class="container">
+             <h2 class="fade-in">Beyond the Horizon</h2>
+             <p class="fade-in" style="transition-delay: 200ms;">Aura Motors was founded on a single principle: to forge the future of motion. We believe in the synergy of silent, electric power and breathtaking design. Our vehicles are more than just a mode of transport; they are a statement of progress, a commitment to sustainability, and an experience that ignites the senses. Every curve, every line, and every material is chosen with intent, creating a seamless connection between driver, machine, and the road ahead.</p>
+        </section>
+
+    </main>
+
+    <footer>
+        <div class="container">
+            <div class="social-links fade-in">
+                <a href="#"><i class='bx bxl-instagram'></i></a>
+                <a href="#"><i class='bx bxl-twitter'></i></a>
+                <a href="#"><i class='bx bxl-youtube'></i></a>
+            </div>
+            <p style="margin-top: 1.5rem;" class="fade-in">&copy; 2025 Aura Motors. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // JAVASCRIPT FOR INTERACTIONS
+
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // 1. THEME TOGGLE
+            const themeToggle = document.getElementById('theme-toggle');
+            const body = document.body;
+            const currentTheme = localStorage.getItem('theme') || 'dark';
+            
+            body.setAttribute('data-theme', currentTheme);
+            themeToggle.innerHTML = currentTheme === 'dark' ? "<i class='bx bxs-sun'></i>" : "<i class='bx bxs-moon'></i>";
+
+            themeToggle.addEventListener('click', () => {
+                let newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+                body.setAttribute('data-theme', newTheme);
+                localStorage.setItem('theme', newTheme);
+                themeToggle.innerHTML = newTheme === 'dark' ? "<i class='bx bxs-sun'></i>" : "<i class='bx bxs-moon'></i>";
             });
-            const activePage = document.getElementById(pageId);
-            if (activePage) {
-                activePage.classList.add('active');
-            }
-            if (pageId === 'admin-page') {
-                checkAdminAuth();
-            }
-            if (pageId === 'configurator-page') {
-                updateConfiguratorUI();
-            }
-        }
 
-        function showModal(title, body) {
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-body').innerHTML = body;
-            document.getElementById('message-modal').classList.add('active');
-        }
-
-        function closeModal() {
-            document.getElementById('message-modal').classList.remove('active');
-        }
-
-        // Initialize Firebase
-        function initFirebase() {
-            try {
-                if (Object.keys(firebaseConfig).length > 0) {
-                    app = initializeApp(firebaseConfig);
-                    db = getFirestore(app);
-                    auth = getAuth(app);
-                    onAuthStateChanged(auth, async (user) => {
-                        if (user) {
-                            userId = user.uid;
-                            console.log("User signed in:", userId);
-                        } else {
-                            userId = crypto.randomUUID();
-                            console.log("User signed out, using anonymous ID:", userId);
-                        }
-                        isAuthReady = true;
-                        fetchAdminData();
-                        fetchGalleryData();
-                    });
-
-                    if (__initial_auth_token) {
-                        signInWithCustomToken(auth, __initial_auth_token);
-                    } else {
-                        signInAnonymously(auth);
+            // 2. FADE-IN ANIMATION ON SCROLL
+            const fadeInElements = document.querySelectorAll('.fade-in');
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('visible');
                     }
+                });
+            }, { threshold: 0.1 });
 
-                } else {
-                    console.log("Firebase config is missing, some features will not work.");
-                    isAuthReady = true; // Still allow app to load
-                }
-            } catch (e) {
-                console.error("Error initializing Firebase:", e);
-                isAuthReady = true;
-            }
-        }
+            fadeInElements.forEach(el => observer.observe(el));
 
-        // User ID for Firestore path based on auth state
-        const getUserId = () => auth.currentUser?.uid || userId;
 
-        function updatePrice() {
-            let total = configOptions[currentConfig.carModel].basePrice;
-            total += configOptions[currentConfig.carModel].colors[currentConfig.color]?.price || 0;
-            total += configOptions[currentConfig.carModel].wheels[currentConfig.wheels]?.price || 0;
-            total += configOptions[currentConfig.carModel].interiors[currentConfig.interior]?.price || 0;
-            currentConfig.price = total;
-            document.getElementById('config-price').innerText = `$${total.toLocaleString()}`;
-        }
-
-        function createOptionButtons(type, options) {
-            const container = document.createElement('div');
-            container.innerHTML = `<h4 class="text-xl font-semibold mb-2">${type.charAt(0).toUpperCase() + type.slice(1)}</h4>`;
-            const optionsDiv = document.createElement('div');
-            optionsDiv.className = 'flex flex-wrap gap-2';
-
-            for (const key in options) {
-                const option = options[key];
-                const button = document.createElement('button');
-                button.className = 'px-4 py-2 rounded-full border-2 transition-all duration-200';
-                if (type === 'colors' || type === 'wheels') {
-                    button.style.backgroundColor = option.hex;
-                    button.style.borderColor = (currentConfig[type] === key) ? 'white' : 'transparent';
-                    if (currentConfig[type] === key) {
-                        button.className += ' ring-2 ring-primary ring-offset-2 ring-offset-gray-900 dark:ring-offset-light';
-                    }
-                } else {
-                    button.innerText = key;
-                    button.className += (currentConfig[type] === key) ? ' bg-primary text-white border-primary' : ' bg-gray-700 dark:bg-gray-200 text-gray-100 dark:text-gray-800 border-transparent';
-                }
-                button.onclick = () => {
-                    currentConfig[type] = key;
-                    updateConfiguratorUI();
-                    update3DMaterials();
-                    updatePrice();
-                };
-                optionsDiv.appendChild(button);
-            }
-            container.appendChild(optionsDiv);
-            return container;
-        }
-
-        function updateConfiguratorUI() {
-            const configOptionsDiv = document.getElementById('config-options');
-            configOptionsDiv.innerHTML = '';
-            const selectedModelOptions = configOptions[currentConfig.carModel];
-
-            configOptionsDiv.appendChild(createOptionButtons('colors', selectedModelOptions.colors));
-            configOptionsDiv.appendChild(createOptionButtons('wheels', selectedModelOptions.wheels));
-            configOptionsDiv.appendChild(createOptionButtons('interiors', selectedModelOptions.interiors));
-            document.getElementById('config-model-select').value = currentConfig.carModel;
-            updatePrice();
-        }
-
-        // Configurator logic
-        document.getElementById('config-model-select').addEventListener('change', (e) => {
-            currentConfig.carModel = e.target.value;
-            // Reset to default options for the new model
-            const newModelDefaults = configOptions[currentConfig.carModel];
-            currentConfig.color = Object.keys(newModelDefaults.colors)[0];
-            currentConfig.wheels = Object.keys(newModelDefaults.wheels)[0];
-            currentConfig.interior = Object.keys(newModelDefaults.interiors)[0];
-
-            updateConfiguratorUI();
-            update3DModel();
-        });
-
-        // Save and Share logic
-        document.getElementById('save-config-btn').addEventListener('click', async () => {
-            if (!isAuthReady) {
-                showModal('Please Wait', 'Authenticating, please try again in a moment.');
-                return;
-            }
-            try {
-                const configToSave = {
-                    ...currentConfig,
-                    userId: getUserId(),
-                    createdAt: new Date().toISOString()
-                };
-                const docRef = await addDoc(collection(db, `artifacts/${appId}/public/data/configs`), configToSave);
-                const shareUrl = `${window.location.origin}/?configId=${docRef.id}`;
-                showModal('Configuration Saved!', `Your unique shareable URL: <br><a href="${shareUrl}" class="text-primary break-all">${shareUrl}</a>`);
-                console.log("Configuration saved with ID:", docRef.id);
-            } catch (e) {
-                console.error("Error saving configuration:", e);
-                showModal('Error', 'Could not save configuration. Please try again.');
-            }
-        });
-
-        // Booking logic
-        document.getElementById('booking-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!isAuthReady) {
-                showModal('Please Wait', 'Authenticating, please try again in a moment.');
-                return;
-            }
-            const name = document.getElementById('booking-name').value;
-            const email = document.getElementById('booking-email').value;
-            const phone = document.getElementById('booking-phone').value;
-            const date = document.getElementById('booking-date').value;
-            let config;
-            try {
-                config = JSON.parse(document.getElementById('booking-config').value);
-            } catch (error) {
-                config = { message: "Configuration not loaded" };
-            }
-
-            const bookingData = {
-                name, email, phone, date,
-                carModel: config.carModel || 'N/A',
-                config: config,
-                userId: getUserId(),
-                createdAt: new Date().toISOString()
+            // 3. SIMULATED CONFIGURATOR PRICE LOGIC
+            const basePrice = 210000;
+            let selectedOptions = {
+                color: 0,
+                wheels: 0
             };
 
-            try {
-                await addDoc(collection(db, `artifacts/${appId}/users/${getUserId()}/bookings`), bookingData);
-                document.getElementById('booking-form').reset();
-                showModal('Success!', 'Your test drive booking has been submitted. We will contact you shortly.');
-            } catch (e) {
-                console.error("Error adding document: ", e);
-                showModal('Error', 'Failed to submit your booking. Please try again.');
+            const priceElement = document.getElementById('total-price');
+            const colorOptions = document.getElementById('color-options');
+            const wheelOptions = document.getElementById('wheel-options');
+
+            function updatePrice() {
+                const totalPrice = basePrice + selectedOptions.color + selectedOptions.wheels;
+                priceElement.textContent = `$${totalPrice.toLocaleString()}`;
             }
-        });
-
-        document.getElementById('book-test-drive-config-btn').addEventListener('click', () => {
-            showPage('booking-page');
-            document.getElementById('booking-config').value = JSON.stringify(currentConfig);
-        });
-
-        // Admin panel logic
-        const fetchAdminData = () => {
-            // Simple demo authentication: hardcode a known admin user ID
-            const ADMIN_USER_ID = 'example-admin-id'; // Replace with a real user ID for testing
-            const userIsAdmin = getUserId() === ADMIN_USER_ID;
-
-            if (userIsAdmin) {
-                adminLoginMessage.classList.add('hidden');
-                adminData.classList.remove('hidden');
-
-                // Listen for changes in bookings
-                const bookingsRef = collection(db, `artifacts/${appId}/users/${getUserId()}/bookings`);
-                onSnapshot(bookingsRef, (snapshot) => {
-                    const bookingsList = document.getElementById('admin-bookings-list');
-                    bookingsList.innerHTML = `<h4 class="text-xl font-semibold text-primary">Bookings</h4>`;
-                    snapshot.forEach(doc => {
-                        const booking = doc.data();
-                        const bookingItem = document.createElement('div');
-                        bookingItem.className = 'p-4 rounded-xl bg-gray-700 dark:bg-gray-200';
-                        bookingItem.innerHTML = `
-                            <p><strong>Name:</strong> ${booking.name}</p>
-                            <p><strong>Car:</strong> ${booking.carModel}</p>
-                            <p><strong>Date:</strong> ${booking.date}</p>
-                            <p><strong>Config:</strong> ${JSON.stringify(booking.config).slice(0, 50)}...</p>
-                        `;
-                        bookingsList.appendChild(bookingItem);
-                    });
-                });
-
-                // Listen for changes in private configurations (now an admin feature)
-                const configsRef = collection(db, `artifacts/${appId}/users/${getUserId()}/configs`);
-                onSnapshot(configsRef, (snapshot) => {
-                    const configsList = document.getElementById('admin-configs-list');
-                    configsList.innerHTML = `<h4 class="text-xl font-semibold text-primary">Saved Configurations</h4>`;
-                    snapshot.forEach(doc => {
-                        const config = doc.data();
-                        const configItem = document.createElement('div');
-                        configItem.className = 'p-4 rounded-xl bg-gray-700 dark:bg-gray-200';
-                        configItem.innerHTML = `
-                            <p><strong>Car:</strong> ${config.carModel}</p>
-                            <p><strong>Price:</strong> $${config.price.toLocaleString()}</p>
-                            <p><strong>Config:</strong> ${JSON.stringify(config).slice(0, 50)}...</p>
-                        `;
-                        configsList.appendChild(configItem);
-                    });
-                });
-
-            } else {
-                adminLoginMessage.innerText = 'Access denied. You are not an authorized admin.';
-                adminLoginMessage.classList.remove('hidden');
-                adminData.classList.add('hidden');
-            }
-        };
-
-        // Gallery logic
-        const fetchGalleryData = () => {
-             const configsRef = collection(db, `artifacts/${appId}/public/data/configs`);
-             onSnapshot(configsRef, (snapshot) => {
-                galleryGrid.innerHTML = '';
-                snapshot.forEach(doc => {
-                    const config = doc.data();
-                    const configId = doc.id;
-                    const card = document.createElement('div');
-                    card.className = 'p-6 rounded-2xl bg-gray-800 dark:bg-gray-100 shadow-lg text-left transform transition-all duration-300 hover:scale-105 cursor-pointer';
-                    card.innerHTML = `
-                        <h3 class="text-2xl font-bold mb-2">${config.carModel.toUpperCase()}</h3>
-                        <p class="text-gray-400 dark:text-gray-600 mb-1">Color: <span class="font-medium">${config.color}</span></p>
-                        <p class="text-gray-400 dark:text-gray-600 mb-1">Wheels: <span class="font-medium">${config.wheels}</span></p>
-                        <p class="text-xl font-bold text-primary mt-4">$${config.price.toLocaleString()}</p>
-                    `;
-                    card.onclick = () => {
-                        currentConfig = config;
-                        showPage('configurator-page');
-                        updateConfiguratorUI();
-                        update3DModel();
-                    };
-                    galleryGrid.appendChild(card);
-                });
-             });
-        };
-
-
-        // Dark/Light mode toggle
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const sunIcon = document.getElementById('sun-icon');
-        const moonIcon = document.getElementById('moon-icon');
-        themeToggleBtn.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            sunIcon.classList.toggle('hidden');
-            moonIcon.classList.toggle('hidden');
-        });
-
-        // 3D Rendering (Three.js)
-        const THREE_CDN = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
-        let scene, camera, renderer, modelGroup;
-        let heroScene, heroCamera, heroRenderer;
-        
-        function create3DCar(carModel) {
-            const group = new THREE.Group();
-            let bodyColor = new THREE.Color(configOptions[carModel].colors[currentConfig.color]?.hex);
-            let wheelColor = new THREE.Color(configOptions[carModel].wheels[currentConfig.wheels]?.hex);
-            let interiorColor = new THREE.Color(configOptions[carModel].interiors[currentConfig.interior]?.hex);
-
-            // Main Body
-            const bodyGeometry = new THREE.BoxGeometry(2.5, 0.7, 1.2);
-            const bodyMaterial = new THREE.MeshLambertMaterial({ color: bodyColor });
-            const body = new THREE.Mesh(bodyGeometry, bodyMaterial);
-            body.position.set(0, 0.5, 0);
-            group.add(body);
-
-            // Cabin
-            const cabinGeometry = new THREE.BoxGeometry(1.4, 0.5, 1);
-            const cabinMaterial = new THREE.MeshLambertMaterial({ color: 0x95a5a6 });
-            const cabin = new THREE.Mesh(cabinGeometry, cabinMaterial);
-            cabin.position.set(0.1, 1.05, 0);
-            group.add(cabin);
-
-            // Front Bumper
-            const bumperGeometry = new THREE.BoxGeometry(0.2, 0.4, 1.2);
-            const bumperMaterial = new THREE.MeshLambertMaterial({ color: '#2c3e50' });
-            const bumper = new THREE.Mesh(bumperGeometry, bumperMaterial);
-            bumper.position.set(1.2, 0.3, 0);
-            group.add(bumper);
-
-            // Rear Spoiler (simple box for now)
-            const spoilerGeometry = new THREE.BoxGeometry(0.1, 0.2, 1.1);
-            const spoilerMaterial = new THREE.MeshLambertMaterial({ color: '#1a1a1a' });
-            const spoiler = new THREE.Mesh(spoilerGeometry, spoilerMaterial);
-            spoiler.position.set(-1.3, 0.9, 0);
-            group.add(spoiler);
-
-            // Wheels
-            const wheelGeometry = new THREE.CylinderGeometry(0.3, 0.3, 0.2, 16);
-            const wheelMaterial = new THREE.MeshLambertMaterial({ color: wheelColor });
-            const wheel1 = new THREE.Mesh(wheelGeometry, wheelMaterial);
-            wheel1.rotation.z = Math.PI / 2;
-            wheel1.position.set(1, 0.2, 0.7);
-            group.add(wheel1);
-            const wheel2 = new THREE.Mesh(wheelGeometry, wheelMaterial);
-            wheel2.rotation.z = Math.PI / 2;
-            wheel2.position.set(-1, 0.2, 0.7);
-            group.add(wheel2);
-            const wheel3 = new THREE.Mesh(wheelGeometry, wheelMaterial);
-            wheel3.rotation.z = Math.PI / 2;
-            wheel3.position.set(1, 0.2, -0.7);
-            group.add(wheel3);
-            const wheel4 = new THREE.Mesh(wheelGeometry, wheelMaterial);
-            wheel4.rotation.z = Math.PI / 2;
-            wheel4.position.set(-1, 0.2, -0.7);
-            group.add(wheel4);
             
-            // Re-apply correct colors to parts after initial creation
-            group.traverse(obj => {
-                if (obj.isMesh) {
-                    if (obj === body) {
-                        obj.material.color.set(bodyColor);
-                    } else if (obj === cabin) {
-                        obj.material.color.set(interiorColor);
-                    } else if (obj.geometry instanceof THREE.CylinderGeometry) {
-                        obj.material.color.set(wheelColor);
-                    }
-                }
-            });
+            function handleOptionClick(event, optionType, container) {
+                const target = event.target;
+                if (!target.hasAttribute('data-price')) return;
 
-            return group;
-        }
-
-        function init3D(canvasId) {
-            const canvas = document.getElementById(canvasId);
-            scene = new THREE.Scene();
-            camera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-            renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-            renderer.setSize(canvas.clientWidth, canvas.clientHeight);
-
-            // Lighting
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            scene.add(ambientLight);
-            const directionalLight = new THREE.DirectionalLight(0xffffff, 0.5);
-            directionalLight.position.set(5, 5, 5);
-            scene.add(directionalLight);
-
-            // Controls
-            let isDragging = false;
-            let previousMousePosition = { x: 0, y: 0 };
-            canvas.addEventListener('mousedown', (e) => { isDragging = true; previousMousePosition = { x: e.clientX, y: e.clientY }; });
-            canvas.addEventListener('mouseup', () => { isDragging = false; });
-            canvas.addEventListener('mousemove', (e) => {
-                if (!isDragging) return;
-                const deltaX = (e.clientX - previousMousePosition.x) * 0.01;
-                const deltaY = (e.clientY - previousMousePosition.y) * 0.01;
-                modelGroup.rotation.y += deltaX;
-                previousMousePosition = { x: e.clientX, y: e.clientY };
-            });
-
-            update3DModel();
-            
-            camera.position.z = 3;
-            animate();
-
-            // Resize listener
-            window.addEventListener('resize', () => {
-                const newWidth = canvas.clientWidth;
-                const newHeight = canvas.clientHeight;
-                camera.aspect = newWidth / newHeight;
-                camera.updateProjectionMatrix();
-                renderer.setSize(newWidth, newHeight);
-            });
-        }
-
-        function initHeroCanvas() {
-            const canvas = document.getElementById('hero-canvas');
-            heroScene = new THREE.Scene();
-            heroCamera = new THREE.PerspectiveCamera(75, canvas.clientWidth / canvas.clientHeight, 0.1, 1000);
-            heroRenderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true });
-            heroRenderer.setSize(canvas.clientWidth, canvas.clientHeight);
-            
-            const ambientLight = new THREE.AmbientLight(0xffffff, 0.5);
-            heroScene.add(ambientLight);
-
-            const particlesGeometry = new THREE.BufferGeometry();
-            const particlesCount = 500;
-            const positions = new Float32Array(particlesCount * 3);
-            for (let i = 0; i < particlesCount * 3; i++) {
-                positions[i] = (Math.random() - 0.5) * 20;
-            }
-            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
-            const particlesMaterial = new THREE.PointsMaterial({ color: 0x666666, size: 0.05 });
-            const particles = new THREE.Points(particlesGeometry, particlesMaterial);
-            heroScene.add(particles);
-
-            heroCamera.position.z = 5;
-
-            function heroAnimate() {
-                requestAnimationFrame(heroAnimate);
-                particles.rotation.y += 0.0005;
-                heroRenderer.render(heroScene, heroCamera);
-            }
-
-            heroAnimate();
-
-            window.addEventListener('resize', () => {
-                const newWidth = canvas.clientWidth;
-                const newHeight = canvas.clientHeight;
-                heroCamera.aspect = newWidth / newHeight;
-                heroCamera.updateProjectionMatrix();
-                heroRenderer.setSize(newWidth, newHeight);
-            });
-        }
-
-
-        function update3DModel() {
-            if (modelGroup) {
-                scene.remove(modelGroup);
-                modelGroup.traverse(object => {
-                    if (object.isMesh) {
-                        object.geometry.dispose();
-                        object.material.dispose();
-                    }
-                });
-            }
-            modelGroup = create3DCar(currentConfig.carModel);
-            scene.add(modelGroup);
-            update3DMaterials();
-        }
-
-        function update3DMaterials() {
-            if (!modelGroup) return;
-            const model = configOptions[currentConfig.carModel];
-            const bodyColor = model.colors[currentConfig.color]?.hex || '#3498db';
-            const wheelColor = model.wheels[currentConfig.wheels]?.hex || '#1a1a1a';
-            const interiorColor = model.interiors[currentConfig.interior]?.hex || '#bdc3c7';
-
-            modelGroup.traverse(obj => {
-                if (obj.isMesh) {
-                    if (obj.geometry instanceof THREE.BoxGeometry && obj.position.y > 0.5 && obj.position.y < 1) {
-                         obj.material.color.set(bodyColor);
-                    } else if (obj.position.y === 1.05) { // Cabin
-                         obj.material.color.set(interiorColor);
-                    } else if (obj.geometry instanceof THREE.CylinderGeometry) { // Wheels
-                        obj.material.color.set(wheelColor);
-                    }
-                }
-            });
-        }
-        
-        function animate() {
-            requestAnimationFrame(animate);
-            if (modelGroup) {
-                modelGroup.rotation.y += 0.005;
-            }
-            renderer.render(scene, camera);
-        }
-
-        // Export PNG logic
-        const html2canvas_CDN = 'https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js';
-        document.getElementById('export-png-btn').addEventListener('click', async () => {
-            const canvasElement = document.getElementById('configurator-canvas');
-            if (!canvasElement) {
-                showModal('Error', '3D preview not available.');
-                return;
-            }
-            try {
-                const canvas = await html2canvas(canvasElement);
-                const link = document.createElement('a');
-                link.download = 'evolve-config.png';
-                link.href = canvas.toDataURL('image/png');
-                link.click();
-            } catch (e) {
-                console.error("Error exporting PNG:", e);
-                showModal('Error', 'Failed to export image.');
-            }
-        });
-
-        // Initialize ScrollReveal
-        const scrollreveal_CDN = 'https://unpkg.com/scrollreveal';
-        async function initScrollReveal() {
-            const ScrollReveal = (await import(scrollreveal_CDN)).default;
-            if (ScrollReveal) {
-                ScrollReveal().reveal('.animate-fadeInUp', { delay: 300, distance: '50px', duration: 800, easing: 'cubic-bezier(0.5, 0, 0, 1)' });
-                ScrollReveal().reveal('.animate-scaleIn', { delay: 300, scale: 0.9, duration: 800 });
-                ScrollReveal().reveal('.car-card', { interval: 200 });
-            }
-        }
-        
-        // Dynamic Model Cards
-        function generateModelCards() {
-            const grid = document.getElementById('models-grid');
-            const models = ['teka-x', 'teka-s', 'teka-r'];
-            models.forEach(model => {
-                const card = document.createElement('div');
-                card.className = 'car-card p-6 rounded-2xl bg-gray-800 dark:bg-gray-100 shadow-lg text-center transform transition-all duration-300 hover:scale-105 animate-fadeInUp';
-                card.innerHTML = `
-                    <h3 class="text-3xl font-bold mb-2">${model.toUpperCase()}</h3>
-                    <p class="text-gray-400 dark:text-gray-600 mb-4">$${configOptions[model].basePrice.toLocaleString()}+</p>
-                    <a href="#configurator" class="inline-block px-6 py-2 rounded-full text-white font-semibold bg-primary hover:bg-red-600 transition-colors" onclick="currentConfig.carModel='${model}'; showPage('configurator-page');">Configure</a>
-                `;
-                grid.appendChild(card);
-            });
-        }
-        
-        // Check for URL parameters to pre-load config
-        async function loadConfigFromUrl() {
-            const urlParams = new URLSearchParams(window.location.search);
-            const configId = urlParams.get('configId');
-
-            if (configId) {
-                showModal('Loading Configuration', 'Please wait while we load your saved configuration.');
-                await new Promise(resolve => {
-                    const checkInterval = setInterval(() => {
-                        if (isAuthReady) {
-                            clearInterval(checkInterval);
-                            resolve();
-                        }
-                    }, 100);
-                });
+                // Update active class
+                container.querySelector('.active').classList.remove('active');
+                target.classList.add('active');
                 
-                try {
-                    const docRef = doc(db, `artifacts/${appId}/public/data/configs`, configId);
-                    const docSnap = await getDoc(docRef);
-
-                    if (docSnap.exists()) {
-                        const savedConfig = docSnap.data();
-                        currentConfig = savedConfig;
-                        document.getElementById('config-model-select').value = savedConfig.carModel;
-                        updateConfiguratorUI();
-                        update3DModel();
-                        showModal('Config Loaded!', 'The configuration has been loaded successfully.');
-                        showPage('configurator-page');
-                    } else {
-                        showModal('Error', 'Configuration not found.');
-                    }
-                } catch (e) {
-                    console.error("Error loading config:", e);
-                    showModal('Error', 'An error occurred while loading the configuration.');
-                }
+                // Update price
+                selectedOptions[optionType] = parseInt(target.getAttribute('data-price'));
+                updatePrice();
             }
-        }
-        
-        // Initial setup
-        window.onload = async () => {
-            initFirebase();
-            initHeroCanvas();
-            init3D('configurator-canvas');
-            updateConfiguratorUI();
-            generateModelCards();
-            initScrollReveal();
-            loadConfigFromUrl();
-        };
+
+            colorOptions.addEventListener('click', (e) => handleOptionClick(e, 'color', colorOptions));
+            wheelOptions.addEventListener('click', (e) => handleOptionClick(e, 'wheels', wheelOptions));
+            
+            // Initial price update
+            updatePrice();
+        });
     </script>
-    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </body>
 </html>
