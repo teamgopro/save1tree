@@ -3,11 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aura Motors - Define Your Horizon</title>
+    <title>TEKA Motors - Engineering Emotion</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
@@ -20,21 +20,23 @@
         }
 
         [data-theme="dark"] {
-            --bg-color: #0B0B0F;
-            --bg-secondary: #16161C;
-            --text-color: #EAEAEB;
-            --text-muted: #8A8A93;
-            --primary-color: #0075FF;
-            --border-color: #2A2A33;
+            --bg-color: #0A0A0A;
+            --bg-secondary: #121212;
+            --text-color: #F0F0F0;
+            --text-muted: #888888;
+            --primary-color: #0077FF;
+            --primary-gradient: linear-gradient(45deg, #0077FF, #0058BE);
+            --border-color: #222222;
         }
 
         [data-theme="light"] {
-            --bg-color: #F5F5F7;
-            --bg-secondary: #FFFFFF;
-            --text-color: #1D1D1F;
-            --text-muted: #6E6E73;
-            --primary-color: #0071E3;
-            --border-color: #D2D2D7;
+            --bg-color: #FFFFFF;
+            --bg-secondary: #F7F7F7;
+            --text-color: #111111;
+            --text-muted: #666666;
+            --primary-color: #0077FF;
+            --primary-gradient: linear-gradient(45deg, #0077FF, #0058BE);
+            --border-color: #EAEAEA;
         }
 
         /* 2. GENERAL & RESET */
@@ -46,120 +48,99 @@
 
         html {
             scroll-behavior: smooth;
+            cursor: none; /* Hide default cursor */
         }
 
         body {
-            font-family: 'Inter', sans-serif;
+            font-family: 'Poppins', sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
-        h1 { font-size: clamp(2.5rem, 5vw, 4.5rem); }
-        h2 { font-size: clamp(2rem, 4vw, 3rem); margin-bottom: 2rem; }
-        p { color: var(--text-muted); line-height: 1.6; }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 0 20px;
-        }
-
-        section {
-            padding: 100px 0;
-            overflow: hidden;
-        }
+        h1 { font-size: clamp(2.8rem, 5vw, 5rem); }
+        h2 { font-size: clamp(2.2rem, 4vw, 3.2rem); margin-bottom: 2rem; }
+        p { color: var(--text-muted); line-height: 1.7; }
+        
+        .container { max-width: 1280px; margin: 0 auto; padding: 0 20px; }
+        section { padding: 120px 0; overflow: hidden; }
 
         .btn {
             display: inline-block;
-            padding: 12px 24px;
-            border-radius: 8px;
+            padding: 14px 28px;
+            border-radius: 10px;
             text-decoration: none;
             font-weight: 600;
-            transition: transform 0.2s ease-out, background-color 0.2s ease;
+            transition: transform 0.3s var(--ease-out-quart), box-shadow 0.3s var(--ease-out-quart);
+            border: none;
         }
 
         .btn-primary {
-            background-color: var(--primary-color);
+            background: var(--primary-gradient);
             color: white;
+            box-shadow: 0 10px 20px -10px var(--primary-color);
         }
         
         .btn-secondary {
-            background-color: var(--bg-secondary);
+            background-color: transparent;
             color: var(--text-color);
             border: 1px solid var(--border-color);
         }
         
-        .btn:hover {
-            transform: translateY(-3px);
-        }
+        .btn:hover { transform: translateY(-5px); }
         
-        /* 3. ANIMATIONS */
-        .fade-in {
-            opacity: 0;
-            transform: translateY(30px);
-            transition: opacity 0.8s var(--ease-out-quart), transform 0.8s var(--ease-out-quart);
-        }
-        
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
+        /* 3. NEW: CUSTOM CURSOR */
+        .cursor {
+            position: fixed;
+            width: 30px;
+            height: 30px;
+            border: 1px solid var(--text-color);
+            border-radius: 50%;
+            left: 0;
+            top: 0;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: width 0.2s ease, height 0.2s ease, background-color 0.2s ease;
+            z-index: 9999;
         }
 
-        /* 4. HEADER & NAVIGATION */
+        .cursor.grow {
+            width: 50px;
+            height: 50px;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* 4. ANIMATIONS */
+        .animate-in {
+            opacity: 0;
+            transform: translateY(40px);
+            transition: opacity 1s var(--ease-out-quart), transform 1s var(--ease-out-quart);
+        }
+        .animate-in.visible { opacity: 1; transform: translateY(0); }
+
+        /* 5. HEADER & NAVIGATION */
         header {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
-            padding: 20px 0;
+            padding: 25px 0;
             z-index: 1000;
-            background: rgba(0, 0, 0, 0.1);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            background: rgba(10, 10, 10, 0.5); /* Darker for better contrast */
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
         }
         
-        header .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 900;
-            text-decoration: none;
-            color: var(--text-color);
-        }
+        header .container { display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 1.8rem; font-weight: 800; text-decoration: none; color: var(--text-color); }
+        nav ul { display: flex; list-style: none; gap: 40px; }
+        nav a { text-decoration: none; color: var(--text-muted); font-weight: 500; transition: color 0.2s ease; }
+        nav a:hover { color: var(--text-color); }
+        #theme-toggle { background: none; border: none; color: var(--text-color); font-size: 1.5rem; }
         
-        nav ul {
-            display: flex;
-            list-style: none;
-            gap: 30px;
-        }
-        
-        nav a {
-            text-decoration: none;
-            color: var(--text-muted);
-            font-weight: 500;
-            transition: color 0.2s ease;
-        }
-
-        nav a:hover {
-            color: var(--text-color);
-        }
-
-        #theme-toggle {
-            background: none;
-            border: none;
-            color: var(--text-color);
-            font-size: 1.5rem;
-            cursor: pointer;
-        }
-        
-        /* 5. HERO SECTION */
+        /* 6. HERO SECTION */
         #home {
             height: 100vh;
             display: flex;
@@ -168,205 +149,143 @@
             text-align: center;
             position: relative;
         }
-        
-        .hero-content {
-            z-index: 2;
-        }
-        
-        .hero-content h1 {
-            text-shadow: 0 0 20px rgba(0,0,0,0.5);
-        }
-
-        .hero-content p {
-            font-size: 1.2rem;
-            max-width: 600px;
-            margin: 1rem auto 2rem;
-        }
-        
+        .hero-content { z-index: 2; }
+        .hero-content p { font-size: 1.25rem; max-width: 650px; margin: 1.5rem auto 2.5rem; }
         .hero-buttons { display: flex; gap: 1rem; justify-content: center; }
-
         .hero-3d-placeholder {
             position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 80%;
-            max-width: 900px;
-            height: 50%;
-            background: radial-gradient(ellipse at center, rgba(100,100,150,0.1) 0%, rgba(0,0,0,0) 70%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--text-muted);
-            font-size: 1.5rem;
-            border: 2px dashed var(--border-color);
-            border-radius: 20px;
-            z-index: 1;
+            top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 1000px; height: 50%;
+            background: radial-gradient(ellipse at center, rgba(100,100,150,0.05) 0%, rgba(0,0,0,0) 70%);
+            display: flex; align-items: center; justify-content: center; color: var(--text-muted); font-size: 1.5rem;
+            border: 2px dashed var(--border-color); border-radius: 20px; z-index: 1;
         }
 
-        /* 6. MODELS & CONFIGURATOR SECTIONS */
+        /* 7. MODELS & CONFIGURATOR SECTIONS */
         .models-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 2.5rem;
         }
-
         .model-card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: 16px;
-            padding: 1.5rem;
-            text-align: center;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            background-color: var(--bg-secondary); border: 1px solid var(--border-color); border-radius: 20px;
+            padding: 1.5rem; text-align: center; transition: transform 0.4s var(--ease-out-quart), box-shadow 0.4s var(--ease-out-quart);
         }
+        .model-card:hover { transform: translateY(-15px); box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); }
+        .model-card img { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; margin-bottom: 1.5rem; background-color: var(--border-color); }
+        .model-card h3 { font-size: 1.8rem; margin-bottom: 0.5rem; }
+        .model-card p { font-size: 1.1rem; margin-bottom: 1.5rem; }
 
-        .model-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
-        }
-        
-        .model-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 8px;
-            margin-bottom: 1rem;
-            background-color: var(--border-color);
-        }
-
-        .model-card h3 { font-size: 1.5rem; margin-bottom: 0.5rem; }
-        .model-card p { font-size: 1rem; margin-bottom: 1.5rem; }
-
-        #configurator {
-            background-color: var(--bg-secondary);
-        }
-        
-        .configurator-layout {
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
-            min-height: 80vh;
-        }
-        
+        #configurator { background-color: var(--bg-secondary); }
+        .configurator-layout { display: grid; grid-template-columns: 2fr 1fr; gap: 2.5rem; min-height: 80vh; }
         .viewer-panel {
-            background-color: var(--bg-color);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2rem;
-            color: var(--text-muted);
-            border: 2px dashed var(--border-color);
+            background-color: var(--bg-color); border-radius: 20px; display: flex; align-items: center;
+            justify-content: center; font-size: 2rem; color: var(--text-muted); border: 2px dashed var(--border-color);
         }
-        
-        .options-panel {
-            display: flex;
-            flex-direction: column;
-            gap: 1.5rem;
-        }
-
-        .price-display {
-            background-color: var(--bg-color);
-            padding: 1rem;
-            border-radius: 8px;
-            border: 1px solid var(--border-color);
-        }
-        
-        .price-display p { margin: 0; color: var(--text-color); }
-        .price-display #total-price { font-size: 2rem; font-weight: bold; }
-        
-        .option-group details {
-            border-bottom: 1px solid var(--border-color);
-            padding-bottom: 1rem;
-        }
-        
-        .option-group summary {
-            font-size: 1.2rem;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 1rem 0;
-        }
-        
-        .option-choices {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
-            padding-top: 1rem;
-        }
-        
-        .color-swatch {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            cursor: pointer;
-            border: 3px solid transparent;
-            transition: border-color 0.2s ease;
-        }
-        
-        .color-swatch:hover, .color-swatch.active {
-            border-color: var(--primary-color);
-        }
-        
-        .wheel-option {
-            width: 80px;
-            height: 80px;
-            border-radius: 8px;
-            cursor: pointer;
-            border: 3px solid var(--border-color);
-            transition: border-color 0.2s ease;
-            background-color: var(--bg-color);
-        }
-
-        .wheel-option:hover, .wheel-option.active {
-            border-color: var(--primary-color);
-        }
-        
+        .options-panel { display: flex; flex-direction: column; gap: 1.5rem; }
+        .price-display { background-color: var(--bg-color); padding: 1.5rem; border-radius: 12px; border: 1px solid var(--border-color); }
+        .price-display p { margin: 0; color: var(--text-color); font-weight: 500;}
+        .price-display #total-price { font-size: 2.2rem; font-weight: 700; }
+        .option-group details { border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+        .option-group summary { font-size: 1.2rem; font-weight: 600; list-style: none; /* Hide default arrow */ padding: 1.5rem 0; position: relative; }
+        .option-group summary::-webkit-details-marker { display: none; }
+        .option-group summary::after { content: '+'; position: absolute; right: 0; font-size: 1.5rem; transition: transform 0.3s ease; }
+        .option-group details[open] summary::after { transform: rotate(45deg); }
+        .option-choices { display: flex; flex-wrap: wrap; gap: 1rem; padding-top: 1rem; }
+        .color-swatch { width: 40px; height: 40px; border-radius: 50%; border: 3px solid transparent; transition: border-color 0.2s ease; }
+        .color-swatch:hover, .color-swatch.active { border-color: var(--primary-color); }
+        .wheel-option { width: 80px; height: 80px; border-radius: 12px; border: 3px solid var(--border-color); transition: border-color 0.2s ease; background-color: var(--bg-color); }
+        .wheel-option:hover, .wheel-option.active { border-color: var(--primary-color); }
         .config-actions { margin-top: auto; display: flex; flex-direction: column; gap: 1rem; }
 
-        /* 7. FOOTER */
-        footer {
-            background-color: var(--bg-secondary);
-            padding: 50px 0;
-            text-align: center;
-            border-top: 1px solid var(--border-color);
+        /* 8. NEW: TECH SPECS SECTION */
+        #tech { text-align: center; }
+        .tech-showcase {
+            position: relative;
+            max-width: 900px;
+            margin: 3rem auto 0;
         }
+        .tech-showcase img {
+            width: 100%;
+            height: auto;
+            border-radius: 16px;
+        }
+        .hotspot {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            background: var(--primary-color);
+            border-radius: 50%;
+            border: 3px solid white;
+            box-shadow: 0 0 20px var(--primary-color);
+        }
+        .hotspot .tooltip {
+            position: absolute;
+            bottom: 150%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--bg-secondary);
+            color: var(--text-color);
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            width: 200px;
+            text-align: left;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        .hotspot:hover .tooltip { opacity: 1; visibility: visible; }
+        .hotspot-1 { top: 40%; left: 25%; }
+        .hotspot-2 { top: 60%; left: 50%; }
+        .hotspot-3 { top: 30%; left: 75%; }
         
-        .social-links a {
+        /* 9. NEW: AI CONCIERGE */
+        #concierge-fab {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            background: var(--primary-gradient);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             font-size: 2rem;
-            color: var(--text-muted);
-            margin: 0 1rem;
-            transition: color 0.2s ease;
+            color: white;
+            box-shadow: 0 10px 20px -5px var(--primary-color);
+            z-index: 1001;
         }
 
-        .social-links a:hover { color: var(--text-color); }
+        /* 10. FOOTER */
+        footer { background-color: var(--bg-secondary); padding: 60px 0; text-align: center; border-top: 1px solid var(--border-color); }
+        .social-links a { font-size: 2.2rem; color: var(--text-muted); margin: 0 1.2rem; transition: color 0.2s ease, transform 0.2s ease; display: inline-block;}
+        .social-links a:hover { color: var(--text-color); transform: translateY(-3px); }
         
-        /* 8. RESPONSIVENESS */
+        /* 11. RESPONSIVENESS */
         @media (max-width: 768px) {
-            header nav { display: none; } /* Simplified for demo */
-            .hero-content h1 { font-size: 2rem; }
-            .hero-content p { font-size: 1rem; }
-
-            .configurator-layout {
-                grid-template-columns: 1fr;
-            }
+            html { cursor: auto; }
+            .cursor { display: none; }
+            header nav { display: none; }
+            .configurator-layout { grid-template-columns: 1fr; }
             .viewer-panel { height: 50vh; }
         }
-
     </style>
 </head>
 <body data-theme="dark">
 
+    <div class="cursor"></div>
+
     <header>
         <div class="container">
-            <a href="#" class="logo">AURA</a>
+            <a href="#" class="logo interactive">TEKA</a>
             <nav>
                 <ul>
-                    <li><a href="#models">Models</a></li>
-                    <li><a href="#configurator">Configure</a></li>
-                    <li><a href="#about">About</a></li>
+                    <li><a href="#models" class="interactive">Models</a></li>
+                    <li><a href="#tech" class="interactive">Technology</a></li>
+                    <li><a href="#configurator" class="interactive">Configure</a></li>
                 </ul>
             </nav>
-            <button id="theme-toggle" title="Toggle Theme">
+            <button id="theme-toggle" class="interactive" title="Toggle Theme">
                 <i class='bx bxs-sun'></i>
             </button>
         </div>
@@ -375,119 +294,125 @@
     <main>
         <section id="home">
             <div class="hero-3d-placeholder">
-                [ Interactive 3D Model Here ]
+                [ Interactive 3D Model of TEKA X ]
             </div>
-            <div class="hero-content container fade-in">
-                <h1>Aura Teka X</h1>
-                <p>Engineered for emotion. Designed for the future. Experience the pinnacle of electric performance.</p>
+            <div class="hero-content container animate-in">
+                <h1>TEKA X</h1>
+                <p>A new dimension of performance. Silent, powerful, and unequivocally TEKA.</p>
                 <div class="hero-buttons">
-                    <a href="#models" class="btn btn-primary">Explore Models</a>
-                    <a href="#configurator" class="btn btn-secondary">Configure Now</a>
+                    <a href="#models" class="btn btn-primary interactive">Explore Models</a>
+                    <a href="#configurator" class="btn btn-secondary interactive">Configure Now</a>
                 </div>
             </div>
         </section>
 
         <section id="models" class="container">
-            <h2 class="fade-in">Our Collection</h2>
+            <h2 class="animate-in">The TEKA Lineup</h2>
             <div class="models-grid">
-                <div class="model-card fade-in" style="transition-delay: 100ms;">
-                    <img src="placeholder.jpg" alt="Aura Teka X">
-                    <h3>Aura Teka X</h3>
+                <div class="model-card animate-in interactive" style="transition-delay: 100ms;">
+                    <img src="placeholder.jpg" alt="TEKA X">
+                    <h3>TEKA X</h3>
                     <p>Starting at $210,000</p>
-                    <a href="#configurator" class="btn btn-primary">Configure</a>
+                    <a href="#configurator" class="btn btn-primary interactive">Configure</a>
                 </div>
-                <div class="model-card fade-in" style="transition-delay: 200ms;">
-                    <img src="placeholder.jpg" alt="Aura Teka S">
-                    <h3>Aura Teka S</h3>
+                <div class="model-card animate-in interactive" style="transition-delay: 200ms;">
+                    <img src="placeholder.jpg" alt="TEKA S">
+                    <h3>TEKA S</h3>
                     <p>Starting at $185,000</p>
-                    <a href="#configurator" class="btn btn-primary">Configure</a>
+                    <a href="#configurator" class="btn btn-primary interactive">Configure</a>
                 </div>
-                <div class="model-card fade-in" style="transition-delay: 300ms;">
-                    <img src="placeholder.jpg" alt="Aura Teka R">
-                    <h3>Aura Teka R</h3>
+                <div class="model-card animate-in interactive" style="transition-delay: 300ms;">
+                    <img src="placeholder.jpg" alt="TEKA R">
+                    <h3>TEKA R</h3>
                     <p>Starting at $255,000</p>
-                    <a href="#configurator" class="btn btn-primary">Configure</a>
+                    <a href="#configurator" class="btn btn-primary interactive">Configure</a>
+                </div>
+            </div>
+        </section>
+        
+        <section id="tech" class="container">
+            <h2 class="animate-in">Engineered From a Blank Slate</h2>
+            <p class="animate-in" style="max-width: 700px; margin: 0 auto 3rem auto;">Our bespoke carbon-fiber monocoque chassis integrates a structural battery pack, creating a platform with unparalleled rigidity and a low center of gravity.</p>
+            <div class="tech-showcase animate-in" style="transition-delay: 200ms;">
+                <img src="https://via.placeholder.com/900x500/111111/888888?text=Chassis+Blueprint" alt="TEKA Chassis Blueprint">
+                <div class="hotspot hotspot-1 interactive">
+                    <div class="tooltip"><strong>Skateboard Battery Pack</strong><br>120kWh solid-state battery for maximum density and safety.</div>
+                </div>
+                <div class="hotspot hotspot-2 interactive">
+                    <div class="tooltip"><strong>Carbon Monocoque</strong><br>Single-piece carbon fiber tub for extreme lightness and strength.</div>
+                </div>
+                 <div class="hotspot hotspot-3 interactive">
+                    <div class="tooltip"><strong>Axial Flux Motors</strong><br>Dual high-performance motors delivering instant torque and precision control.</div>
                 </div>
             </div>
         </section>
 
         <section id="configurator">
             <div class="container">
-                <h2 class="fade-in">Design Your Aura</h2>
-                <div class="configurator-layout fade-in" style="transition-delay: 200ms;">
-                    <div class="viewer-panel">
-                        [ Live 3D Preview ]
-                    </div>
-
+                <h2 class="animate-in">Design Your TEKA</h2>
+                <div class="configurator-layout animate-in" style="transition-delay: 200ms;">
+                    <div class="viewer-panel">[ Live 3D Preview ]</div>
                     <div class="options-panel">
                         <div class="price-display">
-                            <p>Aura Teka X</p>
+                            <p>TEKA X</p>
                             <span id="total-price">$210,000</span>
                         </div>
-
                         <div class="option-group">
                             <details open>
-                                <summary>Exterior Color</summary>
+                                <summary class="interactive">Exterior Color</summary>
                                 <div class="option-choices" id="color-options">
-                                    <div class="color-swatch active" style="background-color: #1a1a1a;" data-price="0" title="Quantum Black"></div>
-                                    <div class="color-swatch" style="background-color: #e0e0e0;" data-price="1500" title="Starlight Silver"></div>
-                                    <div class="color-swatch" style="background-color: #a80000;" data-price="2500" title="Inferno Red"></div>
-                                    <div class="color-swatch" style="background-color: #0033a0;" data-price="2500" title="Abyss Blue"></div>
+                                    <div class="color-swatch active interactive" style="background-color: #1a1a1a;" data-price="0" title="Quantum Black"></div>
+                                    <div class="color-swatch interactive" style="background-color: #e0e0e0;" data-price="1500" title="Starlight Silver"></div>
+                                    <div class="color-swatch interactive" style="background-color: #a80000;" data-price="2500" title="Inferno Red"></div>
+                                    <div class="color-swatch interactive" style="background-color: #0033a0;" data-price="2500" title="Abyss Blue"></div>
                                 </div>
                             </details>
                         </div>
-
                         <div class="option-group">
                             <details>
-                                <summary>Wheels</summary>
+                                <summary class="interactive">Wheels</summary>
                                 <div class="option-choices" id="wheel-options">
-                                    <div class="wheel-option active" data-price="0" title="20' Aero Standard"></div>
-                                    <div class="wheel-option" data-price="3000" title="21' Sport Twin-Spoke"></div>
-                                    <div class="wheel-option" data-price="5000" title="22' Carbon Performance"></div>
+                                    <div class="wheel-option active interactive" data-price="0" title="20' Aero Standard"></div>
+                                    <div class="wheel-option interactive" data-price="3000" title="21' Sport Twin-Spoke"></div>
+                                    <div class="wheel-option interactive" data-price="5000" title="22' Carbon Performance"></div>
                                 </div>
                             </details>
                         </div>
-                        
                         <div class="config-actions">
-                            <a href="#" class="btn btn-secondary">Book Test Drive</a>
-                            <a href="#" class="btn btn-primary">Finalize & Purchase</a>
+                            <a href="#" class="btn btn-secondary interactive">Book Test Drive</a>
+                            <a href="#" class="btn btn-primary interactive">Finalize & Purchase</a>
                         </div>
                     </div>
                 </div>
             </div>
         </section>
 
-        <section id="about" class="container">
-             <h2 class="fade-in">Beyond the Horizon</h2>
-             <p class="fade-in" style="transition-delay: 200ms;">Aura Motors was founded on a single principle: to forge the future of motion. We believe in the synergy of silent, electric power and breathtaking design. Our vehicles are more than just a mode of transport; they are a statement of progress, a commitment to sustainability, and an experience that ignites the senses. Every curve, every line, and every material is chosen with intent, creating a seamless connection between driver, machine, and the road ahead.</p>
-        </section>
-
     </main>
+    
+    <div id="concierge-fab" class="interactive" title="TEKA Concierge">
+         <i class='bx bx-bot'></i>
+    </div>
 
     <footer>
         <div class="container">
-            <div class="social-links fade-in">
-                <a href="#"><i class='bx bxl-instagram'></i></a>
-                <a href="#"><i class='bx bxl-twitter'></i></a>
-                <a href="#"><i class='bx bxl-youtube'></i></a>
+            <div class="social-links animate-in">
+                <a href="#" class="interactive"><i class='bx bxl-instagram'></i></a>
+                <a href="#" class="interactive"><i class='bx bxl-twitter'></i></a>
+                <a href="#" class="interactive"><i class='bx bxl-youtube'></i></a>
             </div>
-            <p style="margin-top: 1.5rem;" class="fade-in">&copy; 2025 Aura Motors. All Rights Reserved.</p>
+            <p class="animate-in" style="margin-top: 2rem;">&copy; 2025 TEKA Motors. All Rights Reserved.</p>
         </div>
     </footer>
 
     <script>
-        // JAVASCRIPT FOR INTERACTIONS
-
         document.addEventListener('DOMContentLoaded', () => {
 
             // 1. THEME TOGGLE
             const themeToggle = document.getElementById('theme-toggle');
             const body = document.body;
             const currentTheme = localStorage.getItem('theme') || 'dark';
-            
             body.setAttribute('data-theme', currentTheme);
             themeToggle.innerHTML = currentTheme === 'dark' ? "<i class='bx bxs-sun'></i>" : "<i class='bx bxs-moon'></i>";
-
             themeToggle.addEventListener('click', () => {
                 let newTheme = body.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
                 body.setAttribute('data-theme', newTheme);
@@ -495,8 +420,20 @@
                 themeToggle.innerHTML = newTheme === 'dark' ? "<i class='bx bxs-sun'></i>" : "<i class='bx bxs-moon'></i>";
             });
 
-            // 2. FADE-IN ANIMATION ON SCROLL
-            const fadeInElements = document.querySelectorAll('.fade-in');
+            // 2. NEW: CUSTOM CURSOR
+            const cursor = document.querySelector('.cursor');
+            const interactiveElements = document.querySelectorAll('.interactive');
+            window.addEventListener('mousemove', e => {
+                cursor.style.left = e.clientX + 'px';
+                cursor.style.top = e.clientY + 'px';
+            });
+            interactiveElements.forEach(el => {
+                el.addEventListener('mouseenter', () => cursor.classList.add('grow'));
+                el.addEventListener('mouseleave', () => cursor.classList.remove('grow'));
+            });
+
+            // 3. SCROLL ANIMATIONS
+            const animatedElements = document.querySelectorAll('.animate-in');
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -504,17 +441,11 @@
                     }
                 });
             }, { threshold: 0.1 });
+            animatedElements.forEach(el => observer.observe(el));
 
-            fadeInElements.forEach(el => observer.observe(el));
-
-
-            // 3. SIMULATED CONFIGURATOR PRICE LOGIC
+            // 4. SIMULATED CONFIGURATOR PRICE LOGIC
             const basePrice = 210000;
-            let selectedOptions = {
-                color: 0,
-                wheels: 0
-            };
-
+            let selectedOptions = { color: 0, wheels: 0 };
             const priceElement = document.getElementById('total-price');
             const colorOptions = document.getElementById('color-options');
             const wheelOptions = document.getElementById('wheel-options');
@@ -527,21 +458,21 @@
             function handleOptionClick(event, optionType, container) {
                 const target = event.target;
                 if (!target.hasAttribute('data-price')) return;
-
-                // Update active class
                 container.querySelector('.active').classList.remove('active');
                 target.classList.add('active');
-                
-                // Update price
                 selectedOptions[optionType] = parseInt(target.getAttribute('data-price'));
                 updatePrice();
             }
 
             colorOptions.addEventListener('click', (e) => handleOptionClick(e, 'color', colorOptions));
             wheelOptions.addEventListener('click', (e) => handleOptionClick(e, 'wheels', wheelOptions));
-            
-            // Initial price update
             updatePrice();
+            
+            // 5. NEW: AI CONCIERGE (SIMULATED)
+            const conciergeFab = document.getElementById('concierge-fab');
+            conciergeFab.addEventListener('click', () => {
+                alert("TEKA Concierge (AI Assistant)\n\nThis would open a chat window. How can I help you design your perfect TEKA today?");
+            });
         });
     </script>
 </body>
